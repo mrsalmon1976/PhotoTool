@@ -5,11 +5,11 @@
 AppName=PhotoTool
 AppVerName=PhotoTool 3.0.0
 AppPublisher=Matt Salmon
-AppPublisherURL=http://software.safish.com
-AppSupportURL=http://software.safish.com
-AppUpdatesURL=http://software.safish.com
+AppPublisherURL=https://software.safish.com
+AppSupportURL=https://software.safish.com
+AppUpdatesURL=https://software.safish.com
 DefaultDirName={pf}\PhotoTool
-DefaultGroupName=My Program
+DefaultGroupName=PhotoTool
 LicenseFile=..\LICENSE
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51

@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImageProcessor">
+    <Reference Include="ImageProcessor, Version=1.9.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ImageProcessor.1.9.3.0\lib\ImageProcessor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
