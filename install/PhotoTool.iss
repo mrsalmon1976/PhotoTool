@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=PhotoTool
-AppVerName=PhotoTool 3.0.0
+AppVerName=PhotoTool 3.1.0
 AppPublisher=Matt Salmon
 AppPublisherURL=https://software.safish.com
 AppSupportURL=https://software.safish.com
@@ -20,7 +20,7 @@ Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescri
 
 [Files]
 Source: "..\source\PhotoTool\bin\Release\PhotoTool.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\source\PhotoTool\bin\Release\ImageProcessor.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\source\PhotoTool\bin\Release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\source\PhotoTool\PhotoTool.config"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
