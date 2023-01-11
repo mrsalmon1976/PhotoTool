@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using PhotoTool.Logging;
 
 namespace SAFish.PhotoTool
 {
@@ -21,22 +22,27 @@ namespace SAFish.PhotoTool
 		private string[] files = null;
 		private int index = 0;
 		private System.Windows.Forms.Button btnClose;
+		private ImageService _imageService;
+        private LogService _logService;
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.Container components = null;
 
 		public FormImageViewer(string[] files, int index)
 		{
 			this.files = files;
             this.index = index;
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+			this._imageService = new ImageService();
+            this._logService = new LogService();
+
+            //
+            // Required for Windows Form Designer support
+            //
+            InitializeComponent();
 			DisplayPhoto();
 		}
 
@@ -80,16 +86,15 @@ namespace SAFish.PhotoTool
             if (picMain.Width <= 0) return;
  
             string file = this.files[this.index];
-            byte[] imgData = System.IO.File.ReadAllBytes(file);
 
             try 
 			{
 				int len = picMain.Width;
-				imgData = ImageUtils.ResizeImage(imgData, len, 90);
-				picMain.Image = ImageUtils.ConvertBytesToImage(imgData);
+                picMain.Image = _imageService.ResizeImage(file, len, 90);
 			}
 			catch (Exception ex) 
 			{
+                _logService.Error(ex);
 				MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}

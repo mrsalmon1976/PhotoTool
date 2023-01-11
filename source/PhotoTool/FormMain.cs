@@ -13,6 +13,8 @@ using PhotoTool.Properties;
 using System.Collections.Generic;
 using System.ComponentModel;
 using PhotoTool.Models;
+using ImageMagick;
+using PhotoTool.Logging;
 
 namespace SAFish.PhotoTool
 {
@@ -36,7 +38,8 @@ namespace SAFish.PhotoTool
 		private System.Windows.Forms.ListView listView;
 		private ArrayList alFiles = null;
 		private Bitmap bBlank = null;
-		private Settings settings = null;
+        private Bitmap bLoadingPreview = null;
+        private Settings settings = null;
 		private System.Windows.Forms.GroupBox gbImageOptions;
 		private System.Windows.Forms.Label lblImgLen;
 		private System.Windows.Forms.Label lblThumbLen;
@@ -65,22 +68,30 @@ namespace SAFish.PhotoTool
         private BackgroundWorker bgwFileLoader = null;
         private BackgroundWorker bgwImageProcessor = null;
         private ProgressDialog dlgProgress = null;
+        private Label lblWarningMessage;
+        private ImageService _imageService;
+        private LogService _logService;
 
 		#region Constructors
 
 		/// <summary>
 		/// Constructor for class FormMain.
 		/// </summary>
-		public FormMain()
+		public FormMain(LogService logService, ImageService imageService)
 		{
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
 			alFiles = new ArrayList();
-			// create empty bitmap
-			bBlank = ImageUtils.CreateBlankImage("No image selected.", picBox.Width, picBox.Height);
-			picBox.Image = bBlank;
+            _logService = logService;
+            _imageService = imageService;
+
+            // create empty bitmap
+            bBlank = _imageService.CreateBlankImage("No image selected.", picBox.Width, picBox.Height);
+            bLoadingPreview = _imageService.CreateBlankImage("Loading preview...", picBox.Width, picBox.Height);
+
+            picBox.Image = bBlank;
 
 			// set form settings
             this.Text = " PhotoTool " + FormMain.Version;
@@ -130,15 +141,6 @@ namespace SAFish.PhotoTool
 				string path = Application.ExecutablePath;
 				return path.Substring(0, path.LastIndexOf("\\") + 1);
 			}
-		}
-
-		/// <summary>
-		/// Logs error to the event log on the user's machine.
-		/// </summary>
-		/// <param name="e">Exception to log.</param>
-		public static void LogError(Exception e) 
-		{
-			EventLog.WriteEntry("PhotoTool", e.Message + "\n" + e.Source + "\n" + e.StackTrace, EventLogEntryType.Error);
 		}
 
 		/// <summary>
@@ -204,7 +206,7 @@ namespace SAFish.PhotoTool
                 dlg.CheckPathExists = true;
                 dlg.Multiselect = true;
                 dlg.InitialDirectory = settings.FolderAddFile;
-                dlg.Filter = "Image Files(*.bmp;*.jpg;*.jpeg;*.gif;*.png)|*.bmp;*.jpg;*.jpeg;*.gif;*.png|All files (*.*)|*.*";
+                dlg.Filter = "Image Files(*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.heic)|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.heic|All files (*.*)|*.*";
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     this.LoadFiles(dlg.FileNames);
@@ -233,7 +235,9 @@ namespace SAFish.PhotoTool
 				listView.Items.Remove(item);
 				this.alFiles.Remove(item.SubItems[0].Text);
 			}
-		}
+
+            ReloadWarningMessage();
+        }
 
 		private string ValidateInput() 
 		{
@@ -272,12 +276,12 @@ namespace SAFish.PhotoTool
 				}
 			}
 			// check number ranges
-			if (imgLen < 1 || imgLen > 5000 ||
+			if (imgLen < 0 ||
 				thumbLen < 1 || thumbLen > 999 ||
 				imgQuality < 0 || imgQuality > 100) 
 			{
 				sb.Append(prefix);
-				sb.Append("Image length must be in the range 1 - 5000.");
+				sb.Append("Image length must be greater than -1.");
 				sb.Append(prefix);
 				sb.Append("Thumbnail length must be in the range 1 - 999.");
 				sb.Append(prefix);
@@ -347,6 +351,7 @@ namespace SAFish.PhotoTool
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.miProjSave = new System.Windows.Forms.MenuItem();
             this.miProjSaveAs = new System.Windows.Forms.MenuItem();
+            this.lblWarningMessage = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picBox)).BeginInit();
             this.gbImageOptions.SuspendLayout();
             this.SuspendLayout();
@@ -365,9 +370,10 @@ namespace SAFish.PhotoTool
             this.listView.FullRowSelect = true;
             this.listView.GridLines = true;
             this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listView.HideSelection = false;
             this.listView.Location = new System.Drawing.Point(0, 80);
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(488, 368);
+            this.listView.Size = new System.Drawing.Size(518, 408);
             this.listView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listView.TabIndex = 0;
             this.listView.UseCompatibleStateImageBehavior = false;
@@ -404,7 +410,7 @@ namespace SAFish.PhotoTool
             this.btnAddDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddDir.Image = global::PhotoTool.Properties.Resources.add;
             this.btnAddDir.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnAddDir.Location = new System.Drawing.Point(496, 80);
+            this.btnAddDir.Location = new System.Drawing.Point(526, 80);
             this.btnAddDir.Name = "btnAddDir";
             this.btnAddDir.Size = new System.Drawing.Size(128, 23);
             this.btnAddDir.TabIndex = 2;
@@ -416,7 +422,7 @@ namespace SAFish.PhotoTool
             this.btnAddFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddFile.Image = global::PhotoTool.Properties.Resources.folder;
             this.btnAddFile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnAddFile.Location = new System.Drawing.Point(496, 112);
+            this.btnAddFile.Location = new System.Drawing.Point(526, 112);
             this.btnAddFile.Name = "btnAddFile";
             this.btnAddFile.Size = new System.Drawing.Size(128, 23);
             this.btnAddFile.TabIndex = 3;
@@ -428,7 +434,7 @@ namespace SAFish.PhotoTool
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnGo.Image = global::PhotoTool.Properties.Resources.go;
             this.btnGo.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnGo.Location = new System.Drawing.Point(496, 424);
+            this.btnGo.Location = new System.Drawing.Point(526, 464);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(128, 23);
             this.btnGo.TabIndex = 4;
@@ -439,7 +445,7 @@ namespace SAFish.PhotoTool
             // 
             this.picBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.picBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picBox.Location = new System.Drawing.Point(496, 176);
+            this.picBox.Location = new System.Drawing.Point(526, 176);
             this.picBox.Name = "picBox";
             this.picBox.Size = new System.Drawing.Size(128, 128);
             this.picBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -451,7 +457,7 @@ namespace SAFish.PhotoTool
             this.btnRem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRem.Image = global::PhotoTool.Properties.Resources.remove;
             this.btnRem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnRem.Location = new System.Drawing.Point(496, 144);
+            this.btnRem.Location = new System.Drawing.Point(526, 144);
             this.btnRem.Name = "btnRem";
             this.btnRem.Size = new System.Drawing.Size(128, 23);
             this.btnRem.TabIndex = 6;
@@ -473,7 +479,7 @@ namespace SAFish.PhotoTool
             this.gbImageOptions.ForeColor = System.Drawing.SystemColors.ControlText;
             this.gbImageOptions.Location = new System.Drawing.Point(0, 0);
             this.gbImageOptions.Name = "gbImageOptions";
-            this.gbImageOptions.Size = new System.Drawing.Size(632, 72);
+            this.gbImageOptions.Size = new System.Drawing.Size(662, 72);
             this.gbImageOptions.TabIndex = 7;
             this.gbImageOptions.TabStop = false;
             this.gbImageOptions.Text = "Image Options";
@@ -553,9 +559,9 @@ namespace SAFish.PhotoTool
             this.lblImgLen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblImgLen.Location = new System.Drawing.Point(8, 24);
             this.lblImgLen.Name = "lblImgLen";
-            this.lblImgLen.Size = new System.Drawing.Size(192, 16);
+            this.lblImgLen.Size = new System.Drawing.Size(268, 24);
             this.lblImgLen.TabIndex = 0;
-            this.lblImgLen.Text = "Image length (longest side) in pixels:";
+            this.lblImgLen.Text = "Longest side in pixels (0 for original):";
             // 
             // mainMenu
             // 
@@ -627,10 +633,22 @@ namespace SAFish.PhotoTool
             this.miProjSaveAs.Index = -1;
             this.miProjSaveAs.Text = "";
             // 
+            // lblWarningMessage
+            // 
+            this.lblWarningMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblWarningMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWarningMessage.ForeColor = System.Drawing.Color.Red;
+            this.lblWarningMessage.Location = new System.Drawing.Point(528, 408);
+            this.lblWarningMessage.Name = "lblWarningMessage";
+            this.lblWarningMessage.Size = new System.Drawing.Size(126, 53);
+            this.lblWarningMessage.TabIndex = 8;
+            this.lblWarningMessage.Text = "Writing HEIC/HEIF files is not supported - they will be saved as JPG";
+            // 
             // FormMain
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(632, 453);
+            this.ClientSize = new System.Drawing.Size(662, 493);
+            this.Controls.Add(this.lblWarningMessage);
             this.Controls.Add(this.gbImageOptions);
             this.Controls.Add(this.btnRem);
             this.Controls.Add(this.picBox);
@@ -645,6 +663,7 @@ namespace SAFish.PhotoTool
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = " PhotoTool";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.FormMain_Closing);
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.Resize += new System.EventHandler(this.FormMain_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.picBox)).EndInit();
             this.gbImageOptions.ResumeLayout(false);
@@ -769,37 +788,40 @@ namespace SAFish.PhotoTool
 			this.listView.Columns[1].Width = w / 6;
 			this.listView.Columns[2].Width = w / 6;
 			this.listView.Columns[3].Width = w / 6;
-		}
+        }
 
 		// event handler for when an image is selected in the list view
 		private void listView_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if (listView.SelectedItems.Count == 1) 
 			{
-				string file = listView.SelectedItems[0].Text;
-				Bitmap img = null;
 				try 
 				{
-					img = (Bitmap)Bitmap.FromFile(listView.SelectedItems[0].Text);
-				}
-				catch (Exception ex) 
+                    string file = listView.SelectedItems[0].Text;
+                    Bitmap img = null;
+                    picBox.Image = bLoadingPreview;
+                    Application.DoEvents();
+
+                    MagickImage image = new MagickImage(file);
+                    image.Format = MagickFormat.Jpeg;
+                    MagickGeometry geometry = new MagickGeometry(picBox.Width, picBox.Height);
+                    image.Resize(geometry);
+
+                    using (var memStream = new MemoryStream())
+                    {
+                        // Write the image to the memorystream
+                        image.Write(memStream);
+
+                        img = new System.Drawing.Bitmap(memStream);
+                    }
+                    picBox.Image = img;
+                }
+                catch (Exception ex) 
 				{
-					picBox.Image = ImageUtils.CreateBlankImage("Unable to preview image.", picBox.Width, picBox.Height);
-					FormMain.LogError(ex);
+                    _logService.Error(ex);
+					picBox.Image = _imageService.CreateBlankImage("Unable to preview image.", picBox.Width, picBox.Height);
 					return;
 				}
-				int w = img.Width;
-				int h = img.Height;
-				if ((w > picBox.Width) && (w >= h)) {
-					w = picBox.Width;
-					h = h / (img.Width / w);
-				}
-				else if ((h > picBox.Height)) {
-					h = picBox.Height;
-					w = w / (img.Height / h);
-				}
-				img = ImageUtils.ScaleImage(img, w, h);
-                picBox.Image = img;
 			}
 			else 
 			{
@@ -884,6 +906,24 @@ namespace SAFish.PhotoTool
 			}
         }
 
+        private void ReloadWarningMessage()
+        {
+            bool isWarningVisible = false;
+            foreach (ListViewItem item in listView.Items)
+            {
+                string filePath = item.Text;
+                string extension = Path.GetExtension(filePath).ToLowerInvariant();
+                if (extension == ".heic" || extension == ".heif") {
+                    isWarningVisible = true;
+                    break;
+                }
+            }
+
+            lblWarningMessage.Visible = isWarningVisible;
+
+        }
+
+
         #region Background Worker Methods for Loading Files
 
         void bgwFileLoader_DoWork(object sender, DoWorkEventArgs e)
@@ -903,11 +943,12 @@ namespace SAFish.PhotoTool
 
                 try
                 {
-                    Image img = Bitmap.FromFile(file);
-                    bgw.ReportProgress(0, new ImageLoadInfo(file, img));
+                    var image = new MagickImage(file);
+                    bgw.ReportProgress(0, new ImageLoadInfo(file, image));
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _logService.Error(ex);
                     errorCount++;
                 }
                 this.dlgProgress.Increment(1);
@@ -929,6 +970,8 @@ namespace SAFish.PhotoTool
                 string msg = String.Format("Unable to load {0} of {1} files.", fli.ErrorCount, fli.Files.Length);
                 MessageBox.Show(this, msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            ReloadWarningMessage();
         }
 
         void bgwFileLoader_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -980,19 +1023,20 @@ namespace SAFish.PhotoTool
                 try
                 {
                     string fileOut = GetOutputFileName(file, ipi.OutputFolder, ipi.ReplaceSpaces, false);
-                    ImageUtils.ResizeImage(file, fileOut, ipi.MaxLength, ipi.Quality);
+                    _imageService.ResizeImage(file, ipi.MaxLength, ipi.Quality, fileOut);
                     this.dlgProgress.Increment(1);
 
                     // create the thumbnail
                     if (ipi.CreateThumbnails)
                     {
                         fileOut = GetOutputFileName(file, ipi.OutputFolder, ipi.ReplaceSpaces, true);
-                        ImageUtils.ResizeImage(file, fileOut, ipi.ThumbnailLength, ipi.Quality);
+                        _imageService.ResizeImage(file, ipi.ThumbnailLength, ipi.Quality, fileOut);
                         this.dlgProgress.Increment(1);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _logService.Error(ex);
                     errorCount++;
                 }
             }
@@ -1020,5 +1064,10 @@ namespace SAFish.PhotoTool
         }
 
         #endregion
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            ReloadWarningMessage();
+        }
     }
 }

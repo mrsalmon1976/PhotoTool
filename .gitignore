@@ -8,3 +8,4 @@ obj/
 *.cache
 *.xap
 source/packages
+source/.vs/

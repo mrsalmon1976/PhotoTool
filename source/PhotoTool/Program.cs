@@ -1,4 +1,7 @@
-﻿using SAFish.PhotoTool;
+﻿using ImageMagick;
+using NLog;
+using PhotoTool.Logging;
+using SAFish.PhotoTool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,20 +19,24 @@ namespace PhotoTool
         [STAThread]
         static void Main()
         {
+            LogService logger = null;
             try
             {
-                Application.Run(new FormMain());
+                var container = BootStrapper.Boot();
+                logger = container.GetInstance<LogService>();
+
+                FormMain formMain = container.GetInstance<FormMain>();
+                Application.Run(formMain);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw;
-                //string err = e.Message + "\n\n" +
-                //    "Please report this error on http://software.safish.com.";
-                //MessageBox.Show(null, err, "PhotoTool Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //FormMain.LogError(e);
+                if (logger != null)
+                {
+                    logger.Error(ex, ex.Message);
+                }
+                Environment.Exit(1);
             }
         }
-
 
     }
 }

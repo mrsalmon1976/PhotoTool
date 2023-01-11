@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoTool", "PhotoTool\PhotoTool.csproj", "{22E0177A-FBCC-4C9A-ACF3-E1804649CDD2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{EB14F0F3-1543-428C-8958-4DADF66BEA4D}"
@@ -9,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{EB14F0
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoTool.Test", "PhotoTool.Test\PhotoTool.Test.csproj", "{9E577A68-12E8-486D-813E-10C661E84C94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,8 +24,15 @@ Global
 		{22E0177A-FBCC-4C9A-ACF3-E1804649CDD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22E0177A-FBCC-4C9A-ACF3-E1804649CDD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22E0177A-FBCC-4C9A-ACF3-E1804649CDD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E577A68-12E8-486D-813E-10C661E84C94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E577A68-12E8-486D-813E-10C661E84C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E577A68-12E8-486D-813E-10C661E84C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E577A68-12E8-486D-813E-10C661E84C94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {56A3A832-171D-43E3-896A-DE2D09039B79}
 	EndGlobalSection
 EndGlobal

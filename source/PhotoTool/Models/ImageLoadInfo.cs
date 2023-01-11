@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageMagick;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,13 +10,13 @@ namespace PhotoTool.Models
 {
     public class ImageLoadInfo
     {
-        public ImageLoadInfo(string file, Image img)
+        public ImageLoadInfo(string file, MagickImage img)
         {
             this.File = file;
             this.Image = img;
         }
 
-        public Image Image { get; set; }
+        public MagickImage Image { get; set; }
 
         public string File { get; set; }
     }
