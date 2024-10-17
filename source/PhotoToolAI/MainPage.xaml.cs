@@ -1,25 +1,28 @@
-﻿namespace PhotoToolAI
+﻿using PhotoToolAI.Views.FaceSearch;
+using PhotoToolAI.Views.BatchResize;
+
+namespace PhotoToolAI
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private readonly BatchResizeView batchResizeView = new BatchResizeView();
+        private readonly FaceSearchView faceSearchView = new FaceSearchView();
 
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            count++;
+		private void BtnBatchResizer_Clicked(object sender, EventArgs e)
+		{
+            scrollView.Content = batchResizeView;
+		}
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+		private void BtnFaceSearch_Clicked(object sender, EventArgs e)
+		{
+			scrollView.Content = faceSearchView;
+		}
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
-    }
+	}
 
 }
