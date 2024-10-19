@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using NLog;
+using PhototoolAI.BootStrapping;
 
 namespace PhotoToolAI
 {
@@ -6,21 +7,26 @@ namespace PhotoToolAI
     {
         public static MauiApp CreateMauiApp()
         {
-            //Test.Run();
             var builder = MauiApp.CreateBuilder();
+
             builder
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+                })
+                .InitialiseLogging();
 
-#if DEBUG
-    		builder.Logging.AddDebug();
-#endif
+            Logger logger = LogManager.GetCurrentClassLogger();
+
+            // add dependencies
+            builder.Services.AddViews();
+
+            logger.Info("Application initialisation complete");
 
             return builder.Build();
+
         }
     }
 }

@@ -26,7 +26,9 @@
                     x:Name="CounterBtn"
                     Text="Click me" 
                     SemanticProperties.Hint="Counts the number of times you click"
-                    HorizontalOptions="Fill" />
+                    HorizontalOptions="Fill"
+                    Clicked="CounterBtn_Clicked"
+            />
     </VerticalStackLayout>
 
 </ContentView>

@@ -1,9 +1,16 @@
+using Microsoft.Extensions.Logging;
+
 namespace PhotoToolAI.Views.BatchResize;
 
 public partial class BatchResizeView : ContentView
 {
-	public BatchResizeView()
+    private readonly ILogger<BatchResizeView> _logger;
+
+    public BatchResizeView()
 	{
-		InitializeComponent();
-	}
+        _logger = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<ILogger<BatchResizeView>>()!;
+
+        InitializeComponent();
+
+    }
 }
