@@ -36,7 +36,7 @@
                 <Button Text="Menu Item 2" Margin="0,0,0,10" Clicked="BtnFaceSearch_Clicked" />
             </VerticalStackLayout>
 
-            <ScrollView Grid.Column="1" x:Name="scrollView" Padding="20">
+            <ScrollView Grid.Column="1" x:Name="scrollView" Padding="10">
                 <batchResize:BatchResizeView />
             </ScrollView>
         </Grid>

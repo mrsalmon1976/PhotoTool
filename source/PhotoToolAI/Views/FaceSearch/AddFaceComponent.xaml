@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PhotoToolAI.Views.FaceSearch.AddFaceComponent">
+    
+    <!-- Main Content Area -->
+    <ScrollView MinimumHeightRequest="0">
+        <Grid Grid.Row="0" RowDefinitions="*, Auto">
+            <VerticalStackLayout
+                Padding="0,0"
+                Spacing="10">
+
+                <Label
+                    Text="Add a person to your collection"
+                    Style="{StaticResource SubHeadline}"
+                    SemanticProperties.HeadingLevel="Level2"
+                    SemanticProperties.Description="Who would you like to search for?" 
+                    HorizontalOptions="StartAndExpand"
+                    />
+                <Label
+                    Text="Select the clearest image you can find of the person - this will produce better results when comparing against other images."
+                    HorizontalOptions="StartAndExpand"
+                    />
+                <Grid ColumnDefinitions="*, Auto" HorizontalOptions="Fill">
+                    <Image
+                        x:Name="imgFace"
+                        Grid.Column="0"
+                        BackgroundColor="#e0e0e0"
+                        Source="dotnet_bot.png"
+                        HeightRequest="185"
+                        Aspect="AspectFit"
+                        SemanticProperties.Description="dot net bot in a race car number eight" />
+                    <VerticalStackLayout Grid.Column="1">
+                    </VerticalStackLayout>
+                </Grid>
+
+
+                <Button
+                    x:Name="CounterBtn"
+                    Text="Click me" 
+                    SemanticProperties.Hint="Counts the number of times you click"
+                    HorizontalOptions="Fill"
+                    IsVisible="False"
+            />
+            </VerticalStackLayout>
+            <HorizontalStackLayout Grid.Row="1" Spacing="10" HorizontalOptions="End">
+                <Button Text="&lt;&lt;   Back"
+                    WidthRequest="120" Clicked="BtnBack_Clicked"
+                    />
+
+                <Button Text="Select" WidthRequest="120" Clicked="BtnSelect_Clicked" />
+                <Button Text="Add Face" WidthRequest="120" IsEnabled="False" />
+            </HorizontalStackLayout>
+        </Grid>
+    </ScrollView>
+
+</ContentView>
