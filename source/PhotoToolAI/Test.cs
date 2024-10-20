@@ -38,7 +38,6 @@ namespace PhotoToolAI
                     rec.AlignFaceUsingLandmarks(img, f.Landmarks!);
 
                     var embedding2 = rec.GenerateEmbedding(img);
-
                     var dot = embedding1.Dot(embedding2);
 
                     if (dot >= 0.42)

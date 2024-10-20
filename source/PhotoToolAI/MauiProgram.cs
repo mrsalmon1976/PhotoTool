@@ -21,7 +21,7 @@ namespace PhotoToolAI
             Logger logger = LogManager.GetCurrentClassLogger();
 
             // add dependencies
-            builder.Services.AddViews();
+            builder.Services.AddDependencies();
 
             logger.Info("Application initialisation complete");
 

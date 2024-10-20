@@ -2,16 +2,21 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using Microsoft.Maui.Storage;
 using SixLabors.ImageSharp.PixelFormats;
+using PhotoToolAI.Services;
 
 namespace PhotoToolAI.Views.FaceSearch;
 
 public partial class AddFaceComponent : ContentView
 {
 	private readonly ILogger<AddFaceComponent> _logger;
+	private IImageService _imageService;
+	private IFaceDetectionService _faceDetectionService;
 
 	public AddFaceComponent()
 	{
 		_logger = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<ILogger<AddFaceComponent>>()!;
+		_imageService = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<IImageService>()!;
+		_faceDetectionService = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<IFaceDetectionService>()!;
 
 		InitializeComponent();
 	}
@@ -55,20 +60,38 @@ public partial class AddFaceComponent : ContentView
 		var file = await PickImageFile();
 		if (file != null)
 		{
+			// copy the file into the working folder
+			string workingFilePath = _imageService.CopyToWorkingDirectory(file.FullPath);
 
-			// Example: Load into an Image control
-			//var stream = await file.OpenReadAsync();
-			//var img = SixLabors.ImageSharp.Image.Load<Rgb24>(stream);
-			
-			//imgFace.Source = ImageSource.FromStream(() => stream);
+			// copy the image and add face squares
+			var faceDetectionResult = _faceDetectionService.CopyImageWithFaceDetections(workingFilePath);
 
-			//using (System.Drawing.Graphics graphics = System.Drawing.Graphics.Fr(b))
-			//{
+			// load the image into the image component
+			imgFace.Source = ImageSource.FromFile(faceDetectionResult.DecoratedImagePath);
+			imgFace.MaximumHeightRequest = faceDetectionResult.ImageSize!.Value.Height;
+			if (imgFace.MaximumHeightRequest > 325)
+			{
+				imgFace.MaximumHeightRequest = 325;
+			}
+		
 
-			//}
+			foreach (var face in faceDetectionResult.Faces)
+			{
+				Entry entry = new Entry();
+				entry.Text = "test";
 
-			// Or just get the path
-			string filePath = file.FullPath;
+				Brush brush = _imageService.ConvertColor(face.Color);
+
+				Border borderEntry = new Border
+				{
+					Stroke = brush,
+					StrokeThickness = 2,
+					Content = entry
+				};
+
+				nameCapturePanel.Children.Add(borderEntry);
+			}
+
 		}
 	}
 

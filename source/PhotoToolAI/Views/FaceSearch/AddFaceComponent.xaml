@@ -27,10 +27,9 @@
                         Grid.Column="0"
                         BackgroundColor="#e0e0e0"
                         Source="dotnet_bot.png"
-                        HeightRequest="185"
                         Aspect="AspectFit"
-                        SemanticProperties.Description="dot net bot in a race car number eight" />
-                    <VerticalStackLayout Grid.Column="1">
+                        />
+                    <VerticalStackLayout x:Name="nameCapturePanel" Grid.Column="1">
                     </VerticalStackLayout>
                 </Grid>
 
