@@ -87,6 +87,9 @@
 	  <MauiXaml Update="Views\FaceSearch\FaceSearchView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\FaceSearch\NameEntry.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\FaceSearch\SelectFaceComponent.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -76,22 +76,13 @@ public partial class AddFaceComponent : ContentView
 
 			nameCapturePanel.Children.Clear();
 
-
             foreach (var face in faceDetectionResult.Faces)
 			{
-				Entry entry = new Entry();
-				entry.Text = "test";
-
 				Brush brush = _imageService.ConvertColor(face.Color);
 
-				Border borderEntry = new Border
-				{
-					Stroke = brush,
-					StrokeThickness = 2,
-					Content = entry
-				};
-
-				nameCapturePanel.Children.Add(borderEntry);
+				NameEntry entry = new NameEntry();
+				entry.BorderColor = brush;
+				nameCapturePanel.Children.Add(entry);
 			}
 
 		}
