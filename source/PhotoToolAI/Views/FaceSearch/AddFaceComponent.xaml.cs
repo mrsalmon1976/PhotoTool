@@ -21,7 +21,7 @@ public partial class AddFaceComponent : ContentView
 		InitializeComponent();
 	}
 
-	public event EventHandler BackButtonClick;
+	public event EventHandler? BackButtonClick;
 
 
 	// Simple version to pick a single image file
@@ -73,9 +73,11 @@ public partial class AddFaceComponent : ContentView
 			{
 				imgFace.MaximumHeightRequest = 325;
 			}
-		
 
-			foreach (var face in faceDetectionResult.Faces)
+			nameCapturePanel.Children.Clear();
+
+
+            foreach (var face in faceDetectionResult.Faces)
 			{
 				Entry entry = new Entry();
 				entry.Text = "test";

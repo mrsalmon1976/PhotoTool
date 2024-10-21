@@ -7,7 +7,7 @@ public partial class SelectFaceComponent : ContentView
 		InitializeComponent();
 	}
 
-	public event EventHandler AddFaceButtonClick;
+	public event EventHandler? AddFaceButtonClick;
 
 	private void BtnAddFace_Clicked(object sender, EventArgs e)
 	{
