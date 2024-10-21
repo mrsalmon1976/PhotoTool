@@ -9,3 +9,4 @@ obj/
 *.xap
 source/packages
 .vs/
+/docs/*.bkp
