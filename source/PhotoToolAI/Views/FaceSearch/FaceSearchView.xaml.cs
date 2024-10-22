@@ -16,25 +16,6 @@ public partial class FaceSearchView : ContentView
 
 		_visibleComponent = selectFaceComponent;
 	}
-
-	private void InitializeControls()
-	{
-
-		//_selectFaceComponent = new SelectFaceComponent();
-		//_selectFaceComponent.AddFaceButtonClick += (s, e) =>
-		//{
-			//contentFrame.Content = null;
-			//contentFrame.Content = _addFaceComponent;
-		//};
-
-		//_addFaceComponent = new AddFaceComponent();
-		//_addFaceComponent.CancelButtonClick += (s, e) =>
-		//{
-			//contentFrame.Content= null;
-			//contentFrame.Content = _selectFaceComponent;
-		//};
-	}
-
 	private void SelectFace_AddFaceButtonClick(object sender, EventArgs e)
 	{
 		SetVisibleComponent(addFaceComponent);
