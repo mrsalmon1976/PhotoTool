@@ -1,3 +1,6 @@
+using Microsoft.Maui.Controls;
+using PhotoToolAI.Models;
+
 namespace PhotoToolAI.Views.FaceSearch;
 
 public partial class NameEntry : ContentView
@@ -7,15 +10,27 @@ public partial class NameEntry : ContentView
 		InitializeComponent();
 	}
 
-	public Brush? BorderColor 
+	public Color? BorderColor 
 	{ 
 		get
 		{
-			return border.Stroke;
-		}
-		set
+			return frame.BorderColor;
+        }
+        set
 		{
-			border.Stroke = value;
+            frame.BorderColor = value;
 		}
 	}
+    public ImageSource FaceImage
+	{
+		get
+		{
+			return imgFace.Source;
+		}
+		set 
+		{ 
+			imgFace.Source = value;
+		}
+        
+    }
 }

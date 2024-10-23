@@ -20,5 +20,7 @@ namespace PhotoToolAI.Models
 		public SixLabors.ImageSharp.RectangleF Box { get; set; }
 
 		public SKColor Color { get; set; }
+
+		public string? ImagePath { get; set; }
 	}
 }

@@ -5,11 +5,11 @@
     
     <!-- Main Content Area -->
     <ScrollView MinimumHeightRequest="0">
-        <Grid Grid.Row="0" RowDefinitions="*, Auto">
-            <VerticalStackLayout
+        <Grid RowDefinitions="*, Auto">
+            <VerticalStackLayout 
+                Grid.Row="0"
                 Padding="0,0"
                 Spacing="10">
-
                 <Label
                     Text="Add a person to your collection"
                     Style="{StaticResource SubHeadline}"
@@ -21,16 +21,18 @@
                     Text="Select the clearest image you can find of the person - this will produce better results when comparing against other images."
                     HorizontalOptions="StartAndExpand"
                     />
-                <Grid ColumnDefinitions="*, Auto" HorizontalOptions="Fill">
+                <Grid ColumnDefinitions="Auto, *" HorizontalOptions="Fill" VerticalOptions="Fill">
                     <Image
                         x:Name="imgFace"
                         Grid.Column="0"
                         BackgroundColor="#e0e0e0"
-                        Source="dotnet_bot.png"
                         Aspect="AspectFit"
+                        VerticalOptions="Fill"
+                        HorizontalOptions="Start"
                         />
-                    <VerticalStackLayout x:Name="nameCapturePanel" Grid.Column="1">
-                    </VerticalStackLayout>
+                    <!-- Source="dotnet_bot.png" -->
+                    <FlexLayout x:Name="nameCapturePanel" Grid.Column="1" Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="Start" Padding="10,0,0,0">
+                    </FlexLayout>
                 </Grid>
 
             </VerticalStackLayout>

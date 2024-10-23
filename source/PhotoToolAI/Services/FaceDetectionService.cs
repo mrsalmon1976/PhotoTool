@@ -56,7 +56,7 @@ namespace PhotoToolAI.Services
 			ImageFaceDetectionResult result = new ImageFaceDetectionResult();
 			result.OriginalImagePath = imagePath;
 
-			var faces = this.DetectFaces(imagePath);
+			var faces = this.DetectFaces(imagePath).ToList();
 
 			string dir = Path.GetDirectoryName(imagePath)!;
 			string fileName = Path.GetFileNameWithoutExtension(imagePath);
@@ -64,18 +64,20 @@ namespace PhotoToolAI.Services
 			string newFileName = $"{fileName}_D{extension}";
 			string newFilePath = Path.Combine(dir, newFileName);
 
-			using var inputImage = SKBitmap.Decode(imagePath);
+            using var inputImage = SKBitmap.Decode(imagePath);
 			using var surface = SKSurface.Create(inputImage.Info);
+			var imageFormat = GetImageFormatFromPath(imagePath);          
 			var canvas = surface.Canvas;
 
 			// Draw the original image
 			canvas.Clear(SKColors.Transparent);
 			canvas.DrawBitmap(inputImage, 0, 0);
 
-
-			foreach (var f in faces)
+			for (int i = 0; i < faces.Count; i++)
 			{
-				var paint = new SKPaint()
+				FaceDetectionResult f = faces[i];
+                // draw lines on the image to highlight the face
+                var paint = new SKPaint()
 				{
 					Color = f.Color,
 					StrokeWidth = 5
@@ -85,12 +87,34 @@ namespace PhotoToolAI.Services
 				canvas.DrawLine(f.Box.X, f.Box.Y, f.Box.X, f.Box.Y + f.Box.Height, paint);
 				canvas.DrawLine(f.Box.X, f.Box.Y + f.Box.Height, f.Box.X + f.Box.Width, f.Box.Y + f.Box.Height, paint);
 				canvas.DrawLine(f.Box.X + f.Box.Width, f.Box.Y, f.Box.X + f.Box.Width, f.Box.Y + f.Box.Height, paint);
-			}
 
-			using var image = surface.Snapshot();
-			using var data = image.Encode(GetImageFormatFromPath(imagePath), 100);
+                // extract the image out
+                SKRectI bounds = new SKRectI((int)f.Box.X, (int)f.Box.Y, (int)f.Box.X + (int)f.Box.Width, (int)f.Box.Y + (int)f.Box.Height);
+                using SKBitmap faceImage = new SKBitmap(bounds.Width, bounds.Height);
+                using (var faceCanvas = new SKCanvas(faceImage))
+                {
+                    // Draw the portion of the original bitmap onto the new one
+                    faceCanvas.DrawBitmap(inputImage, bounds, new SKRect(0, 0, bounds.Width, bounds.Height));
+                }
+                using (var faceData = faceImage.Encode(imageFormat, 100))
+                {
+                    string faceFileName = $"{fileName}_face{i}{extension}";
+                    string faceFilePath = Path.Combine(dir, faceFileName);
+
+                    using (var faceStream = File.OpenWrite(faceFilePath))
+                    {
+                        faceData.SaveTo(faceStream);
+                        faceStream.Close();
+                    }
+					f.ImagePath = faceFilePath;
+                }
+            }
+
+            using var image = surface.Snapshot();
+			using var data = image.Encode(imageFormat, 100);
 			using var stream = File.OpenWrite(newFilePath);
 			data.SaveTo(stream);
+			stream.Close();
 
 
 			result.DecoratedImagePath = newFilePath;

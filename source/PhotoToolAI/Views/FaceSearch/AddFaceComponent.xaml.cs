@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Microsoft.Maui.Storage;
 using SixLabors.ImageSharp.PixelFormats;
 using PhotoToolAI.Services;
+using SkiaSharp;
 
 namespace PhotoToolAI.Views.FaceSearch;
 
@@ -78,11 +79,31 @@ public partial class AddFaceComponent : ContentView
 
             foreach (var face in faceDetectionResult.Faces)
 			{
-				Brush brush = _imageService.ConvertColor(face.Color);
+				
+				Color borderColor = _imageService.ConvertColor(face.Color);
 
-				NameEntry entry = new NameEntry();
-				entry.BorderColor = brush;
-				nameCapturePanel.Children.Add(entry);
+                //SKBitmap originalBitmap = SKBitmap.Decode(faceDetectionResult.OriginalImagePath);
+				//SKRectI bounds = new SKRectI((int)face.Box.X, (int)face.Box.Y, (int)face.Box.X + (int)face.Box.Width, (int)face.Box.Y + (int)face.Box.Height);
+                //SKBitmap extractedBitmap = new SKBitmap(bounds.Width, bounds.Height);
+                //using (var canvas = new SKCanvas(extractedBitmap))
+                //{
+                //    // Draw the portion of the original bitmap onto the new one
+                //    canvas.DrawBitmap(originalBitmap, bounds, new SKRect(0, 0, bounds.Width, bounds.Height));
+                //}
+
+                NameEntry entry = new NameEntry();
+				entry.BorderColor = borderColor;
+				entry.Margin = new Thickness(2);
+				//entry.HorizontalOptions = LayoutOptions.Start;
+                //entry.VerticalOptions = LayoutOptions.Start;
+
+                ImageSource imageSource = ImageSource.FromFile(face.ImagePath);
+                entry.FaceImage = imageSource;
+
+
+                nameCapturePanel.Children.Add(entry);
+
+
 			}
 
 		}
