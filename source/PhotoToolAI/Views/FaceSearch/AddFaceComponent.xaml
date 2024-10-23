@@ -30,9 +30,11 @@
                         VerticalOptions="Fill"
                         HorizontalOptions="Start"
                         />
-                    <!-- Source="dotnet_bot.png" -->
-                    <FlexLayout x:Name="nameCapturePanel" Grid.Column="1" Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="Start" Padding="10,0,0,0">
-                    </FlexLayout>
+                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="Start">
+                        <Label x:Name="facesFound" Text="" HorizontalOptions="Start" IsVisible="False" Padding="10,0" TextColor="LimeGreen" />
+                        <FlexLayout x:Name="nameCapturePanel" Grid.Column="1" Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="Start" Padding="10,0,0,0">
+                        </FlexLayout>
+                    </VerticalStackLayout>
                 </Grid>
 
             </VerticalStackLayout>
@@ -42,7 +44,7 @@
                     />
 
                 <Button Text="Select" WidthRequest="120" Clicked="BtnSelect_Clicked" />
-                <Button Text="Add Face" WidthRequest="120" IsEnabled="False" />
+                <Button x:Name="BtnSaveFaces" Text="Save Faces" WidthRequest="120" IsEnabled="False" />
             </HorizontalStackLayout>
         </Grid>
     </ScrollView>

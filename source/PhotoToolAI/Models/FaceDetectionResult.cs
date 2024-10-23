@@ -11,16 +11,10 @@ namespace PhotoToolAI.Models
 {
 	internal class FaceDetectionResult
 	{
-		public FaceDetectionResult() 
-		{
-			this.Box = new SixLabors.ImageSharp.RectangleF();
-			this.Color = SKColors.LightGreen;
-		}
-
 		public SixLabors.ImageSharp.RectangleF Box { get; set; }
 
 		public SKColor Color { get; set; }
 
-		public string? ImagePath { get; set; }
+		public byte[]? ImageData { get; set; }
 	}
 }

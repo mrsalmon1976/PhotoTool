@@ -13,6 +13,9 @@ public partial class AddFaceComponent : ContentView
 	private IImageService _imageService;
 	private IFaceDetectionService _faceDetectionService;
 
+	private const string FacesFoundText = "{0} faces found in the image. Enter names for the faces you would like to search for.";
+	private const string NoFacesFoundText = "No faces were found in the selected image";
+
 	public AddFaceComponent()
 	{
 		_logger = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<ILogger<AddFaceComponent>>()!;
@@ -66,9 +69,10 @@ public partial class AddFaceComponent : ContentView
 
 			// copy the image and add face squares
 			var faceDetectionResult = _faceDetectionService.CopyImageWithFaceDetections(workingFilePath);
+			int faceCount = faceDetectionResult.Faces.Count;
 
 			// load the image into the image component
-			imgFace.Source = ImageSource.FromFile(faceDetectionResult.DecoratedImagePath);
+			imgFace.Source = ImageSource.FromStream(() => new MemoryStream(faceDetectionResult.DecoratedImageData));
 			imgFace.MaximumHeightRequest = faceDetectionResult.ImageSize!.Value.Height;
 			if (imgFace.MaximumHeightRequest > 325)
 			{
@@ -95,17 +99,25 @@ public partial class AddFaceComponent : ContentView
 				entry.BorderColor = borderColor;
 				entry.Margin = new Thickness(2);
 				//entry.HorizontalOptions = LayoutOptions.Start;
-                //entry.VerticalOptions = LayoutOptions.Start;
+				//entry.VerticalOptions = LayoutOptions.Start;
 
-                ImageSource imageSource = ImageSource.FromFile(face.ImagePath);
-                entry.FaceImage = imageSource;
+				//byte[] bytes = File.ReadAllBytes(face.ImagePath);
+				//new MemoryStream()
+                //ImageSource imageSource = ImageSource.FromFile(face.ImagePath);
+				ImageSource imageSource = ImageSource.FromStream(() => new MemoryStream(face.ImageData));
+				entry.FaceImage = imageSource;
 
 
                 nameCapturePanel.Children.Add(entry);
 
 
+
 			}
 
+
+			facesFound.Text = (faceCount == 0 ? NoFacesFoundText : String.Format(FacesFoundText, faceCount));
+			facesFound.IsVisible = true;
+			BtnSaveFaces.IsEnabled = (faceCount > 0);
 		}
 	}
 

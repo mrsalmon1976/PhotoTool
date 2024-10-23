@@ -54,7 +54,6 @@ namespace PhotoToolAI.Services
 		public ImageFaceDetectionResult CopyImageWithFaceDetections(string imagePath)
 		{
 			ImageFaceDetectionResult result = new ImageFaceDetectionResult();
-			result.OriginalImagePath = imagePath;
 
 			var faces = this.DetectFaces(imagePath).ToList();
 
@@ -65,8 +64,14 @@ namespace PhotoToolAI.Services
 			string newFilePath = Path.Combine(dir, newFileName);
 
             using var inputImage = SKBitmap.Decode(imagePath);
+			var imageFormat = GetImageFormatFromPath(imagePath);
+
+			using (var inputImageData = inputImage.Encode(imageFormat, 100))
+			{
+				result.OriginalImageData = inputImageData.ToArray();
+			}
+
 			using var surface = SKSurface.Create(inputImage.Info);
-			var imageFormat = GetImageFormatFromPath(imagePath);          
 			var canvas = surface.Canvas;
 
 			// Draw the original image
@@ -98,26 +103,16 @@ namespace PhotoToolAI.Services
                 }
                 using (var faceData = faceImage.Encode(imageFormat, 100))
                 {
-                    string faceFileName = $"{fileName}_face{i}{extension}";
-                    string faceFilePath = Path.Combine(dir, faceFileName);
-
-                    using (var faceStream = File.OpenWrite(faceFilePath))
-                    {
-                        faceData.SaveTo(faceStream);
-                        faceStream.Close();
-                    }
-					f.ImagePath = faceFilePath;
+					f.ImageData = faceData.ToArray();
                 }
             }
 
             using var image = surface.Snapshot();
-			using var data = image.Encode(imageFormat, 100);
-			using var stream = File.OpenWrite(newFilePath);
-			data.SaveTo(stream);
-			stream.Close();
+			using var decoratedImageData = image.Encode(imageFormat, 100);
 
 
-			result.DecoratedImagePath = newFilePath;
+			//result.DecoratedImagePath = newFilePath;
+			result.DecoratedImageData = decoratedImageData.ToArray();
 			result.Faces.AddRange(faces);
 			result.ImageSize = new Microsoft.Maui.Graphics.Size(inputImage.Width, inputImage.Height);
 
@@ -156,11 +151,17 @@ namespace PhotoToolAI.Services
 
 			return extension switch
 			{
-				".png" => SKEncodedImageFormat.Png,
+				".bmp" => SKEncodedImageFormat.Bmp,
+				".dng" => SKEncodedImageFormat.Dng,
+				".gif" => SKEncodedImageFormat.Gif,
+				".heif" => SKEncodedImageFormat.Heif,
 				".jpeg" => SKEncodedImageFormat.Jpeg,
 				".jpg" => SKEncodedImageFormat.Jpeg,
-				".bmp" => SKEncodedImageFormat.Bmp,
-				".gif" => SKEncodedImageFormat.Gif,
+				".ktx" => SKEncodedImageFormat.Ktx,
+				".ico" => SKEncodedImageFormat.Ico,
+				".pkm" => SKEncodedImageFormat.Pkm,
+				".png" => SKEncodedImageFormat.Png,
+				".wbmp" => SKEncodedImageFormat.Wbmp,
 				".webp" => SKEncodedImageFormat.Webp,
 				_ => SKEncodedImageFormat.Png // Default to PNG if unknown
 			};
