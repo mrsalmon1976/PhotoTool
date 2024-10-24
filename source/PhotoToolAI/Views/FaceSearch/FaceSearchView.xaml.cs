@@ -15,8 +15,18 @@ public partial class FaceSearchView : ContentView
 		InitializeComponent();
 
 		_visibleComponent = selectFaceComponent;
+		addFaceComponent.FacesSaved += AddFaceComponent_FacesSavedAsync;
+
+
 	}
-	private void SelectFace_AddFaceButtonClick(object sender, EventArgs e)
+
+    private async void AddFaceComponent_FacesSavedAsync(object? sender, EventArgs e)
+    {
+        SetVisibleComponent(selectFaceComponent);
+		await selectFaceComponent.LoadFaces();
+    }
+
+    private void SelectFace_AddFaceButtonClick(object sender, EventArgs e)
 	{
 		SetVisibleComponent(addFaceComponent);
 	}

@@ -44,7 +44,7 @@
                     />
 
                 <Button Text="Select" WidthRequest="120" Clicked="BtnSelect_Clicked" />
-                <Button x:Name="BtnSaveFaces" Text="Save Faces" WidthRequest="120" IsEnabled="False" />
+                <Button x:Name="BtnSaveFaces" Text="Save Faces" WidthRequest="120" IsEnabled="False" Clicked="BtnSaveFaces_Clicked" />
             </HorizontalStackLayout>
         </Grid>
     </ScrollView>

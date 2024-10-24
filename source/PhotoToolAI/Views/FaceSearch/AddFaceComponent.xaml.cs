@@ -4,6 +4,8 @@ using Microsoft.Maui.Storage;
 using SixLabors.ImageSharp.PixelFormats;
 using PhotoToolAI.Services;
 using SkiaSharp;
+using PhotoToolAI.Repositories;
+using PhotoToolAI.Models;
 
 namespace PhotoToolAI.Views.FaceSearch;
 
@@ -12,8 +14,9 @@ public partial class AddFaceComponent : ContentView
 	private readonly ILogger<AddFaceComponent> _logger;
 	private IImageService _imageService;
 	private IFaceDetectionService _faceDetectionService;
+    private IFaceRepository _faceRepo;
 
-	private const string FacesFoundText = "{0} faces found in the image. Enter names for the faces you would like to search for.";
+    private const string FacesFoundText = "{0} faces found in the image. Enter names for the faces you would like to search for.";
 	private const string NoFacesFoundText = "No faces were found in the selected image";
 
 	public AddFaceComponent()
@@ -21,15 +24,18 @@ public partial class AddFaceComponent : ContentView
 		_logger = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<ILogger<AddFaceComponent>>()!;
 		_imageService = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<IImageService>()!;
 		_faceDetectionService = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<IFaceDetectionService>()!;
+        _faceRepo = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<IFaceRepository>()!;
 
-		InitializeComponent();
+        InitializeComponent();
 	}
 
 	public event EventHandler? BackButtonClick;
 
+    public event EventHandler? FacesSaved;
 
-	// Simple version to pick a single image file
-	public async Task<FileResult?> PickImageFile()
+
+    // Simple version to pick a single image file
+    public async Task<FileResult?> PickImageFile()
 	{
 		try
 		{
@@ -98,14 +104,15 @@ public partial class AddFaceComponent : ContentView
                 NameEntry entry = new NameEntry();
 				entry.BorderColor = borderColor;
 				entry.Margin = new Thickness(2);
+				entry.FaceImageData = face.ImageData;
 				//entry.HorizontalOptions = LayoutOptions.Start;
 				//entry.VerticalOptions = LayoutOptions.Start;
 
 				//byte[] bytes = File.ReadAllBytes(face.ImagePath);
 				//new MemoryStream()
                 //ImageSource imageSource = ImageSource.FromFile(face.ImagePath);
-				ImageSource imageSource = ImageSource.FromStream(() => new MemoryStream(face.ImageData));
-				entry.FaceImage = imageSource;
+				//ImageSource imageSource = ImageSource.FromStream(() => new MemoryStream(face.ImageData));
+				//entry.FaceImage = imageSource;
 
 
                 nameCapturePanel.Children.Add(entry);
@@ -129,4 +136,35 @@ public partial class AddFaceComponent : ContentView
 		}
 
 	}
+
+    private async void BtnSaveFaces_Clicked(object sender, EventArgs e)
+    {
+		await SaveFaces();
+    }
+
+	private async Task SaveFaces()
+	{
+		int facesSaved = 0;
+        foreach (var item in nameCapturePanel.Children)
+        {
+            NameEntry nameEntry = (NameEntry)item;
+            if (nameEntry.FaceImageData == null || nameEntry.FaceImageData.Length == 0 || String.IsNullOrWhiteSpace(nameEntry.FaceName))
+            {
+                continue;
+            }
+
+            FaceModel faceModel = new FaceModel()
+            {
+                ImageData = Convert.ToBase64String(nameEntry.FaceImageData),
+                Name = nameEntry.FaceName
+            };
+            await _faceRepo.SaveAsync(faceModel);
+			facesSaved++;
+        }
+
+		if (facesSaved > 0 && FacesSaved != null)
+		{
+            FacesSaved(this, EventArgs.Empty);
+        }
+    }
 }

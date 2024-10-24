@@ -6,15 +6,26 @@ using System.Threading.Tasks;
 
 namespace PhotoToolAI.Services
 {
-	internal interface IFileService
+	public interface IFileService
 	{
 		void CopyFile(string sourceFileName, string destFileName);
 
-		void EnsureDirectoryExists(string path);
+		IEnumerable<string> EnumerateFiles(string path, string searchPattern);
+
+        IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption);
+
+
+        void EnsureDirectoryExists(string path);
+
+		string GetRandomFileName(string extension);
+
+        Task<string> ReadAllTextAsync(string filePath);
+
+        Task WriteAllTextAsync(string filePath, string text);
 
 	}
 
-	internal class FileService : IFileService
+	public class FileService : IFileService
 	{
 		public void CopyFile(string sourceFileName, string destFileName)
 		{
@@ -26,7 +37,34 @@ namespace PhotoToolAI.Services
 			Directory.CreateDirectory(path);
 		}
 
+		public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
+		{
+			return EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
 
-	}
+        }
+
+        public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption)
+        {
+            return Directory.EnumerateFiles(path, searchPattern, searchOption);
+        }
+
+        public string GetRandomFileName(string extension)
+		{
+            string fileName = Path.GetRandomFileName();
+            return fileName.Replace(Path.GetExtension(fileName), ".json");
+        }
+
+        public async Task<string> ReadAllTextAsync(string filePath)
+        {
+            //return await File.ReadAllTextAsync(filePath);
+            return await Task.Run(() => File.ReadAllText(filePath));
+        }
+
+        public async Task WriteAllTextAsync(string filePath, string text)
+		{
+            await File.WriteAllTextAsync(filePath, text);
+        }
+
+    }
 
 }

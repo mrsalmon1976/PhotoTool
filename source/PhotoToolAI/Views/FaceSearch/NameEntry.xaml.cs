@@ -5,6 +5,8 @@ namespace PhotoToolAI.Views.FaceSearch;
 
 public partial class NameEntry : ContentView
 {
+	private byte[]? _faceImageData;
+
 	public NameEntry()
 	{
 		InitializeComponent();
@@ -21,16 +23,30 @@ public partial class NameEntry : ContentView
             frame.BorderColor = value;
 		}
 	}
-    public ImageSource FaceImage
+
+    public byte[]? FaceImageData
 	{
 		get
 		{
-			return imgFace.Source;
+			return _faceImageData;
 		}
-		set 
-		{ 
-			imgFace.Source = value;
-		}
-        
+		set
+		{
+			_faceImageData = value;
+			ImageSource imageSource = ImageSource.FromStream(() => new MemoryStream(_faceImageData));
+			imgFace.Source = imageSource;
+		}            
     }
+
+	public string FaceName
+	{
+		get
+		{
+			return entry.Text;
+		}
+		set
+		{
+			entry.Text = value;
+		}
+	}
 }

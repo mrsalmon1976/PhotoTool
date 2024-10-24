@@ -17,6 +17,9 @@
             SemanticProperties.Description="Who would you like to search for?" 
             HorizontalOptions="StartAndExpand"
             />
+            <FlexLayout Grid.Row="1" x:Name="savedFaces" Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="Start" Padding="10,0,0,0">
+            </FlexLayout>
+                <!--
                 <Grid ColumnDefinitions="*, Auto" HorizontalOptions="Fill">
                     <Image
                         Grid.Column="0"
@@ -25,8 +28,6 @@
                         HeightRequest="185"
                         Aspect="AspectFit"
                         SemanticProperties.Description="dot net bot in a race car number eight" />
-                    <VerticalStackLayout Grid.Column="1">
-                    </VerticalStackLayout>
                 </Grid>
 
 
@@ -37,6 +38,7 @@
                     HorizontalOptions="Fill"
                     IsVisible="False"
             />
+                    -->
             </VerticalStackLayout>
             <HorizontalStackLayout Grid.Row="1" Spacing="10" HorizontalOptions="End">
                 <Button Text="Add Face" WidthRequest="120" Clicked="BtnAddFace_Clicked" />
