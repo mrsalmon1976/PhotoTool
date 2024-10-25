@@ -31,6 +31,8 @@ namespace PhotoToolAI.Repositories
         public async Task<IEnumerable<FaceModel>> GetAllAsync()
         {
             List<FaceModel> faceModels = new List<FaceModel>();
+
+            _fileService.EnsureDirectoryExists(_appSettings.FaceDataDirectory);
             IEnumerable<string> faceFiles = _fileService.EnumerateFiles(_appSettings.FaceDataDirectory, "*.json");
             foreach (string filePath in faceFiles)
             {
@@ -41,7 +43,8 @@ namespace PhotoToolAI.Repositories
                     faceModels.Add(faceModel);
                 }
             }
-            return faceModels;
+
+            return faceModels.OrderBy(x => x.Name);
         }
 
         public async Task SaveAsync(FaceModel faceModel)

@@ -101,7 +101,7 @@ public partial class AddFaceComponent : ContentView
                 //    canvas.DrawBitmap(originalBitmap, bounds, new SKRect(0, 0, bounds.Width, bounds.Height));
                 //}
 
-                NameEntry entry = new NameEntry();
+                NameEntryControl entry = new NameEntryControl();
 				entry.BorderColor = borderColor;
 				entry.Margin = new Thickness(2);
 				entry.FaceImageData = face.ImageData;
@@ -147,7 +147,7 @@ public partial class AddFaceComponent : ContentView
 		int facesSaved = 0;
         foreach (var item in nameCapturePanel.Children)
         {
-            NameEntry nameEntry = (NameEntry)item;
+            NameEntryControl nameEntry = (NameEntryControl)item;
             if (nameEntry.FaceImageData == null || nameEntry.FaceImageData.Length == 0 || String.IsNullOrWhiteSpace(nameEntry.FaceName))
             {
                 continue;

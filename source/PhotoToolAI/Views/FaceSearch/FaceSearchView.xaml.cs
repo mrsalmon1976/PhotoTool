@@ -31,6 +31,11 @@ public partial class FaceSearchView : ContentView
 		SetVisibleComponent(addFaceComponent);
 	}
 
+	private void SelectFace_FaceButtonClick(object sender, EventArgs e)
+	{
+		SetVisibleComponent(selectSourceComponent);
+	}
+
 	private void AddFace_BackButtonClick(object sender, EventArgs e)
 	{
 		SetVisibleComponent(selectFaceComponent);

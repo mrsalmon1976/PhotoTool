@@ -3,11 +3,11 @@ using PhotoToolAI.Models;
 
 namespace PhotoToolAI.Views.FaceSearch;
 
-public partial class NameEntry : ContentView
+public partial class NameEntryControl : ContentView
 {
 	private byte[]? _faceImageData;
 
-	public NameEntry()
+	public NameEntryControl()
 	{
 		InitializeComponent();
 	}

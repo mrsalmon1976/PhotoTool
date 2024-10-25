@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="PhotoToolAI.Views.FaceSearch.SelectFaceComponent">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:faceSearch="clr-namespace:PhotoToolAI.Views.FaceSearch"
+    x:Class="PhotoToolAI.Views.FaceSearch.SelectFaceComponent">
 
     <!-- Main Content Area -->
     <ScrollView MinimumHeightRequest="0">
@@ -18,7 +19,7 @@
             HorizontalOptions="StartAndExpand"
             />
             <FlexLayout Grid.Row="1" x:Name="savedFaces" Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="Start" Padding="10,0,0,0">
-            </FlexLayout>
+                </FlexLayout>
                 <!--
                 <Grid ColumnDefinitions="*, Auto" HorizontalOptions="Fill">
                     <Image

@@ -75,6 +75,12 @@
 	  <Compile Update="Views\FaceSearch\FaceSearchView.xaml.cs">
 	    <DependentUpon>FaceSearchView.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\FaceSearch\NameEntryControl.xaml.cs">
+	    <DependentUpon>NameEntryControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\FaceSearch\SelectSourceComponent.xaml.cs">
+	    <DependentUpon>SelectSourceComponent.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -84,13 +90,19 @@
 	  <MauiXaml Update="Views\FaceSearch\AddFaceComponent.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\FaceSearch\FaceControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\FaceSearch\FaceSearchView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\FaceSearch\NameEntry.xaml">
+	  <MauiXaml Update="Views\FaceSearch\NameEntryControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\FaceSearch\SelectFaceComponent.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\FaceSearch\SelectSourceComponent.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

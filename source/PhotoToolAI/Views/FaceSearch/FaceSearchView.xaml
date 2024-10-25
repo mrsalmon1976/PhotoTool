@@ -8,8 +8,9 @@
     <Frame x:Name="contentFrame">
 
         <Grid VerticalOptions="Fill" HorizontalOptions="Fill">
-            <faceSearch:SelectFaceComponent x:Name="selectFaceComponent" IsVisible="True" VerticalOptions="Fill" AddFaceButtonClick="SelectFace_AddFaceButtonClick" />
+            <faceSearch:SelectFaceComponent x:Name="selectFaceComponent" IsVisible="True" VerticalOptions="Fill" AddFaceButtonClick="SelectFace_AddFaceButtonClick" FaceButtonClick="SelectFace_FaceButtonClick" />
             <faceSearch:AddFaceComponent x:Name="addFaceComponent" IsVisible="False" BackButtonClick="AddFace_BackButtonClick" />
+            <faceSearch:SelectSourceComponent x:Name="selectSourceComponent" IsVisible="False" />
         </Grid>
     </Frame>
 
