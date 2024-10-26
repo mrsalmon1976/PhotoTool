@@ -32,8 +32,8 @@
 
             <!-- Left menu -->
             <VerticalStackLayout Grid.Column="0" BackgroundColor="WhiteSmoke" Padding="10">
-                <Button Text="Menu Item 1" Margin="0,0,0,10" Clicked="BtnBatchResizer_Clicked" />
-                <Button Text="Menu Item 2" Margin="0,0,0,10" Clicked="BtnFaceSearch_Clicked" />
+                <Button Text="Batch Resizer" Margin="0,0,0,10" Clicked="BtnBatchResizer_Clicked" />
+                <Button Text="Face Search" Margin="0,0,0,10" Clicked="BtnFaceSearch_Clicked" />
             </VerticalStackLayout>
 
             <ScrollView Grid.Column="1" x:Name="scrollView" Padding="10">

@@ -10,7 +10,7 @@
         <Grid VerticalOptions="Fill" HorizontalOptions="Fill">
             <faceSearch:SelectFaceComponent x:Name="selectFaceComponent" IsVisible="True" VerticalOptions="Fill" AddFaceButtonClick="SelectFace_AddFaceButtonClick" FaceButtonClick="SelectFace_FaceButtonClick" />
             <faceSearch:AddFaceComponent x:Name="addFaceComponent" IsVisible="False" BackButtonClick="AddFace_BackButtonClick" />
-            <faceSearch:SelectSourceComponent x:Name="selectSourceComponent" IsVisible="False" />
+            <faceSearch:SearchComponent x:Name="searchComponent" IsVisible="False" BackButtonClick="Search_BackButtonClick" />
         </Grid>
     </Frame>
 

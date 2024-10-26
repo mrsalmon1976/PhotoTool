@@ -48,8 +48,13 @@
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+    <MauiImage Update="Resources\Images\cancel.png" Resize="True" BaseSize="100,105" />
+    <MauiImage Update="Resources\Images\cancel_white.png" Resize="True" BaseSize="100,105" />
+    <MauiImage Update="Resources\Images\delete.png" Resize="True" BaseSize="100,105" />
+    <MauiImage Update="Resources\Images\delete_white.png" Resize="True" BaseSize="100,105" />
+    <MauiImage Update="Resources\Images\folder.png" Resize="True" BaseSize="360,360" />
 
-		<!-- Custom Fonts -->
+    <!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
@@ -57,6 +62,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
 		<PackageReference Include="FaceAiSharp" Version="0.5.23" />
 		<PackageReference Include="FaceAiSharp.Bundle" Version="0.5.23" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
@@ -78,8 +84,8 @@
 	  <Compile Update="Views\FaceSearch\NameEntryControl.xaml.cs">
 	    <DependentUpon>NameEntryControl.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\FaceSearch\SelectSourceComponent.xaml.cs">
-	    <DependentUpon>SelectSourceComponent.xaml</DependentUpon>
+	  <Compile Update="Views\FaceSearch\SearchComponent.xaml.cs">
+	    <DependentUpon>SearchComponent.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -99,10 +105,16 @@
 	  <MauiXaml Update="Views\FaceSearch\NameEntryControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\FaceSearch\SearchFolderControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\FaceSearch\SelectFaceComponent.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\FaceSearch\SelectSourceComponent.xaml">
+	  <MauiXaml Update="Views\FaceSearch\SearchComponent.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Shared\FileSystemItemComponent.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

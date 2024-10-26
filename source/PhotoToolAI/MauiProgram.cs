@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using CommunityToolkit.Maui;
+using NLog;
 using PhototoolAI.BootStrapping;
 
 namespace PhotoToolAI
@@ -11,6 +12,7 @@ namespace PhotoToolAI
 
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

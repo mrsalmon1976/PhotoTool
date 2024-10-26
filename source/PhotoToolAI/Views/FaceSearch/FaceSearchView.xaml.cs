@@ -33,7 +33,7 @@ public partial class FaceSearchView : ContentView
 
 	private void SelectFace_FaceButtonClick(object sender, EventArgs e)
 	{
-		SetVisibleComponent(selectSourceComponent);
+		SetVisibleComponent(searchComponent);
 	}
 
 	private void AddFace_BackButtonClick(object sender, EventArgs e)
@@ -41,10 +41,18 @@ public partial class FaceSearchView : ContentView
 		SetVisibleComponent(selectFaceComponent);
 	}
 
-	private void SetVisibleComponent(ContentView contentView)
+    private void Search_BackButtonClick(object sender, EventArgs e)
+    {
+        SetVisibleComponent(selectFaceComponent);
+    }
+
+    private void SetVisibleComponent(ContentView contentView)
 	{
-		_visibleComponent.IsVisible = false;
-		contentView.IsVisible = true;
+		if (_visibleComponent != null)
+		{
+			_visibleComponent.IsVisible = false;
+		}
 		_visibleComponent = contentView;
-	}
+        _visibleComponent.IsVisible = true;
+    }
 }

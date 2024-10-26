@@ -30,7 +30,7 @@
                         VerticalOptions="Fill"
                         HorizontalOptions="Start"
                         />
-                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="Start">
+                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="Start" BackgroundColor="Yellow">
                         <Label x:Name="facesFound" Text="" HorizontalOptions="Start" IsVisible="False" Padding="10,0" TextColor="LimeGreen" />
                         <FlexLayout x:Name="nameCapturePanel" Grid.Column="1" Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="Start" Padding="10,0,0,0">
                         </FlexLayout>
@@ -39,10 +39,7 @@
 
             </VerticalStackLayout>
             <HorizontalStackLayout Grid.Row="1" Spacing="10" HorizontalOptions="End" Padding="0,10,0,0">
-                <Button Text="&lt;&lt;   Back"
-                    WidthRequest="120" Clicked="BtnBack_Clicked"
-                    />
-
+                <Button Text="&lt;&lt;   Back" WidthRequest="120" Clicked="BtnBack_Clicked" />
                 <Button Text="Select" WidthRequest="120" Clicked="BtnSelect_Clicked" />
                 <Button x:Name="BtnSaveFaces" Text="Save Faces" WidthRequest="120" IsEnabled="False" Clicked="BtnSaveFaces_Clicked" />
             </HorizontalStackLayout>

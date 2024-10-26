@@ -27,16 +27,18 @@ namespace PhotoToolAI.Services
 	internal class FaceDetectionService : IFaceDetectionService
 	{
 		private readonly IFileService _fileService;
+        private readonly IImageService _imageService;
 
-		private readonly SKColor[] colorPalette;
+        private readonly SKColor[] colorPalette;
 
 		//private readonly Colors[] brushColorPalette;
 
-		public FaceDetectionService(IFileService fileService)
+		public FaceDetectionService(IFileService fileService, IImageService imageService)
 		{
 			_fileService = fileService;
+			_imageService = imageService;
 
-			colorPalette = new SKColor[]
+            colorPalette = new SKColor[]
 			{
 				SKColors.LightGreen,
 				SKColors.Red,
@@ -64,7 +66,7 @@ namespace PhotoToolAI.Services
 			string newFilePath = Path.Combine(dir, newFileName);
 
             using var inputImage = SKBitmap.Decode(imagePath);
-			var imageFormat = GetImageFormatFromPath(imagePath);
+			var imageFormat = _imageService.GetImageFormatFromPath(imagePath);
 
 			using (var inputImageData = inputImage.Encode(imageFormat, 100))
 			{
@@ -145,27 +147,7 @@ namespace PhotoToolAI.Services
 			return result;
 		}
 
-		private SKEncodedImageFormat GetImageFormatFromPath(string filePath)
-		{
-			var extension = Path.GetExtension(filePath).ToLowerInvariant();
 
-			return extension switch
-			{
-				".bmp" => SKEncodedImageFormat.Bmp,
-				".dng" => SKEncodedImageFormat.Dng,
-				".gif" => SKEncodedImageFormat.Gif,
-				".heif" => SKEncodedImageFormat.Heif,
-				".jpeg" => SKEncodedImageFormat.Jpeg,
-				".jpg" => SKEncodedImageFormat.Jpeg,
-				".ktx" => SKEncodedImageFormat.Ktx,
-				".ico" => SKEncodedImageFormat.Ico,
-				".pkm" => SKEncodedImageFormat.Pkm,
-				".png" => SKEncodedImageFormat.Png,
-				".wbmp" => SKEncodedImageFormat.Wbmp,
-				".webp" => SKEncodedImageFormat.Webp,
-				_ => SKEncodedImageFormat.Png // Default to PNG if unknown
-			};
-		}
 
 	}
 }

@@ -2,6 +2,7 @@
 using PhotoToolAI;
 using PhotoToolAI.Configuration;
 using PhotoToolAI.Repositories;
+using PhotoToolAI.Resources;
 using PhotoToolAI.Services;
 using PhotoToolAI.Views.BatchResize;
 using PhotoToolAI.Views.FaceSearch;
@@ -13,6 +14,8 @@ namespace PhototoolAI.BootStrapping
 		public static void AddDependencies(this IServiceCollection services)
         {
             services.AddSingleton<IAppSettings, AppSettings>();
+            services.AddSingleton<IResourceProvider, ResourceProvider>();
+
             AddRepositories(services);
             AddServices(services);
             AddViews(services);

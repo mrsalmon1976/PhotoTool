@@ -4,7 +4,6 @@
     xmlns:faceSearch="clr-namespace:PhotoToolAI.Views.FaceSearch"
     x:Class="PhotoToolAI.Views.FaceSearch.SelectFaceComponent">
 
-    <!-- Main Content Area -->
     <ScrollView MinimumHeightRequest="0">
         <Grid Grid.Row="0" RowDefinitions="*, Auto">
             <VerticalStackLayout
