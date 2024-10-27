@@ -2,6 +2,6 @@ PhotoTool is a very basic image resizing tool.  Nothing special, just the basics
 
 Download the latest release here: https://github.com/mrsalmon1976/PhotoTool/releases/latest
 
-Original web site: http://software.safish.com/software/phototool/
+Original web site: [http://software.safish.com/software/phototool/](https://software.safish.com/software/phototool)
 
 
