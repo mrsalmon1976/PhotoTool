@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using PhotoToolAI.Comparers;
 using PhotoToolAI.Resources;
 using PhotoToolAI.Services;
+using System.Diagnostics;
 
 namespace PhotoToolAI.Views.FaceSearch;
 
@@ -59,6 +60,10 @@ public partial class SearchFolderControl : ContentView
         fileSystemItem.InfoTextColor = _resourceProvider.PrimaryDarkTextColor;
         fileSystemItem.IsCancelButtonVisible = true;
 
+        int totalFileCount = 0;
+        int imageCount = 0;
+        int faceMatchCount = 0;
+
         try
         {
             IsBusy = true;
@@ -82,9 +87,9 @@ public partial class SearchFolderControl : ContentView
             // Perform background work
             await Task.Run(async () =>
             {
+                Stopwatch stopwatchLoad = Stopwatch.StartNew();
                 IEnumerable<string> files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories);
                 List<FileInfo> imageFiles = new List<FileInfo>();
-                int processedFiles = 0;
 
                 foreach (var file in files)
                 {
@@ -95,19 +100,28 @@ public partial class SearchFolderControl : ContentView
                     if (_imageService.IsImageExtension(fileInfo.Extension))
                     {
                         imageFiles.Add(fileInfo);
+                        imageCount++;
                     }
 
-                    progress.Report($"Searching for images...{imageFiles.Count} found of {++processedFiles} files.");
+                    progress.Report($"Searching for images...{imageCount} found of {++totalFileCount} files.");
                 }
+                stopwatchLoad.Stop();
+                _logger.LogInformation($"Processed {totalFileCount} in {stopwatchLoad.ElapsedMilliseconds}ms");
 
                 // sort the objects
+                Stopwatch stopwatchSort = Stopwatch.StartNew();
                 progress.Report($"Sorting images by date...");
                 imageFiles.Sort(new FileInfoCreateDateComparer());
+                stopwatchSort.Stop();
+                _logger.LogInformation($"Sorted {imageCount} images by CreateDate in {stopwatchSort.ElapsedMilliseconds}ms");
 
                 // now we start trying to search through the images
+                Stopwatch stopwatchSearch = Stopwatch.StartNew();
                 foreach (FileInfo fileInfo in imageFiles)
                 {
                 }
+                stopwatchSearch.Stop();
+                _logger.LogInformation($"Searched {imageCount} image files for face matches in {stopwatchSearch.ElapsedMilliseconds}ms");
 
 
             }, _cancellationTokenSource.Token);
@@ -115,8 +129,8 @@ public partial class SearchFolderControl : ContentView
             // Update UI when complete
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                //StatusLabel.Text = "Processing complete!";
-                //LoadingIndicator.IsVisible = false;
+                fileSystemItem.InfoText = $"{totalFileCount} found, {imageCount} images, {faceMatchCount} matches.";
+                fileSystemItem.InfoTextColor = _resourceProvider.PrimaryDarkTextColor;
             });
         }
         catch (OperationCanceledException)
@@ -131,8 +145,9 @@ public partial class SearchFolderControl : ContentView
         {
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                //StatusLabel.Text = $"Error: {ex.Message}";
-                //LoadingIndicator.IsVisible = false;
+                fileSystemItem.InfoText = $"Unexpected error occurred: {ex.Message}";
+                fileSystemItem.InfoTextColor = _resourceProvider.ErrorTextColor;
+                _logger.LogError(ex, ex.Message);
             });
         }
         finally

@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Storage;
+using PhotoToolAI.Models;
 using PhotoToolAI.Views.Shared;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -13,6 +14,8 @@ public partial class SearchComponent : ContentView
 	}
 
     public event EventHandler? BackButtonClick;
+
+    public FaceModel? FaceModel { get; set; } = null;
 
 
     private async void SelectFolderButtonClicked(object sender, EventArgs e)
