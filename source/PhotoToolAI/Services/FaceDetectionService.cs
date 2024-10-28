@@ -39,8 +39,10 @@ namespace PhotoToolAI.Services
 		private readonly SKColor[] colorPalette;
 
 		//private readonly Colors[] brushColorPalette;
+		private IFaceDetectorWithLandmarks _faceDetectorWithLandmarks;
+        private IFaceEmbeddingsGenerator _faceEmbeddingsGenerator;
 
-		public FaceDetectionService(IFileService fileService, IImageService imageService)
+        public FaceDetectionService(IFileService fileService, IImageService imageService)
 		{
 			_fileService = fileService;
 			_imageService = imageService;
@@ -58,9 +60,13 @@ namespace PhotoToolAI.Services
 				SKColors.Pink,
 				SKColors.White
 			};
-		}
 
-		public ImageFaceDetectionResult CopyImageWithFaceDetections(string imagePath)
+            _faceDetectorWithLandmarks = FaceAiSharpBundleFactory.CreateFaceDetectorWithLandmarks();
+            _faceEmbeddingsGenerator = FaceAiSharpBundleFactory.CreateFaceEmbeddingsGenerator();
+
+        }
+
+        public ImageFaceDetectionResult CopyImageWithFaceDetections(string imagePath)
 		{
 			ImageFaceDetectionResult result = new ImageFaceDetectionResult();
 
@@ -157,25 +163,21 @@ namespace PhotoToolAI.Services
 		public float[] GetFaceEmbedding(FaceModel faceModel)
 		{
 			var img = SixLabors.ImageSharp.Image.Load<Rgb24>(new MemoryStream(faceModel.GetImageDataAsBytes()));
-			var det = FaceAiSharpBundleFactory.CreateFaceDetectorWithLandmarks();
-			var rec = FaceAiSharpBundleFactory.CreateFaceEmbeddingsGenerator();
-			return rec.GenerateEmbedding(img);
+			return _faceEmbeddingsGenerator.GenerateEmbedding(img);
 		}
 
 
         public FaceSearchResult SearchForFace(float[] embedding, string imagePath)
 		{
-            var det = FaceAiSharpBundleFactory.CreateFaceDetectorWithLandmarks();
-            var rec = FaceAiSharpBundleFactory.CreateFaceEmbeddingsGenerator();
 
             var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
-			var faces = det.DetectFaces(image);
+			var faces = _faceDetectorWithLandmarks.DetectFaces(image);
 			foreach (var face in faces)
 			{
 				var img = image.Clone();
-				rec.AlignFaceUsingLandmarks(img, face.Landmarks!);
+				_faceEmbeddingsGenerator.AlignFaceUsingLandmarks(img, face.Landmarks!);
 
-				var embeddingFace = rec.GenerateEmbedding(img);
+				var embeddingFace = _faceEmbeddingsGenerator.GenerateEmbedding(img);
 				var dot = embedding.Dot(embeddingFace);
 				return new FaceSearchResult()
 				{
