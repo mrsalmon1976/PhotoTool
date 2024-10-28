@@ -8,7 +8,7 @@
     <Frame x:Name="contentFrame">
 
         <Grid VerticalOptions="Fill" HorizontalOptions="Fill">
-            <faceSearch:SelectFaceComponent x:Name="selectFaceComponent" IsVisible="True" VerticalOptions="Fill" AddFaceButtonClick="SelectFace_AddFaceButtonClick" FaceButtonClick="SelectFace_FaceButtonClick" />
+            <faceSearch:SelectFaceComponent x:Name="selectFaceComponent" IsVisible="True" VerticalOptions="Fill" AddFaceButtonClick="SelectFace_AddFaceButtonClick" FaceControlClick="SelectFace_Click" />
             <faceSearch:AddFaceComponent x:Name="addFaceComponent" IsVisible="False" BackButtonClick="AddFace_BackButtonClick" />
             <faceSearch:SearchComponent x:Name="searchComponent" IsVisible="False" BackButtonClick="Search_BackButtonClick" />
         </Grid>

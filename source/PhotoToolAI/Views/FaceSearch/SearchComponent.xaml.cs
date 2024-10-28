@@ -30,7 +30,7 @@ public partial class SearchComponent : ContentView
             {
                 SearchFolderControl item = new SearchFolderControl();
                 sources.Children.Add(item);
-                item.SearchFolderForFace(folderPicker.Folder.Path);
+                await item.SearchFolderForFace(this.FaceModel!, folderPicker.Folder.Path);
             }
         }
         catch (Exception ex)

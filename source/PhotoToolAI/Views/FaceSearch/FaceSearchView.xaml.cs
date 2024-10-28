@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using PhotoToolAI.Models;
 
 namespace PhotoToolAI.Views.FaceSearch;
 
@@ -31,8 +32,9 @@ public partial class FaceSearchView : ContentView
 		SetVisibleComponent(addFaceComponent);
 	}
 
-	private void SelectFace_FaceButtonClick(object sender, EventArgs e)
+	private void SelectFace_Click(object sender, FaceModel faceModel)
 	{
+		searchComponent.FaceModel = faceModel;
 		SetVisibleComponent(searchComponent);
 	}
 

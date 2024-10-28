@@ -1,3 +1,5 @@
+using PhotoToolAI.Models;
+
 namespace PhotoToolAI.Views.FaceSearch;
 
 public partial class FaceControl : ContentView
@@ -7,37 +9,24 @@ public partial class FaceControl : ContentView
 		InitializeComponent();
 	}
 
-	public event EventHandler? Clicked;
+	public event EventHandler<FaceModel>? Clicked;
 
-	public ImageSource FaceImageSource
-	{
-		get
-		{
-			return faceImage.Source;
-		}
-		set
-		{
-			faceImage.Source = value;
-		}
-	}
+	public FaceModel FaceModel { get; private set; }
 
-	public string FaceName
+	public void SetFaceModel(FaceModel model)
 	{
-		get
-		{
-			return nameLabel.Text;
-		}
-		set
-		{
-			nameLabel.Text = value;
-		}
-	}
+		FaceModel = model;
+        nameLabel.Text = model.Name;
+
+		var data = model.GetImageDataAsBytes();
+        faceImage.Source = ImageSource.FromStream(() => new MemoryStream(data));
+    }
 
 	private void faceImage_Clicked(object sender, EventArgs e)
 	{
 		if (Clicked != null)
 		{
-			Clicked(sender, e);
+			Clicked(sender, FaceModel);
 		}
 	}
 }

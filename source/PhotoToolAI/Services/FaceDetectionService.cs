@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+//using static Microsoft.Maui.Controls.Internals.GIFBitmap;
+using FaceAiSharp.Extensions;
 
 namespace PhotoToolAI.Services
 {
@@ -22,14 +24,19 @@ namespace PhotoToolAI.Services
 		ImageFaceDetectionResult CopyImageWithFaceDetections(string imagePath);
 
 		IEnumerable<FaceDetectionResult> DetectFaces(string imagePath);
-	}
+
+		float[] GetFaceEmbedding(FaceModel faceModel);
+
+		FaceSearchResult SearchForFace(float[] embedding, string imagePath);
+
+    }
 
 	internal class FaceDetectionService : IFaceDetectionService
 	{
 		private readonly IFileService _fileService;
-        private readonly IImageService _imageService;
+		private readonly IImageService _imageService;
 
-        private readonly SKColor[] colorPalette;
+		private readonly SKColor[] colorPalette;
 
 		//private readonly Colors[] brushColorPalette;
 
@@ -38,7 +45,7 @@ namespace PhotoToolAI.Services
 			_fileService = fileService;
 			_imageService = imageService;
 
-            colorPalette = new SKColor[]
+			colorPalette = new SKColor[]
 			{
 				SKColors.LightGreen,
 				SKColors.Red,
@@ -65,7 +72,7 @@ namespace PhotoToolAI.Services
 			string newFileName = $"{fileName}_D{extension}";
 			string newFilePath = Path.Combine(dir, newFileName);
 
-            using var inputImage = SKBitmap.Decode(imagePath);
+			using var inputImage = SKBitmap.Decode(imagePath);
 			var imageFormat = _imageService.GetImageFormatFromPath(imagePath);
 
 			using (var inputImageData = inputImage.Encode(imageFormat, 100))
@@ -83,8 +90,8 @@ namespace PhotoToolAI.Services
 			for (int i = 0; i < faces.Count; i++)
 			{
 				FaceDetectionResult f = faces[i];
-                // draw lines on the image to highlight the face
-                var paint = new SKPaint()
+				// draw lines on the image to highlight the face
+				var paint = new SKPaint()
 				{
 					Color = f.Color,
 					StrokeWidth = 5
@@ -95,21 +102,21 @@ namespace PhotoToolAI.Services
 				canvas.DrawLine(f.Box.X, f.Box.Y + f.Box.Height, f.Box.X + f.Box.Width, f.Box.Y + f.Box.Height, paint);
 				canvas.DrawLine(f.Box.X + f.Box.Width, f.Box.Y, f.Box.X + f.Box.Width, f.Box.Y + f.Box.Height, paint);
 
-                // extract the image out
-                SKRectI bounds = new SKRectI((int)f.Box.X, (int)f.Box.Y, (int)f.Box.X + (int)f.Box.Width, (int)f.Box.Y + (int)f.Box.Height);
-                using SKBitmap faceImage = new SKBitmap(bounds.Width, bounds.Height);
-                using (var faceCanvas = new SKCanvas(faceImage))
-                {
-                    // Draw the portion of the original bitmap onto the new one
-                    faceCanvas.DrawBitmap(inputImage, bounds, new SKRect(0, 0, bounds.Width, bounds.Height));
-                }
-                using (var faceData = faceImage.Encode(imageFormat, 100))
-                {
+				// extract the image out
+				SKRectI bounds = new SKRectI((int)f.Box.X, (int)f.Box.Y, (int)f.Box.X + (int)f.Box.Width, (int)f.Box.Y + (int)f.Box.Height);
+				using SKBitmap faceImage = new SKBitmap(bounds.Width, bounds.Height);
+				using (var faceCanvas = new SKCanvas(faceImage))
+				{
+					// Draw the portion of the original bitmap onto the new one
+					faceCanvas.DrawBitmap(inputImage, bounds, new SKRect(0, 0, bounds.Width, bounds.Height));
+				}
+				using (var faceData = faceImage.Encode(imageFormat, 100))
+				{
 					f.ImageData = faceData.ToArray();
-                }
-            }
+				}
+			}
 
-            using var image = surface.Snapshot();
+			using var image = surface.Snapshot();
 			using var decoratedImageData = image.Encode(imageFormat, 100);
 
 
@@ -147,7 +154,36 @@ namespace PhotoToolAI.Services
 			return result;
 		}
 
+		public float[] GetFaceEmbedding(FaceModel faceModel)
+		{
+			var img = SixLabors.ImageSharp.Image.Load<Rgb24>(new MemoryStream(faceModel.GetImageDataAsBytes()));
+			var det = FaceAiSharpBundleFactory.CreateFaceDetectorWithLandmarks();
+			var rec = FaceAiSharpBundleFactory.CreateFaceEmbeddingsGenerator();
+			return rec.GenerateEmbedding(img);
+		}
 
 
+        public FaceSearchResult SearchForFace(float[] embedding, string imagePath)
+		{
+            var det = FaceAiSharpBundleFactory.CreateFaceDetectorWithLandmarks();
+            var rec = FaceAiSharpBundleFactory.CreateFaceEmbeddingsGenerator();
+
+            var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+			var faces = det.DetectFaces(image);
+			foreach (var face in faces)
+			{
+				var img = image.Clone();
+				rec.AlignFaceUsingLandmarks(img, face.Landmarks!);
+
+				var embeddingFace = rec.GenerateEmbedding(img);
+				var dot = embedding.Dot(embeddingFace);
+				return new FaceSearchResult()
+				{
+					DotProduct = dot,
+					Embedding = embeddingFace
+				};
+			}
+			return FaceSearchResult.NoMatchFound;
+		}
 	}
 }

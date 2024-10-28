@@ -1,7 +1,11 @@
+using FaceAiSharp;
 using Microsoft.Extensions.Logging;
 using PhotoToolAI.Comparers;
+using PhotoToolAI.Constants;
+using PhotoToolAI.Models;
 using PhotoToolAI.Resources;
 using PhotoToolAI.Services;
+using SixLabors.ImageSharp.PixelFormats;
 using System.Diagnostics;
 
 namespace PhotoToolAI.Views.FaceSearch;
@@ -14,6 +18,8 @@ public partial class SearchFolderControl : ContentView
     private readonly ILogger<SearchFolderControl> _logger;
     private readonly IResourceProvider _resourceProvider;
     private readonly IImageService _imageService;
+    private readonly IFileService _fileService;
+    private readonly IFaceDetectionService _faceDetectionService;
 
     public SearchFolderControl()
 	{
@@ -23,6 +29,8 @@ public partial class SearchFolderControl : ContentView
         _logger = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<ILogger<SearchFolderControl>>()!;
         _resourceProvider = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<IResourceProvider>()!;
         _imageService = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<IImageService>()!;
+        _fileService = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<IFileService>()!;
+        _faceDetectionService = Application.Current!.MainPage!.Handler!.MauiContext!.Services.GetService<IFaceDetectionService>()!;
 
     }
 
@@ -51,7 +59,7 @@ public partial class SearchFolderControl : ContentView
         }
     }
 
-    public async Task SearchFolderForFace(string path)
+    public async Task SearchFolderForFace(FaceModel faceModel, string path)
     {
         if (IsBusy) return;
 
@@ -63,6 +71,7 @@ public partial class SearchFolderControl : ContentView
         int totalFileCount = 0;
         int imageCount = 0;
         int faceMatchCount = 0;
+
 
         try
         {
@@ -115,10 +124,33 @@ public partial class SearchFolderControl : ContentView
                 stopwatchSort.Stop();
                 _logger.LogInformation($"Sorted {imageCount} images by CreateDate in {stopwatchSort.ElapsedMilliseconds}ms");
 
+                // get the face embedding
+                var faceEmbedding = _faceDetectionService.GetFaceEmbedding(faceModel);
+
                 // now we start trying to search through the images
                 Stopwatch stopwatchSearch = Stopwatch.StartNew();
                 foreach (FileInfo fileInfo in imageFiles)
                 {
+                    progress.Report($"Searching file {fileInfo.FullName}.");
+                    FaceSearchResult searchResult = _faceDetectionService.SearchForFace(faceEmbedding, fileInfo.FullName);
+                    if (searchResult.FaceMatchProspect != FaceMatchProspect.NoMatch)
+                    {
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        {
+                            Label lbl = new Label();
+                            lbl.Text = fileInfo.FullName;
+                            searchResults.Children.Add(lbl);
+
+                            if (searchResult.FaceMatchProspect == FaceMatchProspect.ProbableMatch)
+                            {
+                                lbl.TextColor = Colors.Green;
+                            }
+                            else if (searchResult.FaceMatchProspect == FaceMatchProspect.PossibleMatch)
+                            {
+                                lbl.TextColor = Colors.Orange;
+                            }
+                        });
+                    }
                 }
                 stopwatchSearch.Stop();
                 _logger.LogInformation($"Searched {imageCount} image files for face matches in {stopwatchSearch.ElapsedMilliseconds}ms");

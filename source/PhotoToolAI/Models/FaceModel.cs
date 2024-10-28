@@ -17,5 +17,10 @@ namespace PhotoToolAI.Models
         public string Name { get; set; }
 
         public string ImageData { get; set; }
+
+        public byte[] GetImageDataAsBytes()
+        {
+            return Convert.FromBase64String(ImageData);
+        }
     }
 }

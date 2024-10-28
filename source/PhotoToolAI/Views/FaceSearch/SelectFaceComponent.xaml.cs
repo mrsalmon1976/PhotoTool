@@ -23,7 +23,7 @@ public partial class SelectFaceComponent : ContentView
     }
 
     public event EventHandler? AddFaceButtonClick;
-	public event EventHandler? FaceButtonClick;
+	public event EventHandler<FaceModel>? FaceControlClick;
 
 	public async Task LoadFaces()
 	{
@@ -33,20 +33,18 @@ public partial class SelectFaceComponent : ContentView
 
         foreach (var face in faces)
 		{
-			byte[] data = Convert.FromBase64String(face.ImageData);
 			FaceControl faceControl = new FaceControl();
-			faceControl.FaceName = face.Name;
-			faceControl.FaceImageSource = ImageSource.FromStream(() => new MemoryStream(data));
+			faceControl.SetFaceModel(face);
 			faceControl.Clicked += FaceControl_Clicked;
 			savedFaces.Children.Add(faceControl);
 		}
 	}
 
-	private void FaceControl_Clicked(object? sender, EventArgs e)
+	private void FaceControl_Clicked(object? sender, FaceModel faceModel)
 	{
-		if (FaceButtonClick != null)
+		if (FaceControlClick != null)
 		{
-			FaceButtonClick.Invoke(this, EventArgs.Empty);
+			FaceControlClick.Invoke(this, faceModel);
 		}
 	}
 

@@ -17,6 +17,8 @@ namespace PhotoToolAI.Services
 
         void EnsureDirectoryExists(string path);
 
+        bool FileExists(string path);
+
 		string GetRandomFileName(string extension);
 
         Task<string> ReadAllTextAsync(string filePath);
@@ -47,6 +49,12 @@ namespace PhotoToolAI.Services
         {
             return Directory.EnumerateFiles(path, searchPattern, searchOption);
         }
+
+        public bool FileExists(string path)
+        {
+            return File.Exists(path);
+        }
+
 
         public string GetRandomFileName(string extension)
 		{
