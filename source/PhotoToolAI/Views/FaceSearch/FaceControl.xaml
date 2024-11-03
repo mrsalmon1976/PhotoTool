@@ -7,7 +7,7 @@
             <ImageButton
                 x:Name="faceImage"
                 Source="dotnet_bot.png"
-                HeightRequest="100"
+                HeightRequest="70"
                 Aspect="AspectFit"
                 Clicked="faceImage_Clicked"
                 />

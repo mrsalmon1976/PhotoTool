@@ -52,7 +52,9 @@
     <MauiImage Update="Resources\Images\cancel_white.png" Resize="True" BaseSize="100,105" />
     <MauiImage Update="Resources\Images\delete.png" Resize="True" BaseSize="100,105" />
     <MauiImage Update="Resources\Images\delete_white.png" Resize="True" BaseSize="100,105" />
-    <MauiImage Update="Resources\Images\folder.png" Resize="True" BaseSize="360,360" />
+    <MauiImage Update="Resources\Images\folder.png" Resize="True" BaseSize="300,232" />
+    <MauiImage Update="Resources\Images\icon_batch_resize.png" Resize="True" BaseSize="512,512" />
+    <MauiImage Update="Resources\Images\icon_search_face.png" Resize="True" BaseSize="512,512" />
 
     <!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />

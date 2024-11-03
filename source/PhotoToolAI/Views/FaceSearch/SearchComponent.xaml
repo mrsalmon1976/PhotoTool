@@ -6,10 +6,10 @@
         <Grid RowDefinitions="Auto, *, Auto">
             <Label
                 Grid.Row="0"
-                Text="Select folders to begin searching"
+                Text="Face Search &#8594; search for Matt"
                 Style="{StaticResource SubHeadline}"
                 SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Select folders to begin searching" 
+                SemanticProperties.Description="Face Search, search for face" 
                 HorizontalOptions="StartAndExpand"
                 />
             <VerticalStackLayout Grid.Row="1" x:Name="sources" Padding="10,0,0,0" Spacing="10">

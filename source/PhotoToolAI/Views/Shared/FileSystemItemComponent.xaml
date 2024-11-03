@@ -2,30 +2,30 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PhotoToolAI.Views.Shared.FileSystemItemComponent">
-    <Frame>
-    <Grid ColumnDefinitions="Auto, *, Auto" Padding="0" HorizontalOptions="Fill">
+    <Frame Padding="0">
+    <Grid ColumnDefinitions="Auto, *, Auto" Padding="10,0,10,0" HorizontalOptions="Fill">
         <Image
             Grid.Column="0"
             x:Name="imgItem"
             Source="folder.png"
             Aspect="AspectFit"
             HorizontalOptions="Start"
-            MaximumHeightRequest="70"
+            MaximumHeightRequest="20"
             />
-            <VerticalStackLayout Grid.Column="1" Margin="10">
+            <HorizontalStackLayout Grid.Column="1" Margin="10">
                 <Label x:Name="lblPath" Text="" />
                 <Label x:Name="lblInfo" Text="Loading..." FontSize="12"/>
-            </VerticalStackLayout>
+            </HorizontalStackLayout>
             <HorizontalStackLayout Grid.Column="2">
                 <Button 
                     x:Name="CancelButton"
-                    HeightRequest="20"
-                    WidthRequest="20"
+                    HeightRequest="10"
+                    WidthRequest="10"
                     Padding="5"
                     Margin="5"
-                    CornerRadius="10"
+                    CornerRadius="5"
                     ImageSource="cancel_white.png"
-                    ToolTipProperties.Text="Remove this folder"
+                    ToolTipProperties.Text="Cancel image search"
                     Clicked="CancelButtonClicked"
                     />
                 <Button 
@@ -33,7 +33,7 @@
                     WidthRequest="20"
                     Padding="5"
                     Margin="5"
-                    CornerRadius="10"
+                    CornerRadius="5"
                     ImageSource="delete_white.png"
                     ToolTipProperties.Text="Remove this folder"
                     />
