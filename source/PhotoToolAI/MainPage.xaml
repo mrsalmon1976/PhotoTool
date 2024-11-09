@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:batchResize="clr-namespace:PhotoToolAI.Views.BatchResize"
+             xmlns:shared="clr-namespace:PhotoToolAI.Views.Shared"
              x:Class="PhotoToolAI.MainPage">
 
     <Grid>
@@ -11,20 +12,19 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" ColumnDefinitions="*, *" Padding="0">
-            <StackLayout Grid.Column="0">
-                <HorizontalStackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                    <Image Source="icon_search_face.png" WidthRequest="20" HeightRequest="20" HorizontalOptions="Center" />
-                    <Button Text="Batch Resizer" HorizontalOptions="Center" MinimumWidthRequest="20" Style="{StaticResource TabButton}" Clicked="BtnBatchResizer_Clicked" />
-                </HorizontalStackLayout>
-                <BoxView HeightRequest="2" Color="DarkGray" />
-            </StackLayout>
+
+            <shared:TopMenuItem Grid.Column="0" x:Name="batchResizerMenuItem" ImageSource="icon_batch_resize.png" DisabledImageSource="icon_batch_resize_disabled.png" Clicked="MenuItemBatchResizerClicked" Text="Batch Resizer" IsActive="True" />
+            <shared:TopMenuItem Grid.Column="1" x:Name="faceSearchMenuItem" ImageSource="icon_search_face.png" DisabledImageSource="icon_search_face_disabled.png"  Clicked="MenuItemFaceSearchClicked" Text="Face Search" IsActive="False" />
+
+            <!--
             <StackLayout Grid.Column="1">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                     <Image Source="icon_search_face.png" WidthRequest="20" HeightRequest="20" HorizontalOptions="Center" />
-                    <Button Text="Face Search" HorizontalOptions="Center" MinimumWidthRequest="20" Style="{StaticResource TabButton}" Clicked="BtnFaceSearch_Clicked" />
+                    <Button Text="Face Search" HorizontalOptions="Center" MinimumWidthRequest="20" Style="{StaticResource TopMenuItemButton}" Clicked="BtnFaceSearch_Clicked" />
                 </HorizontalStackLayout>
-                <BoxView HeightRequest="2" Color="Purple" />
+                <BoxView Style="{StaticResource TopMenuItemBox}" />
             </StackLayout>
+            -->
         </Grid>
 
         <Grid Grid.Row="1">

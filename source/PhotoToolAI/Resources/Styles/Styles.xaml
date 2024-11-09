@@ -49,10 +49,26 @@
         </Setter>
     </Style>
 
-    <Style x:Key="TabButton" TargetType="Button">
+    <Style x:Key="TopMenuItemButton" TargetType="Button">
         <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryDarkText}, Dark={StaticResource PrimaryDarkText}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" />
     </Style>
+
+    <Style x:Key="TopMenuItemButtonDisabled" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray400}}" />
+    </Style>
+
+    <Style x:Key="TopMenuItemBox" TargetType="BoxView">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Underline}, Dark={StaticResource Underline}}" />
+        <Setter Property="HeightRequest" Value="3" />
+    </Style>
+
+    <Style x:Key="TopMenuItemBoxDisabled" TargetType="BoxView">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray400}}" />
+        <Setter Property="HeightRequest" Value="3" />
+    </Style>
+
 
     <Style TargetType="CheckBox">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />

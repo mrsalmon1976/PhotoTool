@@ -1,5 +1,6 @@
 ﻿using PhotoToolAI.Views.FaceSearch;
 using PhotoToolAI.Views.BatchResize;
+using PhotoToolAI.Views.Shared;
 
 namespace PhotoToolAI
 {
@@ -16,15 +17,23 @@ namespace PhotoToolAI
             InitializeComponent();
         }
 
-		private void BtnBatchResizer_Clicked(object sender, EventArgs e)
+		private void MenuItemBatchResizerClicked(object sender, EventArgs e)
 		{
-            scrollView.Content = _batchResizeView;
+            ToggleActiveControls(_batchResizeView, batchResizerMenuItem);
 		}
 
-		private void BtnFaceSearch_Clicked(object sender, EventArgs e)
+		private void MenuItemFaceSearchClicked(object sender, EventArgs e)
 		{
-			scrollView.Content = _faceSearchView;
+            ToggleActiveControls(_faceSearchView, faceSearchMenuItem);
 		}
+
+        private void ToggleActiveControls(ContentView activeView, TopMenuItem activeMenuItem)
+        {
+            batchResizerMenuItem.IsActive = false;
+            faceSearchMenuItem.IsActive = false;
+            activeMenuItem.IsActive = true;
+            scrollView.Content = activeView;
+        }
 
 	}
 

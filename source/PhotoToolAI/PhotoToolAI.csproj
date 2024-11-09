@@ -53,14 +53,21 @@
     <MauiImage Update="Resources\Images\delete.png" Resize="True" BaseSize="100,105" />
     <MauiImage Update="Resources\Images\delete_white.png" Resize="True" BaseSize="100,105" />
     <MauiImage Update="Resources\Images\folder.png" Resize="True" BaseSize="300,232" />
-    <MauiImage Update="Resources\Images\icon_batch_resize.png" Resize="True" BaseSize="512,512" />
-    <MauiImage Update="Resources\Images\icon_search_face.png" Resize="True" BaseSize="512,512" />
+    <MauiImage Update="Resources\Images\icon_batch_resize.png" Resize="True" BaseSize="50,50" />
+    <MauiImage Update="Resources\Images\icon_batch_resize_disabled.png" Resize="True" BaseSize="50,50" />
+    <MauiImage Update="Resources\Images\icon_search_face.png" Resize="True" BaseSize="50,50" />
+    <MauiImage Update="Resources\Images\icon_search_face_disabled.png" Resize="True" BaseSize="50,50" />
 
     <!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\Images\icon_batch_resize_disabled.png" />
+	  <None Remove="Resources\Images\icon_search_face_disabled.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -89,6 +96,9 @@
 	  <Compile Update="Views\FaceSearch\SearchComponent.xaml.cs">
 	    <DependentUpon>SearchComponent.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\Shared\TopMenuItem.xaml.cs">
+	    <DependentUpon>TopMenuItem.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -116,9 +126,19 @@
 	  <MauiXaml Update="Views\FaceSearch\SearchComponent.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Shared\TopMenuItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Shared\FileSystemItemComponent.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Update="Resources\Images\icon_batch_resize_disabled.png">
+	    <Resize>True</Resize>
+	    <BaseSize>512,512</BaseSize>
+	  </MauiImage>
 	</ItemGroup>
 
 </Project>
