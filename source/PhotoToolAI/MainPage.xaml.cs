@@ -15,6 +15,8 @@ namespace PhotoToolAI
             this._faceSearchView = faceSearchView;
 
             InitializeComponent();
+
+            ToggleActiveControls(_batchResizeView, batchResizerMenuItem);
         }
 
 		private void MenuItemBatchResizerClicked(object sender, EventArgs e)

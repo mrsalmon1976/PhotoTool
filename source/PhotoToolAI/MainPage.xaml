@@ -16,20 +16,10 @@
             <shared:TopMenuItem Grid.Column="0" x:Name="batchResizerMenuItem" ImageSource="icon_batch_resize.png" DisabledImageSource="icon_batch_resize_disabled.png" Clicked="MenuItemBatchResizerClicked" Text="Batch Resizer" IsActive="True" />
             <shared:TopMenuItem Grid.Column="1" x:Name="faceSearchMenuItem" ImageSource="icon_search_face.png" DisabledImageSource="icon_search_face_disabled.png"  Clicked="MenuItemFaceSearchClicked" Text="Face Search" IsActive="False" />
 
-            <!--
-            <StackLayout Grid.Column="1">
-                <HorizontalStackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                    <Image Source="icon_search_face.png" WidthRequest="20" HeightRequest="20" HorizontalOptions="Center" />
-                    <Button Text="Face Search" HorizontalOptions="Center" MinimumWidthRequest="20" Style="{StaticResource TopMenuItemButton}" Clicked="BtnFaceSearch_Clicked" />
-                </HorizontalStackLayout>
-                <BoxView Style="{StaticResource TopMenuItemBox}" />
-            </StackLayout>
-            -->
         </Grid>
 
         <Grid Grid.Row="1">
             <ScrollView x:Name="scrollView" Padding="10" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                <batchResize:BatchResizeView />
             </ScrollView>
         </Grid>
     </Grid>
