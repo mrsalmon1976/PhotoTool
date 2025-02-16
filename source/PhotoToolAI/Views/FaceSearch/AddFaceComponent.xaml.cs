@@ -29,7 +29,7 @@ public partial class AddFaceComponent : ContentView
         InitializeComponent();
 	}
 
-	public event EventHandler? BackButtonClick;
+	public event EventHandler? CancelButtonClick;
 
     public event EventHandler? FacesSaved;
 
@@ -128,11 +128,11 @@ public partial class AddFaceComponent : ContentView
 		}
 	}
 
-	private void BtnBack_Clicked(object sender, EventArgs e)
+	private void CancelButton_Clicked(object sender, EventArgs e)
 	{
-		if (BackButtonClick != null)
+		if (CancelButtonClick != null)
 		{
-			BackButtonClick(this, EventArgs.Empty);
+			CancelButtonClick(this, EventArgs.Empty);
 		}
 
 	}

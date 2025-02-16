@@ -19,13 +19,13 @@ namespace PhotoToolAI.Models
             {
                 if (DotProduct >= 0.42)
                 {
-                    return FaceMatchProspect.ProbableMatch;
+                    return FaceMatchProspect.Probable;
                 }
                 else if (DotProduct > 0.28 && DotProduct < 0.42)
                 {
-                    return FaceMatchProspect.PossibleMatch;
+                    return FaceMatchProspect.Possible;
                 }
-                return FaceMatchProspect.NoMatch;
+                return FaceMatchProspect.None;
             }
         }
 

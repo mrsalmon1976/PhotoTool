@@ -133,7 +133,7 @@ public partial class SearchFolderControl : ContentView
                 {
                     progress.Report($"Searching file {fileInfo.FullName}.");
                     FaceSearchResult searchResult = _faceDetectionService.SearchForFace(faceEmbedding, fileInfo.FullName);
-                    if (searchResult.FaceMatchProspect != FaceMatchProspect.NoMatch)
+                    if (searchResult.FaceMatchProspect != FaceMatchProspect.None)
                     {
                         await MainThread.InvokeOnMainThreadAsync(() =>
                         {
@@ -141,11 +141,11 @@ public partial class SearchFolderControl : ContentView
                             lbl.Text = fileInfo.FullName;
                             searchResults.Children.Add(lbl);
 
-                            if (searchResult.FaceMatchProspect == FaceMatchProspect.ProbableMatch)
+                            if (searchResult.FaceMatchProspect == FaceMatchProspect.Probable)
                             {
                                 lbl.TextColor = Colors.Green;
                             }
-                            else if (searchResult.FaceMatchProspect == FaceMatchProspect.PossibleMatch)
+                            else if (searchResult.FaceMatchProspect == FaceMatchProspect.Possible)
                             {
                                 lbl.TextColor = Colors.Orange;
                             }

@@ -1,4 +1,6 @@
 ﻿using PhotoToolAI.Configuration;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Processing;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,8 @@ namespace PhotoToolAI.Services
 		SKEncodedImageFormat GetImageFormatFromPath(string path);
 
         bool IsImageExtension(string extension);
+
+		byte[] ConvertToGrayscale(byte[] imageBytes);
 
 
     }
@@ -61,7 +65,21 @@ namespace PhotoToolAI.Services
 			);
 		}
 
-		public string CopyToWorkingDirectory(string source)
+        public byte[] ConvertToGrayscale(byte[] imageBytes)
+        {
+            using (SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(imageBytes)) // Load image from byte array
+            {
+                image.Mutate(x => x.Grayscale()); // Apply grayscale transformation
+
+                using (var outputStream = new MemoryStream())
+                {
+                    image.Save(outputStream, new PngEncoder()); // Save as PNG (or another format)
+                    return outputStream.ToArray(); // Return byte array
+                }
+            }
+        }
+
+        public string CopyToWorkingDirectory(string source)
 		{
 			string workDir = _appSettings.WorkingDirectory;
 			_fileService.EnsureDirectoryExists(workDir);

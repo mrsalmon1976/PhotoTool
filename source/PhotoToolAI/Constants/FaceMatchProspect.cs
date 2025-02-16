@@ -8,8 +8,8 @@ namespace PhotoToolAI.Constants
 {
     internal enum FaceMatchProspect
     {
-        NoMatch = 0,
-        PossibleMatch = 2,
-        ProbableMatch = 3
+        None = 0,
+        Possible = 2,
+        Probable = 3
     }
 }

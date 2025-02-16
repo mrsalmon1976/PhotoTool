@@ -5,13 +5,108 @@
              x:Class="PhotoToolAI.Views.FaceSearch.FaceSearchView"
              >
 
-    <Frame x:Name="contentFrame">
+    <Grid x:Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <!-- Resizable Left Panel -->
+            <ColumnDefinition Width="5"/>
+            <!-- Splitter -->
+            <ColumnDefinition Width="*"/>
+            <!-- Right Content -->
+        </Grid.ColumnDefinitions>
 
-        <Grid VerticalOptions="Fill" HorizontalOptions="Fill">
-            <faceSearch:SelectFaceComponent x:Name="selectFaceComponent" IsVisible="True" VerticalOptions="Fill" AddFaceButtonClick="SelectFace_AddFaceButtonClick" FaceControlClick="SelectFace_Click" />
-            <faceSearch:AddFaceComponent x:Name="addFaceComponent" IsVisible="False" BackButtonClick="AddFace_BackButtonClick" />
-            <faceSearch:SearchComponent x:Name="searchComponent" IsVisible="False" BackButtonClick="Search_BackButtonClick" />
+        
+
+        <!-- Left Menu -->
+        <Grid x:Name="LeftPanel" BackgroundColor="LightGray" Grid.Column="0">
+            <VerticalStackLayout>
+
+                <Button Text="Add Face" HorizontalOptions="FillAndExpand" Clicked="AddFaceButton_Clicked"></Button>
+                <Label Text="Face" FontSize="Small" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
+
+                <FlexLayout x:Name="savedFaces" Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="Start" Padding="10,0,0,0">
+                </FlexLayout>
+
+            </VerticalStackLayout>
         </Grid>
-    </Frame>
+
+        <!-- Resizable Splitter (Border instead of BoxView) -->
+        <Border x:Name="Splitter" Grid.Column="1" BackgroundColor="DarkGray"
+                WidthRequest="5" HorizontalOptions="Fill" VerticalOptions="Fill">
+            <Border.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnPanUpdated"/>
+            </Border.GestureRecognizers>
+        </Border>
+
+        <!-- Right Content -->
+
+        <faceSearch:AddFaceComponent x:Name="addFaceComponent" Grid.Column="2" IsVisible="False" CancelButtonClick="AddFace_CancelButtonClick" FacesSaved="addFaceComponent_FacesSaved" />
+        <VerticalStackLayout x:Name="ResultsPanel" Grid.Column="2">
+            <FlexLayout>
+                <Label x:Name="SearchLabel" Text="Select a face to search for" FontSize="Small" HorizontalOptions="Start" Margin="0,0,2,0"/>
+                <Label x:Name="SelectedPathLabel" IsVisible="False"  Text="[Select]" FontSize="Small" HorizontalOptions="StartAndExpand" TextColor="Blue" TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding DirectorySelectClickCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </FlexLayout>
+            <FlexLayout>
+                <Button x:Name="SearchButton" IsEnabled="False" Text="Search" HorizontalOptions="Start" Clicked="SearchButton_Clicked" />
+                <Button x:Name="CancelSearchButton" IsVisible="False" Text="Cancel" HorizontalOptions="Start" Clicked="CancelSearchButton_Clicked" />
+            </FlexLayout>
+            <VerticalStackLayout x:Name="ProgressPanel" IsVisible="False">
+                <ProgressBar x:Name="ProgressBar" MinimumWidthRequest="100" MinimumHeightRequest="3" HorizontalOptions="Start"  />
+                <Label x:Name="ProgressLabel" Text="Searching..." HorizontalOptions="StartAndExpand" />
+            </VerticalStackLayout>
+            
+            <Label x:Name="ResultsLabel" Text="" HorizontalOptions="StartAndExpand" />
+
+            <ListView x:Name="SearchResultsListView" 
+                ItemsSource="{Binding FaceSearchResults}" 
+                HasUnevenRows="False" 
+                IsPullToRefreshEnabled="True"
+                SeparatorVisibility="Default"
+                SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="0" HeightRequest="70">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Image 
+                                        Source="{Binding Source}"
+                                        Aspect="AspectFit"
+                                        HeightRequest="70"
+                                        HorizontalOptions="Center"/>
+
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" Margin="0,0,5,0" />
+                                    <Label Text="{Binding MatchInfo }" TextColor="{Binding MatchColor}" FontSize="10" VerticalOptions="Center" Margin="0,0,0,0" />
+                                </VerticalStackLayout>
+
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </VerticalStackLayout>
+        <Grid BackgroundColor="White" Grid.Column="2" IsVisible="False">
+            <Frame x:Name="contentFrame">
+
+
+                <Grid VerticalOptions="Fill" HorizontalOptions="Fill">
+                    <faceSearch:SelectFaceComponent IsVisible="True" x:Name="selectFaceComponent" VerticalOptions="Fill" AddFaceButtonClick="SelectFace_AddFaceButtonClick" FaceControlClick="SelectFace_Click" />
+                    <faceSearch:SearchComponent x:Name="searchComponent" IsVisible="False" BackButtonClick="Search_BackButtonClick" />
+                </Grid>
+            </Frame>
+        </Grid>
+    </Grid>
 
 </ContentView>
