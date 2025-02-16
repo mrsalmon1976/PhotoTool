@@ -165,11 +165,11 @@ public partial class FaceSearchView : ContentView
         }
     }
 
-    private void OnHandlerChanged(object sender, EventArgs e)
+    private async void OnHandlerChanged(object sender, EventArgs e)
     {
         if (Handler != null && !_isLoaded)
         {
-            LoadFacesAsync().FireAndForget();
+            await LoadFacesAsync();//.FireAndForget();
             _isLoaded = true;
         }
     }
@@ -193,7 +193,7 @@ public partial class FaceSearchView : ContentView
 
 	private void AddFace_CancelButtonClick(object sender, EventArgs e)
 	{
-        ResultsPanel.IsVisible = true;
+        MainGrid.IsVisible = true;
         addFaceComponent.IsVisible = false;
     }
 
@@ -411,7 +411,7 @@ public partial class FaceSearchView : ContentView
 
     private void AddFaceButton_Clicked(object sender, EventArgs e)
     {
-        ResultsPanel.IsVisible = false;
+        MainGrid.IsVisible = false;
         addFaceComponent.IsVisible = true;
     }
 
@@ -420,7 +420,7 @@ public partial class FaceSearchView : ContentView
         await LoadFacesAsync();
         await MainThread.InvokeOnMainThreadAsync(() =>
         {
-            ResultsPanel.IsVisible = true;
+            MainGrid.IsVisible = true;
             addFaceComponent.IsVisible = false;
         });
     }
