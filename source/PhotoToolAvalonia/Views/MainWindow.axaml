@@ -1,0 +1,24 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PhotoToolAvalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="PhotoToolAvalonia.Views.MainWindow"
+        xmlns:fs="clr-namespace:PhotoToolAvalonia.Views.FaceSearch"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/phototool-logo.ico"
+        Title="PhotoTool">
+
+  <Grid>
+    <TabControl Margin="5">
+      <TabItem Header="Batch Resizer">
+        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+      </TabItem>
+      <TabItem Header="Face Search">
+        <fs:FaceSearchPanel DataContext="{Binding FaceSearchDataContext}" />
+      </TabItem>
+    </TabControl>
+  </Grid>
+
+</Window>

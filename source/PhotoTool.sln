@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoTool.Test", "PhotoTool
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoToolAI", "PhotoToolAI\PhotoToolAI.csproj", "{347DF533-7B66-4FC7-B177-D482EF6848FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoToolAvalonia", "PhotoToolAvalonia\PhotoToolAvalonia.csproj", "{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +86,22 @@ Global
 		{347DF533-7B66-4FC7-B177-D482EF6848FB}.Release|x86.ActiveCfg = Release|Any CPU
 		{347DF533-7B66-4FC7-B177-D482EF6848FB}.Release|x86.Build.0 = Release|Any CPU
 		{347DF533-7B66-4FC7-B177-D482EF6848FB}.Release|x86.Deploy.0 = Release|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Debug|x64.Build.0 = Debug|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Debug|x86.Build.0 = Debug|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Release|ARM64.Build.0 = Release|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Release|x64.ActiveCfg = Release|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Release|x64.Build.0 = Release|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Release|x86.ActiveCfg = Release|Any CPU
+		{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

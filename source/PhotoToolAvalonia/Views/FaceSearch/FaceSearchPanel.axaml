@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:PhotoToolAvalonia.ViewModels"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" 
+             x:DataType="vm:FaceSearchPanelViewModel"
+             x:Class="PhotoToolAvalonia.Views.FaceSearch.FaceSearchPanel"
+             >
+
+  <Panel>
+
+  <Grid ColumnDefinitions="300, 4, *">
+    <!-- Left column (faces) -->
+    <StackPanel Grid.Column="0">
+      <TextBlock Text="{Binding AnotherGreeting}" />
+      <WrapPanel x:Name="FaceWrapPanel">
+        <ItemsControl ItemsSource="{Binding Faces}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Name}"/>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      </WrapPanel>
+    </StackPanel>
+    
+    <GridSplitter Grid.Column="1" Background="Purple" ResizeDirection="Columns"/>
+
+    <!-- Right column (body area) -->
+    <Rectangle Grid.Column="2" Fill="Red"/>
+  </Grid>
+  </Panel>
+</UserControl>
