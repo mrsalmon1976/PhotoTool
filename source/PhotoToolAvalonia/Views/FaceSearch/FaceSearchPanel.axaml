@@ -10,10 +10,24 @@
 
   <Panel>
 
-  <Grid ColumnDefinitions="300, 4, *">
-    <!-- Left column (faces) -->
+  <Grid ColumnDefinitions="*, 4, 200">
+    <!-- Left column (main area) -->
     <StackPanel Grid.Column="0">
-      <TextBlock Text="{Binding AnotherGreeting}" />
+      <Expander MinWidth="400" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,0,10,0" IsExpanded="True">
+        <Expander.Header>
+          <TextBlock Text="Search Options" FontWeight="DemiBold" />
+        </Expander.Header>
+        <Grid RowDefinitions="*,10,*" ColumnDefinitions="90,*">
+          <TextBlock Grid.Row="0" Grid.Column="0">Folder</TextBlock>
+          <WrapPanel Grid.Row="0" Grid.Column="1">
+            <TextBox Watermark="Select a folder" Width="300" />
+            <Button Margin="5,0,0,0" IsEnabled="True">..</Button>
+          </WrapPanel>
+          <Line Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"></Line>
+          <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Face</TextBlock>
+          <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding FacesLabelText}" HorizontalAlignment="Left" />
+        </Grid>
+      </Expander>      
       <WrapPanel x:Name="FaceWrapPanel">
         <ItemsControl ItemsSource="{Binding Faces}">
           <ItemsControl.ItemTemplate>
@@ -27,8 +41,12 @@
     
     <GridSplitter Grid.Column="1" Background="Purple" ResizeDirection="Columns"/>
 
-    <!-- Right column (body area) -->
-    <Rectangle Grid.Column="2" Fill="Red"/>
+    <!-- Right column (buttons) -->
+    <DockPanel Grid.Column="2">
+      <Button x:Name="AddFaceButton" DockPanel.Dock="Top"  Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
+      <Button x:Name="SearchButton" DockPanel.Dock="Bottom" Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
+    </DockPanel>
+      
   </Grid>
   </Panel>
 </UserControl>

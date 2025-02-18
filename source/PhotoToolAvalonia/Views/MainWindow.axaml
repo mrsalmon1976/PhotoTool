@@ -8,8 +8,10 @@
         xmlns:fs="clr-namespace:PhotoToolAvalonia.Views.FaceSearch"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/phototool-logo.ico"
-        Title="PhotoTool">
-
+        Title="PhotoTool" 
+        MinWidth="800"
+        MinHeight="600"
+        >
   <Grid>
     <TabControl Margin="5">
       <TabItem Header="Batch Resizer">
