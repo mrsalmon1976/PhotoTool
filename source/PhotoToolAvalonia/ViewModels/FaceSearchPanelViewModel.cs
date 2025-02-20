@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using PhotoToolAvalonia.Models.FaceSearch;
+using PhotoToolAvalonia.Utilities;
 using PhotoToolAvalonia.Views.FaceSearch;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -38,11 +39,10 @@ namespace PhotoToolAvalonia.ViewModels
 
         private async void OnAddFaceButtonClick()
         {
-            var appLifetime = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
             var faceAddDialog = new FaceAddDialog();
             faceAddDialog.DataContext = new FaceAddDialogViewModel();
             faceAddDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            var result = await faceAddDialog.ShowDialog<FaceAddDialogViewModel?>(appLifetime!.MainWindow!);
+            var result = await faceAddDialog.ShowDialog<FaceAddDialogViewModel?>(AppUtils.GetMainWindow());
 
             //string s = "";
             // Code for executing the command here.

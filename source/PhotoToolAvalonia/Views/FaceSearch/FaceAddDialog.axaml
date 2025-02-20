@@ -2,11 +2,31 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:PhotoToolAvalonia.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PhotoToolAvalonia.Views.FaceSearch.FaceAddDialog"
+        x:DataType="vm:FaceAddDialogViewModel"
+        Icon="/Assets/phototool-logo.ico"
         Title="Add a Face"
-        Width="640"
-        Height="480"
+        Width="800"
+        MinWidth="640"
+        Height="600"
+        MinHeight="480"
         >
-  Welcome to Avalonia!
+  <Grid ColumnDefinitions="*, 4, 200">
+    <!-- Left column (main area) -->
+    <Panel Grid.Column="0">
+      <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="LightGray"></Rectangle>
+      <Image Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="Uniform" Source="{Binding SelectedImage}" />      
+    </Panel>
+
+    <GridSplitter Grid.Column="1" Background="Purple" ResizeDirection="Columns"/>
+
+    <!-- Right column (buttons) -->
+    <DockPanel Grid.Column="2">
+      <Button x:Name="SelectFileButton" DockPanel.Dock="Top" Command="{Binding SelectFileButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Select File</Button>
+      <Button x:Name="SaveFacesButton" DockPanel.Dock="Bottom" Command="{Binding SaveFacesButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
+    </DockPanel>
+
+  </Grid>
 </Window>

@@ -8,8 +8,6 @@
              x:Class="PhotoToolAvalonia.Views.FaceSearch.FaceSearchPanel"
              >
 
-  <Panel>
-
   <Grid ColumnDefinitions="*, 4, 200">
     <!-- Left column (main area) -->
     <StackPanel Grid.Column="0">
@@ -48,5 +46,4 @@
     </DockPanel>
       
   </Grid>
-  </Panel>
 </UserControl>
