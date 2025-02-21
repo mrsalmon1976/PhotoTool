@@ -7,6 +7,9 @@
              x:DataType="vm:FaceSearchPanelViewModel"
              x:Class="PhotoToolAvalonia.Views.FaceSearch.FaceSearchPanel"
              >
+  <Design.DataContext>
+    <vm:FaceSearchPanelViewModelDesign />
+  </Design.DataContext>
 
   <Grid ColumnDefinitions="*, 4, 200">
     <!-- Left column (main area) -->

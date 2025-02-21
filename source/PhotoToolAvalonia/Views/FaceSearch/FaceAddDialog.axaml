@@ -13,6 +13,11 @@
         Height="600"
         MinHeight="480"
         >
+
+  <Design.DataContext>
+    <vm:FaceAddDialogViewModelDesign />
+  </Design.DataContext>
+
   <Grid ColumnDefinitions="*, 4, 200">
     <!-- Left column (main area) -->
     <Panel Grid.Column="0">

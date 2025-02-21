@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PhotoToolAvalonia.Configuration;
+using PhotoToolAvalonia.Providers;
 using PhotoToolAvalonia.ViewModels;
-using PhotoToolAvalonia.Views;
-using PhotoToolAvalonia.Views.FaceSearch;
 
 namespace PhotoToolAvalonia.BootStrapping
 {
@@ -11,11 +10,8 @@ namespace PhotoToolAvalonia.BootStrapping
 		public static void AddDependencies(this IServiceCollection services)
         {
             services.AddSingleton<IAppSettings, AppSettings>();
-            //services.AddSingleton<IResourceProvider, ResourceProvider>();
 
-            //AddRepositories(services);
-            //AddServices(services);
-            //AddViews(services);
+            AddProviders(services);
             AddViewModels(services);
         }
 
@@ -39,6 +35,11 @@ namespace PhotoToolAvalonia.BootStrapping
         //          services.AddSingleton<MainPage>();
 
         //      }
+
+        private static void AddProviders(this IServiceCollection services)
+        {
+            services.AddSingleton<IAssetProvider, AssetProvider>();
+        }
 
         private static void AddViewModels(this IServiceCollection services)
         {

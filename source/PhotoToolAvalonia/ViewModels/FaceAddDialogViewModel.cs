@@ -1,34 +1,32 @@
-﻿using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls;
-using Avalonia.Threading;
-using PhotoToolAvalonia.Configuration;
-using PhotoToolAvalonia.Models.FaceSearch;
-using PhotoToolAvalonia.Views.FaceSearch;
+﻿using Avalonia.Controls;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Reactive;
-using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Platform.Storage;
-using System.IO;
 using PhotoToolAvalonia.Utilities;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using PhotoToolAvalonia.Providers;
+using PhotoToolAvalonia.Constants;
 
 namespace PhotoToolAvalonia.ViewModels
 {
     public partial class FaceAddDialogViewModel : ReactiveObject
     {
 
-        public FaceAddDialogViewModel()
+        private readonly IAssetProvider _assetProvider;
+
+        private Bitmap? _selectedImage = null;
+
+        public FaceAddDialogViewModel(IAssetProvider assetProvider)
         {
             SaveFacesButtonClickCommand = ReactiveCommand.Create(OnSaveFacesButtonClickCommand);
             SelectFileButtonClickCommand = ReactiveCommand.Create(OnSelectFileButtonClick);
+            SelectedImage = assetProvider.GetImage(Assets.PhotoToolLogo_300x300_800bg);
+            this._assetProvider = assetProvider;
         }
 
         #region Control Properties
 
-        private Bitmap? _selectedImage = null;
 
         public Bitmap? SelectedImage
         {
@@ -84,4 +82,16 @@ namespace PhotoToolAvalonia.ViewModels
 
 
     }
+
+    #region Design time mode
+
+    public class FaceAddDialogViewModelDesign : FaceAddDialogViewModel
+    {
+        public FaceAddDialogViewModelDesign() : base(new AssetProvider())
+        {
+
+        }
+    }
+
+    #endregion
 }

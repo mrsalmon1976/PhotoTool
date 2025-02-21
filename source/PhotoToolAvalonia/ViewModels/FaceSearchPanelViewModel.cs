@@ -1,7 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
+﻿using Avalonia.Controls;
 using PhotoToolAvalonia.Models.FaceSearch;
+using PhotoToolAvalonia.Providers;
 using PhotoToolAvalonia.Utilities;
 using PhotoToolAvalonia.Views.FaceSearch;
 using ReactiveUI;
@@ -14,6 +13,8 @@ namespace PhotoToolAvalonia.ViewModels
     public partial class FaceSearchPanelViewModel : ReactiveObject
     {
 
+        private string _facesLabelText = string.Empty;
+
         public FaceSearchPanelViewModel()
         {
             AddFaceButtonClickCommand = ReactiveCommand.Create(OnAddFaceButtonClick);
@@ -21,7 +22,6 @@ namespace PhotoToolAvalonia.ViewModels
 
         #region Control Properties
 
-        private string _facesLabelText = string.Empty;
 
         public string FacesLabelText
         {
@@ -39,8 +39,9 @@ namespace PhotoToolAvalonia.ViewModels
 
         private async void OnAddFaceButtonClick()
         {
+            // todo: dependency injection...how?  viewmodel factory?
             var faceAddDialog = new FaceAddDialog();
-            faceAddDialog.DataContext = new FaceAddDialogViewModel();
+            faceAddDialog.DataContext = new FaceAddDialogViewModel(new AssetProvider() );
             faceAddDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             var result = await faceAddDialog.ShowDialog<FaceAddDialogViewModel?>(AppUtils.GetMainWindow());
 
@@ -63,8 +64,13 @@ namespace PhotoToolAvalonia.ViewModels
 
             FacesLabelText = "No saved faces found - add faces on the right to begin searching.";
         }
-
-
-
     }
+
+    #region Design time mode
+
+    public class FaceSearchPanelViewModelDesign : FaceSearchPanelViewModel
+    {
+    }
+
+    #endregion
 }
