@@ -15,6 +15,7 @@ namespace PhotoToolAvalonia.ViewModels
 
         private readonly IAssetProvider _assetProvider;
 
+        private bool _isImageSelected;
         private Bitmap? _selectedImage = null;
 
         public FaceAddDialogViewModel(IAssetProvider assetProvider)
@@ -27,6 +28,11 @@ namespace PhotoToolAvalonia.ViewModels
 
         #region Control Properties
 
+        public bool IsImageSelected
+        {
+            get => _isImageSelected;
+            private set => this.RaiseAndSetIfChanged(ref _isImageSelected, value);
+        }
 
         public Bitmap? SelectedImage
         {
@@ -72,6 +78,7 @@ namespace PhotoToolAvalonia.ViewModels
                 //var fileContent = await streamReader.ReadToEndAsync();
                 //this.SelectedImagePath = files[0].Path.AbsolutePath;
                 this.SelectedImage = new Bitmap(files[0].Path.LocalPath);
+                this.IsImageSelected = true;
             }
 
         }
