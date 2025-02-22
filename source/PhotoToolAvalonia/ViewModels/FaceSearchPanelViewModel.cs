@@ -12,7 +12,6 @@ namespace PhotoToolAvalonia.ViewModels
 {
     public partial class FaceSearchPanelViewModel : ReactiveObject
     {
-
         private string _facesLabelText = string.Empty;
         private readonly IViewModelProvider _viewModelProvider;
 

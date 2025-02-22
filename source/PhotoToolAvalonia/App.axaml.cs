@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
@@ -9,6 +8,7 @@ using PhotoToolAvalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
 using PhotoToolAvalonia.BootStrapping;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using PhotoToolAvalonia.Logging;
 
 namespace PhotoToolAvalonia;
 
@@ -41,6 +41,8 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+
+        AppLogger.Create<App>().Info("Application started");
     }
 
     private void DisableAvaloniaDataAnnotationValidation()

@@ -4,7 +4,6 @@ using System.Reactive;
 using Avalonia.Platform.Storage;
 using PhotoToolAvalonia.Utilities;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using PhotoToolAvalonia.Providers;
 using PhotoToolAvalonia.Constants;
 using System;
@@ -12,13 +11,15 @@ using MsBox.Avalonia;
 using PhotoToolAvalonia.Views.FaceSearch;
 using PhotoToolAvalonia.Services;
 using System.IO;
+using PhotoToolAvalonia.Logging;
 
 namespace PhotoToolAvalonia.ViewModels
 {
     public partial class FaceAddDialogViewModel : ReactiveObject
     {
 
-        private readonly IAssetProvider _assetProvider;
+        private static IAppLogger _logger = AppLogger.Create<FaceAddDialogViewModel>();
+
         private readonly IFaceDetectionService _faceDetectionService;
         private bool _isImageSelected;
         private Bitmap? _selectedImage = null;
@@ -28,7 +29,6 @@ namespace PhotoToolAvalonia.ViewModels
             SaveFacesButtonClickCommand = ReactiveCommand.Create(OnSaveFacesButtonClickCommand);
             SelectFileButtonClickCommand = ReactiveCommand.Create(OnSelectFileButtonClick);
             SelectedImage = assetProvider.GetImage(Assets.PhotoToolLogo_300x300_800bg);
-            this._assetProvider = assetProvider;
             this._faceDetectionService = faceDetectionService;
         }
 
@@ -79,8 +79,10 @@ namespace PhotoToolAvalonia.ViewModels
             {
                 try
                 {
+                    IPerformanceLogger profiler = PerformanceLogger.CreateAndStart<FaceAddDialogViewModel>("DecorateImageWithFaceDetections");
                     string filePath = files[0].Path.LocalPath;
                     var result = _faceDetectionService.DecorateImageWithFaceDetections(filePath);
+                    profiler.Stop();
 
                     this.SelectedImage = new Bitmap(new MemoryStream(result.DecoratedImageData));
                     this.IsImageSelected = true;
@@ -91,7 +93,7 @@ namespace PhotoToolAvalonia.ViewModels
                     var parent = AppUtils.GetWindow<FaceAddDialog>();
                     await box.ShowWindowDialogAsync(parent);
                     // Handle errors - often due to permission issues
-                    // _logger.LogError($"Image selection failed: {ex.Message}");
+                    _logger.Error(ex, $"Image selection failed: {ex.Message}");
                 }
 
             }
