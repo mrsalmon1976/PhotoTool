@@ -18,7 +18,7 @@
     <vm:FaceAddDialogViewModelDesign />
   </Design.DataContext>
 
-  <Grid ColumnDefinitions="*, 4, 200">
+  <Grid ColumnDefinitions="*, 4, 250">
     <!-- Left column (main area) -->
     <Panel Grid.Column="0">
       <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="LightGray"></Rectangle>
@@ -30,7 +30,25 @@
 
     <!-- Right column (buttons) -->
     <DockPanel Grid.Column="2">
-      <Button x:Name="SelectFileButton" DockPanel.Dock="Top" Command="{Binding SelectFileButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Select File</Button>
+      <StackPanel DockPanel.Dock="Top">
+        <Button x:Name="SelectFileButton" Command="{Binding SelectFileButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Select File</Button>
+        <ItemsRepeater ItemsSource="{Binding DetectedFaces}" >
+          <ItemsRepeater.ItemTemplate>
+            <DataTemplate>
+              <Border Margin="5,5,5,0" 
+                  CornerRadius="5"
+                  BorderBrush="#e0e0e0" BorderThickness="1"
+                  Padding="5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                  <Image Source="{Binding Image}" Height="40" HorizontalAlignment="Left" />
+                  <TextBox BorderBrush="{Binding ColorBrush }" Text="{Binding Name}" MinWidth="150" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,5,0" />
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>        
+      </StackPanel>
+      
       <Button x:Name="SaveFacesButton" DockPanel.Dock="Bottom" Command="{Binding SaveFacesButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
     </DockPanel>
 

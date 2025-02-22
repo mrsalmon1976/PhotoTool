@@ -12,6 +12,9 @@ using PhotoToolAvalonia.Views.FaceSearch;
 using PhotoToolAvalonia.Services;
 using System.IO;
 using PhotoToolAvalonia.Logging;
+using System.Collections.ObjectModel;
+using PhotoToolAvalonia.Models.FaceSearch;
+using Avalonia.Media;
 
 namespace PhotoToolAvalonia.ViewModels
 {
@@ -45,6 +48,8 @@ namespace PhotoToolAvalonia.ViewModels
             get => _selectedImage;
             private set => this.RaiseAndSetIfChanged(ref _selectedImage, value);
         }
+
+        public ObservableCollection<FaceModel> DetectedFaces { get; set; } = new ObservableCollection<FaceModel>();
 
 
 
@@ -84,6 +89,16 @@ namespace PhotoToolAvalonia.ViewModels
                     var result = _faceDetectionService.DecorateImageWithFaceDetections(filePath);
                     profiler.Stop();
 
+                    // reset the detected faces
+                    DetectedFaces.Clear();
+                    result.Faces.ForEach(f =>
+                    {
+                        Bitmap faceImage = new Bitmap(new MemoryStream(f.ImageData!));
+                        uint brushColor = (uint)f.Color;
+                        DetectedFaces.Add(new FaceModel() { Name = String.Empty, Image = faceImage, ColorBrush = new SolidColorBrush(brushColor) });
+                    });
+
+
                     this.SelectedImage = new Bitmap(new MemoryStream(result.DecoratedImageData));
                     this.IsImageSelected = true;
                 }
@@ -95,7 +110,6 @@ namespace PhotoToolAvalonia.ViewModels
                     // Handle errors - often due to permission issues
                     _logger.Error(ex, $"Image selection failed: {ex.Message}");
                 }
-
             }
 
         }
