@@ -8,6 +8,7 @@ using PhotoToolAvalonia.ViewModels;
 using PhotoToolAvalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
 using PhotoToolAvalonia.BootStrapping;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace PhotoToolAvalonia;
 
@@ -29,6 +30,7 @@ public partial class App : Application
         collection.AddDependencies();
 
         var services = collection.BuildServiceProvider();
+        Ioc.Default.ConfigureServices(services);
 
         var mainWindow = new MainWindow();
         mainWindow.DataContext = services.GetRequiredService<MainWindowViewModel>();

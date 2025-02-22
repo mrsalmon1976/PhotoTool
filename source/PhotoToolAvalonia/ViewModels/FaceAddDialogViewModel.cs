@@ -10,6 +10,8 @@ using PhotoToolAvalonia.Constants;
 using System;
 using MsBox.Avalonia;
 using PhotoToolAvalonia.Views.FaceSearch;
+using PhotoToolAvalonia.Services;
+using System.IO;
 
 namespace PhotoToolAvalonia.ViewModels
 {
@@ -17,16 +19,17 @@ namespace PhotoToolAvalonia.ViewModels
     {
 
         private readonly IAssetProvider _assetProvider;
-
+        private readonly IFaceDetectionService _faceDetectionService;
         private bool _isImageSelected;
         private Bitmap? _selectedImage = null;
 
-        public FaceAddDialogViewModel(IAssetProvider assetProvider)
+        public FaceAddDialogViewModel(IAssetProvider assetProvider, IFaceDetectionService faceDetectionService)
         {
             SaveFacesButtonClickCommand = ReactiveCommand.Create(OnSaveFacesButtonClickCommand);
             SelectFileButtonClickCommand = ReactiveCommand.Create(OnSelectFileButtonClick);
             SelectedImage = assetProvider.GetImage(Assets.PhotoToolLogo_300x300_800bg);
             this._assetProvider = assetProvider;
+            this._faceDetectionService = faceDetectionService;
         }
 
         #region Control Properties
@@ -74,15 +77,12 @@ namespace PhotoToolAvalonia.ViewModels
 
             if (files.Count >= 1)
             {
-                // Open reading stream from the first file.
-                //await using var stream = await files[0].OpenReadAsync();
-                //using var streamReader = new StreamReader(stream);
-                // Reads all the content of file as a text.
-                //var fileContent = await streamReader.ReadToEndAsync();
-                //this.SelectedImagePath = files[0].Path.AbsolutePath;
                 try
                 {
-                    this.SelectedImage = new Bitmap(files[0].Path.LocalPath);
+                    string filePath = files[0].Path.LocalPath;
+                    var result = _faceDetectionService.DecorateImageWithFaceDetections(filePath);
+
+                    this.SelectedImage = new Bitmap(new MemoryStream(result.DecoratedImageData));
                     this.IsImageSelected = true;
                 }
                 catch (Exception ex)
@@ -107,9 +107,8 @@ namespace PhotoToolAvalonia.ViewModels
 
     public class FaceAddDialogViewModelDesign : FaceAddDialogViewModel
     {
-        public FaceAddDialogViewModelDesign() : base(new AssetProvider())
+        public FaceAddDialogViewModelDesign() : base(new AssetProvider(), new FaceDetectionService(new ImageService()))
         {
-
         }
     }
 

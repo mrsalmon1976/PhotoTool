@@ -14,9 +14,12 @@ namespace PhotoToolAvalonia.ViewModels
     {
 
         private string _facesLabelText = string.Empty;
+        private readonly IViewModelProvider _viewModelProvider;
 
-        public FaceSearchPanelViewModel()
+        public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider)
         {
+            this._viewModelProvider = viewModelProvider;
+
             AddFaceButtonClickCommand = ReactiveCommand.Create(OnAddFaceButtonClick);
         }
 
@@ -39,9 +42,8 @@ namespace PhotoToolAvalonia.ViewModels
 
         private async void OnAddFaceButtonClick()
         {
-            // todo: dependency injection...how?  viewmodel factory?
             var faceAddDialog = new FaceAddDialog();
-            faceAddDialog.DataContext = new FaceAddDialogViewModel(new AssetProvider() );
+            faceAddDialog.DataContext = _viewModelProvider.GetViewModel<FaceAddDialogViewModel>();
             faceAddDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             var result = await faceAddDialog.ShowDialog<FaceAddDialogViewModel?>(AppUtils.GetMainWindow());
 
@@ -70,6 +72,9 @@ namespace PhotoToolAvalonia.ViewModels
 
     public class FaceSearchPanelViewModelDesign : FaceSearchPanelViewModel
     {
+        public FaceSearchPanelViewModelDesign() : base(new ViewModelProvider())
+        {
+        }
     }
 
     #endregion
