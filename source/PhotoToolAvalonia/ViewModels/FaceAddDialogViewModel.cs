@@ -7,6 +7,9 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using PhotoToolAvalonia.Providers;
 using PhotoToolAvalonia.Constants;
+using System;
+using MsBox.Avalonia;
+using PhotoToolAvalonia.Views.FaceSearch;
 
 namespace PhotoToolAvalonia.ViewModels
 {
@@ -77,15 +80,25 @@ namespace PhotoToolAvalonia.ViewModels
                 // Reads all the content of file as a text.
                 //var fileContent = await streamReader.ReadToEndAsync();
                 //this.SelectedImagePath = files[0].Path.AbsolutePath;
-                this.SelectedImage = new Bitmap(files[0].Path.LocalPath);
-                this.IsImageSelected = true;
+                try
+                {
+                    this.SelectedImage = new Bitmap(files[0].Path.LocalPath);
+                    this.IsImageSelected = true;
+                }
+                catch (Exception ex)
+                {
+                    var box = MessageBoxManager.GetMessageBoxStandard("Image Load Error", $"An error occurred loading the selected image: {ex.Message}", MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error, WindowStartupLocation.CenterScreen);
+                    var parent = AppUtils.GetWindow<FaceAddDialog>();
+                    await box.ShowWindowDialogAsync(parent);
+                    // Handle errors - often due to permission issues
+                    // _logger.LogError($"Image selection failed: {ex.Message}");
+                }
+
             }
 
         }
 
         #endregion
-
-
 
 
     }

@@ -11,6 +11,12 @@ namespace PhotoToolAvalonia.Utilities
 {
     class AppUtils
     {
+        public static Window GetWindow<T>() where T : Window
+        {
+            var appLifetime = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+            return appLifetime!.Windows.FirstOrDefault(w => w is T)!;
+        }
+
         public static Window GetMainWindow()
         {
             var appLifetime = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
