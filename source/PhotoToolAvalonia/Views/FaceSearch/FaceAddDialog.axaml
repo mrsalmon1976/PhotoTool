@@ -37,11 +37,11 @@
             <DataTemplate>
               <Border Margin="5,5,5,0" 
                   CornerRadius="5"
-                  BorderBrush="#e0e0e0" BorderThickness="1"
+                  BorderBrush="#e0e0e0" BorderThickness="2"
                   Padding="5">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                   <Image Source="{Binding Image}" Height="40" HorizontalAlignment="Left" />
-                  <TextBox BorderBrush="{Binding ColorBrush }" Text="{Binding Name}" MinWidth="150" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,5,0" />
+                  <TextBox DataContext="{Binding .}" BorderBrush="{Binding ColorBrush }" BorderThickness="2" Text="{Binding Name}" MinWidth="150" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,5,0" />
                 </StackPanel>
               </Border>
             </DataTemplate>

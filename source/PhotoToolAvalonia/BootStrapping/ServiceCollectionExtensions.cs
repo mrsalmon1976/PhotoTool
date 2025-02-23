@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using PhotoToolAvalonia.Configuration;
 using PhotoToolAvalonia.Providers;
+using PhotoToolAvalonia.Repositories;
 using PhotoToolAvalonia.Services;
 using PhotoToolAvalonia.ViewModels;
 using ReactiveUI;
@@ -15,6 +16,7 @@ namespace PhotoToolAvalonia.BootStrapping
             services.AddSingleton<IAppSettings, AppSettings>();
 
             AddProviders(services);
+            AddRepositories(services);
             AddServices(services);
             AddViewModels(services);
         }
@@ -25,10 +27,16 @@ namespace PhotoToolAvalonia.BootStrapping
             services.AddSingleton<IViewModelProvider, ViewModelProvider>();
         }
 
+        private static void AddRepositories(this IServiceCollection services)
+        {
+            services.AddSingleton<IFaceRepository, FaceRepository>();
+        }
+
         private static void AddServices(this IServiceCollection services)
         {
-            services.AddSingleton<IImageService, ImageService>();
             services.AddSingleton<IFaceDetectionService, FaceDetectionService>();
+            services.AddSingleton<IFileService, FileService>();
+            services.AddSingleton<IImageService, ImageService>();
         }
 
         private static void AddViewModels(this IServiceCollection services)

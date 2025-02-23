@@ -23,6 +23,7 @@ namespace PhotoToolAvalonia.Configuration
 		public string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
 
 		public string FaceDataDirectory { get; private set; }
+
 		public string WorkingDirectory { get; private set; }
 	}
 }

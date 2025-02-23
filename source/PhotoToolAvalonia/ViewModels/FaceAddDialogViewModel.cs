@@ -15,6 +15,8 @@ using PhotoToolAvalonia.Logging;
 using System.Collections.ObjectModel;
 using PhotoToolAvalonia.Models.FaceSearch;
 using Avalonia.Media;
+using PhotoToolAvalonia.Repositories;
+using PhotoToolAvalonia.Configuration;
 
 namespace PhotoToolAvalonia.ViewModels
 {
@@ -24,15 +26,17 @@ namespace PhotoToolAvalonia.ViewModels
         private static IAppLogger _logger = AppLogger.Create<FaceAddDialogViewModel>();
 
         private readonly IFaceDetectionService _faceDetectionService;
+        private readonly IFaceRepository _faceRepo;
         private bool _isImageSelected;
         private Bitmap? _selectedImage = null;
 
-        public FaceAddDialogViewModel(IAssetProvider assetProvider, IFaceDetectionService faceDetectionService)
+        public FaceAddDialogViewModel(IAssetProvider assetProvider, IFaceDetectionService faceDetectionService, IFaceRepository faceRepo)
         {
             SaveFacesButtonClickCommand = ReactiveCommand.Create(OnSaveFacesButtonClickCommand);
             SelectFileButtonClickCommand = ReactiveCommand.Create(OnSelectFileButtonClick);
             SelectedImage = assetProvider.GetImage(Assets.PhotoToolLogo_300x300_800bg);
             this._faceDetectionService = faceDetectionService;
+            this._faceRepo = faceRepo;
         }
 
         #region Control Properties
@@ -49,7 +53,7 @@ namespace PhotoToolAvalonia.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _selectedImage, value);
         }
 
-        public ObservableCollection<FaceModel> DetectedFaces { get; set; } = new ObservableCollection<FaceModel>();
+        public ObservableCollection<FaceDetectionModel> DetectedFaces { get; set; } = new ObservableCollection<FaceDetectionModel>();
 
 
 
@@ -63,6 +67,30 @@ namespace PhotoToolAvalonia.ViewModels
 
         private async void OnSaveFacesButtonClickCommand()
         {
+            //var x = this.DetectedFaces;
+
+            //int facesSaved = 0;
+            foreach (var detectedFace in this.DetectedFaces)
+            {
+                if (String.IsNullOrWhiteSpace(detectedFace.Name) || detectedFace.Image == null)
+                {
+                    continue;
+                }
+
+                FaceModel faceModel = new FaceModel()
+                {
+                    ImageData = Convert.ToBase64String(detectedFace.GetImageDataAsByteArray()!),
+                    Name = detectedFace.Name
+                };
+
+                await _faceRepo.SaveAsync(faceModel);
+                //facesSaved++;
+            }
+
+            //if (facesSaved > 0 && FacesSaved != null)
+            //{
+            //    FacesSaved(this, EventArgs.Empty);
+            //}
 
         }
 
@@ -95,7 +123,7 @@ namespace PhotoToolAvalonia.ViewModels
                     {
                         Bitmap faceImage = new Bitmap(new MemoryStream(f.ImageData!));
                         uint brushColor = (uint)f.Color;
-                        DetectedFaces.Add(new FaceModel() { Name = String.Empty, Image = faceImage, ColorBrush = new SolidColorBrush(brushColor) });
+                        DetectedFaces.Add(new FaceDetectionModel() { Name = String.Empty, Image = faceImage, ColorBrush = new SolidColorBrush(brushColor) });
                     });
 
 
@@ -123,7 +151,11 @@ namespace PhotoToolAvalonia.ViewModels
 
     public class FaceAddDialogViewModelDesign : FaceAddDialogViewModel
     {
-        public FaceAddDialogViewModelDesign() : base(new AssetProvider(), new FaceDetectionService(new ImageService()))
+        public FaceAddDialogViewModelDesign() : base(
+            new AssetProvider(),
+            new FaceDetectionService(new ImageService()),
+            new FaceRepository(new AppSettings(), new FileService())
+            )
         {
         }
     }

@@ -31,7 +31,7 @@ namespace PhotoToolAvalonia.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _facesLabelText, value);
         }
 
-        public ObservableCollection<FaceModel> Faces { get; set; } = new ObservableCollection<FaceModel>();
+        public ObservableCollection<FaceDetectionModel> Faces { get; set; } = new ObservableCollection<FaceDetectionModel>();
 
         #endregion
 
@@ -58,10 +58,10 @@ namespace PhotoToolAvalonia.ViewModels
 
         public async Task LoadFaces()
         {
-            Faces.Add(new FaceModel() { Name = "Face 1" });
-            Faces.Add(new FaceModel() { Name = "Face 2" });
-            Faces.Add(new FaceModel() { Name = "Face 3" });
-            Faces.Add(new FaceModel() { Name = "Face 4" });
+            Faces.Add(new FaceDetectionModel() { Name = "Face 1" });
+            Faces.Add(new FaceDetectionModel() { Name = "Face 2" });
+            Faces.Add(new FaceDetectionModel() { Name = "Face 3" });
+            Faces.Add(new FaceDetectionModel() { Name = "Face 4" });
 
             FacesLabelText = "No saved faces found - add faces on the right to begin searching.";
         }
