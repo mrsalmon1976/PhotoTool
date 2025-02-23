@@ -17,6 +17,10 @@ using PhotoToolAvalonia.Models.FaceSearch;
 using Avalonia.Media;
 using PhotoToolAvalonia.Repositories;
 using PhotoToolAvalonia.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
+using Avalonia.Input;
+using Tmds.DBus.Protocol;
 
 namespace PhotoToolAvalonia.ViewModels
 {
@@ -28,6 +32,7 @@ namespace PhotoToolAvalonia.ViewModels
         private readonly IFaceDetectionService _faceDetectionService;
         private readonly IFaceRepository _faceRepo;
         private bool _isImageSelected;
+        private bool _isSaveButtonEnabled;
         private Bitmap? _selectedImage = null;
 
         public FaceAddDialogViewModel(IAssetProvider assetProvider, IFaceDetectionService faceDetectionService, IFaceRepository faceRepo)
@@ -47,13 +52,19 @@ namespace PhotoToolAvalonia.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _isImageSelected, value);
         }
 
+        public bool IsSaveButtonEnabled
+        {
+            get => _isSaveButtonEnabled;
+            private set => this.RaiseAndSetIfChanged(ref _isSaveButtonEnabled, value);
+        }
+
         public Bitmap? SelectedImage
         {
             get => _selectedImage;
             private set => this.RaiseAndSetIfChanged(ref _selectedImage, value);
         }
 
-        public ObservableCollection<FaceDetectionModel> DetectedFaces { get; set; } = new ObservableCollection<FaceDetectionModel>();
+        public ObservableCollection<FaceAddViewModel> DetectedFaces { get; set; } = new ObservableCollection<FaceAddViewModel>();
 
 
 
@@ -67,9 +78,9 @@ namespace PhotoToolAvalonia.ViewModels
 
         private async void OnSaveFacesButtonClickCommand()
         {
-            //var x = this.DetectedFaces;
 
-            //int facesSaved = 0;
+
+            int facesSaved = 0;
             foreach (var detectedFace in this.DetectedFaces)
             {
                 if (String.IsNullOrWhiteSpace(detectedFace.Name) || detectedFace.Image == null)
@@ -84,13 +95,22 @@ namespace PhotoToolAvalonia.ViewModels
                 };
 
                 await _faceRepo.SaveAsync(faceModel);
-                //facesSaved++;
+                facesSaved++;
             }
 
-            //if (facesSaved > 0 && FacesSaved != null)
-            //{
-            //    FacesSaved(this, EventArgs.Empty);
-            //}
+            var dialog = AppUtils.GetWindow<FaceAddDialog>();
+
+            if (facesSaved == 0)
+            {
+                await AppUtils.ShowErrorDialog("No Named Faces", "You need to assign names to at least one face.", dialog);
+            }
+            else
+            {
+                var message = (facesSaved == 1 ? "face has" : "faces have");
+                message = $"{facesSaved} {message} been successfully saved";
+                await AppUtils.ShowWarningDialog("Faces Saved", message, dialog);
+                dialog!.Close();
+            }
 
         }
 
@@ -123,18 +143,20 @@ namespace PhotoToolAvalonia.ViewModels
                     {
                         Bitmap faceImage = new Bitmap(new MemoryStream(f.ImageData!));
                         uint brushColor = (uint)f.Color;
-                        DetectedFaces.Add(new FaceDetectionModel() { Name = String.Empty, Image = faceImage, ColorBrush = new SolidColorBrush(brushColor) });
+                        DetectedFaces.Add(new FaceAddViewModel() { Name = String.Empty, Image = faceImage, ColorBrush = new SolidColorBrush(brushColor) });
                     });
 
 
                     this.SelectedImage = new Bitmap(new MemoryStream(result.DecoratedImageData));
                     this.IsImageSelected = true;
+                    this.IsSaveButtonEnabled = (DetectedFaces.Count > 0);
                 }
                 catch (Exception ex)
                 {
-                    var box = MessageBoxManager.GetMessageBoxStandard("Image Load Error", $"An error occurred loading the selected image: {ex.Message}", MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error, WindowStartupLocation.CenterScreen);
-                    var parent = AppUtils.GetWindow<FaceAddDialog>();
-                    await box.ShowWindowDialogAsync(parent);
+                    string message = $"An error occurred loading the selected image: {ex.Message}";
+                    var dialog = AppUtils.GetWindow<FaceAddDialog>();
+                    await AppUtils.ShowErrorDialog("Image Load Error", message, dialog);
+
                     // Handle errors - often due to permission issues
                     _logger.Error(ex, $"Image selection failed: {ex.Message}");
                 }
@@ -143,7 +165,6 @@ namespace PhotoToolAvalonia.ViewModels
         }
 
         #endregion
-
 
     }
 

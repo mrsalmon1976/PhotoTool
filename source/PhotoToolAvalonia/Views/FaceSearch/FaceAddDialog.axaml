@@ -3,6 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:PhotoToolAvalonia.ViewModels"
+		xmlns:i="using:Avalonia.Xaml.Interactivity"
+        xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PhotoToolAvalonia.Views.FaceSearch.FaceAddDialog"
         x:DataType="vm:FaceAddDialogViewModel"
@@ -42,14 +44,14 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                   <Image Source="{Binding Image}" Height="40" HorizontalAlignment="Left" />
                   <TextBox DataContext="{Binding .}" BorderBrush="{Binding ColorBrush }" BorderThickness="2" Text="{Binding Name}" MinWidth="150" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,5,0" />
-                </StackPanel>
+				  </StackPanel>
               </Border>
             </DataTemplate>
           </ItemsRepeater.ItemTemplate>
         </ItemsRepeater>        
       </StackPanel>
       
-      <Button x:Name="SaveFacesButton" DockPanel.Dock="Bottom" Command="{Binding SaveFacesButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
+      <Button x:Name="SaveFacesButton" IsEnabled="{ Binding IsSaveButtonEnabled }" DockPanel.Dock="Bottom" Command="{Binding SaveFacesButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Save Faces</Button>
     </DockPanel>
 
   </Grid>

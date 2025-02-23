@@ -10,4 +10,6 @@ public partial class FaceAddDialog : Window
     {
         InitializeComponent();
     }
+
+
 }
