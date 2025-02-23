@@ -15,9 +15,9 @@ namespace PhotoToolAvalonia.Logging
             // ensures the header is always written if the file does not exist
             var dt = DateTime.Now.ToString("yyyy-MM-dd");
 
-            string perfLogPath = $"{AppDomain.CurrentDomain.BaseDirectory}\\logs\\perflog-{dt}.log";
-            string appLogPath = $"{AppDomain.CurrentDomain.BaseDirectory}\\logs\\infolog-{dt}.log";
-            string errorLogPath = $"{AppDomain.CurrentDomain.BaseDirectory}\\logs\\errorlog-{dt}.log";
+            string perfLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", $"perflog-{dt}.log");
+            string appLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", $"infolog-{dt}.log");
+            string errorLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", $"errorlog-{dt}.log");
 
             WriteLogHeader(perfLogPath, $"LogDate|LogTime|LogSource|ProfileName|ExecutionTimeMilliseconds");
             WriteLogHeader(appLogPath, $"LogTime|Logger|LogLevel|Message|Exception");
@@ -49,6 +49,11 @@ namespace PhotoToolAvalonia.Logging
 
         private static void WriteLogHeader(string logPath, string header)
         {
+            string dir = Path.GetDirectoryName(logPath)!;
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
             if (!File.Exists(logPath))
             {
                 File.WriteAllText(logPath, $"{header}{Environment.NewLine}");
