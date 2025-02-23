@@ -44,8 +44,8 @@
 
     <!-- Right column (buttons) -->
     <DockPanel Grid.Column="2">
-      <Button x:Name="AddFaceButton" DockPanel.Dock="Top"  Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
-      <Button x:Name="SearchButton" DockPanel.Dock="Bottom" Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
+      <Button x:Name="AddFaceButton" DockPanel.Dock="Top"  Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
+      <Button x:Name="SearchButton" DockPanel.Dock="Bottom" Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
     </DockPanel>
       
   </Grid>
