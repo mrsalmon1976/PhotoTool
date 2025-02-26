@@ -21,6 +21,8 @@ namespace PhotoToolAvalonia.ViewModels
 
         public Bitmap? Image { get; set; } = null;
 
+        public Bitmap? ImageGrayscale { get; set; } = null;
+
         public SolidColorBrush ColorBrush { get; set; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));
 
         public byte[]? GetImageDataAsByteArray()

@@ -44,7 +44,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                   <Image Source="{Binding Image}" Height="40" HorizontalAlignment="Left" />
                   <TextBox DataContext="{Binding .}" BorderBrush="{Binding ColorBrush }" BorderThickness="2" Text="{Binding Name}" MinWidth="150" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,5,0" />
-				  </StackPanel>
+				        </StackPanel>
               </Border>
             </DataTemplate>
           </ItemsRepeater.ItemTemplate>

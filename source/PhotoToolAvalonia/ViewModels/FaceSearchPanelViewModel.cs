@@ -1,9 +1,16 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using DynamicData;
+using PhotoToolAvalonia.Configuration;
 using PhotoToolAvalonia.Providers;
+using PhotoToolAvalonia.Repositories;
+using PhotoToolAvalonia.Services;
 using PhotoToolAvalonia.Utilities;
 using PhotoToolAvalonia.Views.FaceSearch;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -13,24 +20,28 @@ namespace PhotoToolAvalonia.ViewModels
     {
         private string _facesLabelText = string.Empty;
         private readonly IViewModelProvider _viewModelProvider;
+        private readonly IFaceRepository _faceRepo;
+        private readonly IImageService _imageService;
+        private bool _IsFaceListVisible;
 
-        public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider)
+        public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider, IFaceRepository faceRepo, IImageService imageService)
         {
             this._viewModelProvider = viewModelProvider;
-
+            this._faceRepo = faceRepo;
+            this._imageService = imageService;
             AddFaceButtonClickCommand = ReactiveCommand.Create(OnAddFaceButtonClick);
         }
 
         #region Control Properties
 
-
-        public string FacesLabelText
+        public bool IsFaceListVisible
         {
-            get => _facesLabelText;
-            private set => this.RaiseAndSetIfChanged(ref _facesLabelText, value);
+            get => _IsFaceListVisible;
+            private set => this.RaiseAndSetIfChanged(ref _IsFaceListVisible, value);
         }
+        
 
-        public ObservableCollection<FaceAddViewModel> Faces { get; set; } = new ObservableCollection<FaceAddViewModel>();
+        public ObservableCollection<FaceAddViewModel> SavedFaces { get; set; } = new ObservableCollection<FaceAddViewModel>();
 
         #endregion
 
@@ -44,6 +55,7 @@ namespace PhotoToolAvalonia.ViewModels
             faceAddDialog.DataContext = _viewModelProvider.GetViewModel<FaceAddDialogViewModel>();
             faceAddDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             var result = await faceAddDialog.ShowDialog<FaceAddDialogViewModel?>(AppUtils.GetMainWindow());
+            await LoadFaces();
 
             //string s = "";
             // Code for executing the command here.
@@ -57,12 +69,25 @@ namespace PhotoToolAvalonia.ViewModels
 
         public async Task LoadFaces()
         {
-            Faces.Add(new FaceAddViewModel() { Name = "Face 1" });
-            Faces.Add(new FaceAddViewModel() { Name = "Face 2" });
-            Faces.Add(new FaceAddViewModel() { Name = "Face 3" });
-            Faces.Add(new FaceAddViewModel() { Name = "Face 4" });
+            SavedFaces.Clear();
+            var faces = await _faceRepo.GetAllAsync();
+            if (faces.Count() > 0)
+            {
+                foreach (var f in faces)
+                {
+                    var imageData = f.GetImageDataAsBytes();
+                    var image = new Bitmap(new MemoryStream(imageData));
+                    var grayscaleImage = new Bitmap(new MemoryStream(_imageService.ConvertToGrayscale(imageData)));
 
-            FacesLabelText = "No saved faces found - add faces on the right to begin searching.";
+                    SavedFaces.Add(new FaceAddViewModel()
+                    {
+                        ImageGrayscale = grayscaleImage,
+                        Image = image,
+                        Name = f.Name
+                    });
+                }
+            }
+            this.IsFaceListVisible = faces.Any();
         }
     }
 
@@ -70,7 +95,11 @@ namespace PhotoToolAvalonia.ViewModels
 
     public class FaceSearchPanelViewModelDesign : FaceSearchPanelViewModel
     {
-        public FaceSearchPanelViewModelDesign() : base(new ViewModelProvider())
+        public FaceSearchPanelViewModelDesign() : base(
+            new ViewModelProvider()
+            , new FaceRepository(new AppSettings(), new FileService())
+            , new ImageService()
+            )
         {
         }
     }
