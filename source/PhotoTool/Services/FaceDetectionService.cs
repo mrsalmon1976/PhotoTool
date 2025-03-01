@@ -1,5 +1,5 @@
 ﻿using FaceAiSharp;
-using PhotoTool.Models.FaceSearch;
+using PhotoTool.Features.FaceSearch.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SkiaSharp;

@@ -11,7 +11,7 @@ using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoTool.ViewModels
+namespace PhotoTool.Features.FaceSearch.ViewModels
 {
     public class FaceAddViewModel
     {

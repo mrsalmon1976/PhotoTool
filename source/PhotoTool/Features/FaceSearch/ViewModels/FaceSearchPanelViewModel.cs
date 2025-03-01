@@ -1,12 +1,11 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media.Imaging;
-using DynamicData;
 using PhotoTool.Shared.Configuration;
 using PhotoTool.Providers;
 using PhotoTool.Repositories;
 using PhotoTool.Services;
 using PhotoTool.Utilities;
-using PhotoTool.Views.FaceSearch;
+using PhotoTool.Features.FaceSearch.Views;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -14,7 +13,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 
-namespace PhotoTool.ViewModels
+namespace PhotoTool.Features.FaceSearch.ViewModels
 {
     public partial class FaceSearchPanelViewModel : ReactiveObject
     {
@@ -26,9 +25,9 @@ namespace PhotoTool.ViewModels
 
         public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider, IFaceRepository faceRepo, IImageService imageService)
         {
-            this._viewModelProvider = viewModelProvider;
-            this._faceRepo = faceRepo;
-            this._imageService = imageService;
+            _viewModelProvider = viewModelProvider;
+            _faceRepo = faceRepo;
+            _imageService = imageService;
             AddFaceButtonClickCommand = ReactiveCommand.Create(OnAddFaceButtonClick);
         }
 
@@ -87,7 +86,7 @@ namespace PhotoTool.ViewModels
                     });
                 }
             }
-            this.IsFaceListVisible = faces.Any();
+            IsFaceListVisible = faces.Any();
         }
     }
 

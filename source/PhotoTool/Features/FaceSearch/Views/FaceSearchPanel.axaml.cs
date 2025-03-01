@@ -1,7 +1,7 @@
 using Avalonia.Controls;
-using PhotoTool.ViewModels;
+using PhotoTool.Features.FaceSearch.ViewModels;
 
-namespace PhotoTool.Views.FaceSearch;
+namespace PhotoTool.Features.FaceSearch.Views;
 
 public partial class FaceSearchPanel: UserControl
 {

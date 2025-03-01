@@ -6,23 +6,18 @@ using PhotoTool.Utilities;
 using Avalonia.Media.Imaging;
 using PhotoTool.Providers;
 using System;
-using MsBox.Avalonia;
-using PhotoTool.Views.FaceSearch;
+using PhotoTool.Features.FaceSearch.Views;
 using PhotoTool.Services;
 using System.IO;
 using System.Collections.ObjectModel;
-using PhotoTool.Models.FaceSearch;
 using Avalonia.Media;
 using PhotoTool.Repositories;
 using PhotoTool.Shared.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
-using Avalonia.Input;
-using Tmds.DBus.Protocol;
 using PhotoTool.Shared.Constants;
 using PhotoTool.Shared.Logging;
+using PhotoTool.Features.FaceSearch.Models;
 
-namespace PhotoTool.ViewModels
+namespace PhotoTool.Features.FaceSearch.ViewModels
 {
     public partial class FaceAddDialogViewModel : ReactiveObject
     {
@@ -40,8 +35,8 @@ namespace PhotoTool.ViewModels
             SaveFacesButtonClickCommand = ReactiveCommand.Create(OnSaveFacesButtonClickCommand);
             SelectFileButtonClickCommand = ReactiveCommand.Create(OnSelectFileButtonClick);
             SelectedImage = assetProvider.GetImage(Assets.PhotoToolLogo_300x300_800bg);
-            this._faceDetectionService = faceDetectionService;
-            this._faceRepo = faceRepo;
+            _faceDetectionService = faceDetectionService;
+            _faceRepo = faceRepo;
         }
 
         #region Control Properties
@@ -81,9 +76,9 @@ namespace PhotoTool.ViewModels
 
 
             int facesSaved = 0;
-            foreach (var detectedFace in this.DetectedFaces)
+            foreach (var detectedFace in DetectedFaces)
             {
-                if (String.IsNullOrWhiteSpace(detectedFace.Name) || detectedFace.Image == null)
+                if (string.IsNullOrWhiteSpace(detectedFace.Name) || detectedFace.Image == null)
                 {
                     continue;
                 }
@@ -106,7 +101,7 @@ namespace PhotoTool.ViewModels
             }
             else
             {
-                var message = (facesSaved == 1 ? "face has" : "faces have");
+                var message = facesSaved == 1 ? "face has" : "faces have";
                 message = $"{facesSaved} {message} been successfully saved";
                 await AppUtils.ShowWarningDialog("Faces Saved", message, dialog);
                 dialog!.Close();
@@ -143,13 +138,13 @@ namespace PhotoTool.ViewModels
                     {
                         Bitmap faceImage = new Bitmap(new MemoryStream(f.ImageData!));
                         uint brushColor = (uint)f.Color;
-                        DetectedFaces.Add(new FaceAddViewModel() { Name = String.Empty, Image = faceImage, ColorBrush = new SolidColorBrush(brushColor) });
+                        DetectedFaces.Add(new FaceAddViewModel() { Name = string.Empty, Image = faceImage, ColorBrush = new SolidColorBrush(brushColor) });
                     });
 
 
-                    this.SelectedImage = new Bitmap(new MemoryStream(result.DecoratedImageData));
-                    this.IsImageSelected = true;
-                    this.IsSaveButtonEnabled = (DetectedFaces.Count > 0);
+                    SelectedImage = new Bitmap(new MemoryStream(result.DecoratedImageData));
+                    IsImageSelected = true;
+                    IsSaveButtonEnabled = DetectedFaces.Count > 0;
                 }
                 catch (Exception ex)
                 {

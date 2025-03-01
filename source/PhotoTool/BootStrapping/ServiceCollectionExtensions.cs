@@ -1,10 +1,11 @@
 ﻿using Avalonia.Platform;
 using Microsoft.Extensions.DependencyInjection;
+using PhotoTool.Features.FaceSearch.ViewModels;
 using PhotoTool.Providers;
 using PhotoTool.Repositories;
 using PhotoTool.Services;
 using PhotoTool.Shared.Configuration;
-using PhotoTool.ViewModels;
+using PhotoTool.Shared.ViewModels;
 using ReactiveUI;
 
 namespace PhotoTool.BootStrapping

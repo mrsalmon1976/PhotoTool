@@ -1,4 +1,6 @@
-﻿namespace PhotoTool.ViewModels
+﻿using PhotoTool.Features.FaceSearch.ViewModels;
+
+namespace PhotoTool.Shared.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {

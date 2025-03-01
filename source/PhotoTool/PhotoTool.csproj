@@ -37,12 +37,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\FaceSearch\FaceSearchPanel.axaml.cs">
+    <Compile Update="Features\FaceSearch\Views\FaceSearchPanel.axaml.cs">
       <DependentUpon>FaceSearchPanel.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\" />
+    <Folder Include="Views\FaceSearch\" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoTool.Models.FaceSearch
+namespace PhotoTool.Features.FaceSearch.Models
 {
     public class FaceDetectionResult
     {

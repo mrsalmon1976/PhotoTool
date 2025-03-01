@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace PhotoTool.ViewModels;
+namespace PhotoTool.Shared.ViewModels;
 
 public class ViewModelBase : ObservableObject
 {

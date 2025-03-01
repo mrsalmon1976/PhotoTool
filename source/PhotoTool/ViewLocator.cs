@@ -1,7 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using PhotoTool.ViewModels;
+using PhotoTool.Shared.ViewModels;
 
 namespace PhotoTool;
 

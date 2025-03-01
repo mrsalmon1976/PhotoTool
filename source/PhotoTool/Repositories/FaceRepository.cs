@@ -1,4 +1,4 @@
-﻿using PhotoTool.Models.FaceSearch;
+﻿using PhotoTool.Features.FaceSearch.Models;
 using PhotoTool.Services;
 using PhotoTool.Shared.Configuration;
 using System.Collections.Generic;

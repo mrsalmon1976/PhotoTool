@@ -3,12 +3,11 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
-using PhotoTool.ViewModels;
-using PhotoTool.Views;
 using Microsoft.Extensions.DependencyInjection;
 using PhotoTool.BootStrapping;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using PhotoTool.Shared.Logging;
+using PhotoTool.Shared.ViewModels;
 
 namespace PhotoTool;
 

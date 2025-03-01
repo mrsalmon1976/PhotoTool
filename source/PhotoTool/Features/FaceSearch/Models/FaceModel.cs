@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoTool.Models.FaceSearch
+namespace PhotoTool.Features.FaceSearch.Models
 {
     public class FaceModel
     {
         public FaceModel()
         {
-            this.Name = String.Empty;
-            this.ImageData = string.Empty;
+            Name = string.Empty;
+            ImageData = string.Empty;
         }
 
         public string Name { get; set; }
