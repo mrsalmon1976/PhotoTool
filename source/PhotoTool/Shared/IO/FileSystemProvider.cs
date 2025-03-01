@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace PhotoTool.Services
+namespace PhotoTool.Shared.IO
 {
-	public interface IFileService
+	public interface IFileSystemProvider
 	{
 		void CopyFile(string sourceFileName, string destFileName);
 
@@ -26,7 +26,7 @@ namespace PhotoTool.Services
 
 	}
 
-	public class FileService : IFileService
+	public class FileSystemProvider : IFileSystemProvider
 	{
 		public void CopyFile(string sourceFileName, string destFileName)
 		{

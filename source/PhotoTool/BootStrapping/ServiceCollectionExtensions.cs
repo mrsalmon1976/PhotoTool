@@ -1,10 +1,12 @@
 ﻿using Avalonia.Platform;
 using Microsoft.Extensions.DependencyInjection;
+using PhotoTool.Features.FaceSearch.Repositories;
+using PhotoTool.Features.FaceSearch.Services;
 using PhotoTool.Features.FaceSearch.ViewModels;
-using PhotoTool.Providers;
-using PhotoTool.Repositories;
-using PhotoTool.Services;
 using PhotoTool.Shared.Configuration;
+using PhotoTool.Shared.Graphics;
+using PhotoTool.Shared.IO;
+using PhotoTool.Shared.Resources;
 using PhotoTool.Shared.ViewModels;
 using ReactiveUI;
 
@@ -14,38 +16,42 @@ namespace PhotoTool.BootStrapping
     {
 		public static void AddDependencies(this IServiceCollection services)
         {
-            services.AddSingleton<IAppSettings, AppSettings>();
-
-            AddProviders(services);
-            AddRepositories(services);
-            AddServices(services);
-            AddViewModels(services);
+            AddShared(services);
+            AddFaceSearchFeature(services);
         }
 
-        private static void AddProviders(this IServiceCollection services)
+        private static void AddShared(this IServiceCollection services)
         {
+            // Configuration
+            services.AddSingleton<IAppSettings, AppSettings>();
+
+            // Graphics
+            services.AddSingleton<IImageProcessor, ImageProcessor>();
+
+            // IO
+            services.AddSingleton<IFileSystemProvider, FileSystemProvider>();
+
+            // Resources
             services.AddSingleton<IAssetProvider, AssetProvider>();
+
+            // ViewModels
+            services.AddTransient<MainWindowViewModel>();
             services.AddSingleton<IViewModelProvider, ViewModelProvider>();
         }
 
-        private static void AddRepositories(this IServiceCollection services)
+
+
+        private static void AddFaceSearchFeature(this IServiceCollection services)
         {
+            // Repositories
             services.AddSingleton<IFaceRepository, FaceRepository>();
-        }
 
-        private static void AddServices(this IServiceCollection services)
-        {
-            services.AddSingleton<IFaceDetectionService, FaceDetectionService>();
-            services.AddSingleton<IFileService, FileService>();
-            services.AddSingleton<IImageService, ImageService>();
-        }
+            // Services
+            services.AddSingleton<IFaceDetector, FaceDetector>();
 
-        private static void AddViewModels(this IServiceCollection services)
-        {
+            // ViewModels
             services.AddTransient<FaceAddDialogViewModel>();
             services.AddTransient<FaceSearchPanelViewModel>();
-            services.AddTransient<MainWindowViewModel>();
-
         }
 
 

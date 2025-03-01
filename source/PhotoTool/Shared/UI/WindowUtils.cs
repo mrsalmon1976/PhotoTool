@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoTool.Utilities
+namespace PhotoTool.Shared.UI
 {
-    class AppUtils
+    class WindowUtils
     {
         public static Window? GetWindow<T>() where T : Window
         {

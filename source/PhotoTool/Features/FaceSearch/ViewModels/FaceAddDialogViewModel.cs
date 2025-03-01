@@ -2,20 +2,22 @@
 using ReactiveUI;
 using System.Reactive;
 using Avalonia.Platform.Storage;
-using PhotoTool.Utilities;
 using Avalonia.Media.Imaging;
-using PhotoTool.Providers;
 using System;
 using PhotoTool.Features.FaceSearch.Views;
-using PhotoTool.Services;
 using System.IO;
 using System.Collections.ObjectModel;
 using Avalonia.Media;
-using PhotoTool.Repositories;
 using PhotoTool.Shared.Configuration;
 using PhotoTool.Shared.Constants;
 using PhotoTool.Shared.Logging;
 using PhotoTool.Features.FaceSearch.Models;
+using PhotoTool.Shared.Resources;
+using PhotoTool.Features.FaceSearch.Repositories;
+using PhotoTool.Features.FaceSearch.Services;
+using PhotoTool.Shared.IO;
+using PhotoTool.Shared.Graphics;
+using PhotoTool.Shared.UI;
 
 namespace PhotoTool.Features.FaceSearch.ViewModels
 {
@@ -24,18 +26,18 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private static IAppLogger _logger = AppLogger.Create<FaceAddDialogViewModel>();
 
-        private readonly IFaceDetectionService _faceDetectionService;
+        private readonly IFaceDetector _faceDetector;
         private readonly IFaceRepository _faceRepo;
         private bool _isImageSelected;
         private bool _isSaveButtonEnabled;
         private Bitmap? _selectedImage = null;
 
-        public FaceAddDialogViewModel(IAssetProvider assetProvider, IFaceDetectionService faceDetectionService, IFaceRepository faceRepo)
+        public FaceAddDialogViewModel(IAssetProvider assetProvider, IFaceDetector faceDetectionService, IFaceRepository faceRepo)
         {
             SaveFacesButtonClickCommand = ReactiveCommand.Create(OnSaveFacesButtonClickCommand);
             SelectFileButtonClickCommand = ReactiveCommand.Create(OnSelectFileButtonClick);
             SelectedImage = assetProvider.GetImage(Assets.PhotoToolLogo_300x300_800bg);
-            _faceDetectionService = faceDetectionService;
+            _faceDetector = faceDetectionService;
             _faceRepo = faceRepo;
         }
 
@@ -93,17 +95,17 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                 facesSaved++;
             }
 
-            var dialog = AppUtils.GetWindow<FaceAddDialog>();
+            var dialog = WindowUtils.GetWindow<FaceAddDialog>();
 
             if (facesSaved == 0)
             {
-                await AppUtils.ShowErrorDialog("No Named Faces", "You need to assign names to at least one face.", dialog);
+                await WindowUtils.ShowErrorDialog("No Named Faces", "You need to assign names to at least one face.", dialog);
             }
             else
             {
                 var message = facesSaved == 1 ? "face has" : "faces have";
                 message = $"{facesSaved} {message} been successfully saved";
-                await AppUtils.ShowWarningDialog("Faces Saved", message, dialog);
+                await WindowUtils.ShowWarningDialog("Faces Saved", message, dialog);
                 dialog!.Close();
             }
 
@@ -113,7 +115,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         {
             // Get top level from the current control. Alternatively, you can use Window reference instead.
             //var topLevel = TopLevel.GetTopLevel(this);
-            var topLevel = TopLevel.GetTopLevel(AppUtils.GetMainWindow());
+            var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
 
             // Start async operation to open the dialog.
             var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -129,7 +131,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                 {
                     IPerformanceLogger profiler = PerformanceLogger.CreateAndStart<FaceAddDialogViewModel>("DecorateImageWithFaceDetections");
                     string filePath = files[0].Path.LocalPath;
-                    var result = _faceDetectionService.DecorateImageWithFaceDetections(filePath);
+                    var result = _faceDetector.DecorateImageWithFaceDetections(filePath);
                     profiler.Stop();
 
                     // reset the detected faces
@@ -149,8 +151,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                 catch (Exception ex)
                 {
                     string message = $"An error occurred loading the selected image: {ex.Message}";
-                    var dialog = AppUtils.GetWindow<FaceAddDialog>();
-                    await AppUtils.ShowErrorDialog("Image Load Error", message, dialog);
+                    var dialog = WindowUtils.GetWindow<FaceAddDialog>();
+                    await WindowUtils.ShowErrorDialog("Image Load Error", message, dialog);
 
                     // Handle errors - often due to permission issues
                     _logger.Error(ex, $"Image selection failed: {ex.Message}");
@@ -169,8 +171,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
     {
         public FaceAddDialogViewModelDesign() : base(
             new AssetProvider(),
-            new FaceDetectionService(new ImageService()),
-            new FaceRepository(new AppSettings(), new FileService())
+            new FaceDetector(new ImageProcessor()),
+            new FaceRepository(new AppSettings(), new FileSystemProvider())
             )
         {
         }

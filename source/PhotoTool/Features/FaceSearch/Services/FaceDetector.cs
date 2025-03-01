@@ -1,5 +1,6 @@
 ﻿using FaceAiSharp;
 using PhotoTool.Features.FaceSearch.Models;
+using PhotoTool.Shared.Graphics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SkiaSharp;
@@ -9,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoTool.Services
+namespace PhotoTool.Features.FaceSearch.Services
 {
-    public interface IFaceDetectionService
+    public interface IFaceDetector
     {
         FaceDetectionResult DecorateImageWithFaceDetections(string imagePath);
 
@@ -20,12 +21,12 @@ namespace PhotoTool.Services
         IEnumerable<FaceDetectionResultItem> DetectFaces(Image<Rgb24> image);
     }
 
-    public class FaceDetectionService : IFaceDetectionService
+    public class FaceDetector : IFaceDetector
     {
         private readonly SKColor[] _colorPalette;
-        private readonly IImageService _imageService;
+        private readonly IImageProcessor _imageService;
 
-        public FaceDetectionService(IImageService imageService)
+        public FaceDetector(IImageProcessor imageService)
         {
             _colorPalette = new SKColor[]
             {
@@ -40,7 +41,7 @@ namespace PhotoTool.Services
                 SKColors.Pink,
                 SKColors.White
             };
-            this._imageService = imageService;
+            _imageService = imageService;
         }
 
         public IEnumerable<FaceDetectionResultItem> DetectFaces(string imagePath)

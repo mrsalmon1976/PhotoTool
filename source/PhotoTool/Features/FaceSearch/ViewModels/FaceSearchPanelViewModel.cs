@@ -1,10 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using PhotoTool.Shared.Configuration;
-using PhotoTool.Providers;
-using PhotoTool.Repositories;
-using PhotoTool.Services;
-using PhotoTool.Utilities;
 using PhotoTool.Features.FaceSearch.Views;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -12,6 +8,11 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using PhotoTool.Shared.ViewModels;
+using PhotoTool.Features.FaceSearch.Repositories;
+using PhotoTool.Shared.IO;
+using PhotoTool.Shared.Graphics;
+using PhotoTool.Shared.UI;
 
 namespace PhotoTool.Features.FaceSearch.ViewModels
 {
@@ -20,10 +21,10 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private string _facesLabelText = string.Empty;
         private readonly IViewModelProvider _viewModelProvider;
         private readonly IFaceRepository _faceRepo;
-        private readonly IImageService _imageService;
+        private readonly IImageProcessor _imageService;
         private bool _IsFaceListVisible;
 
-        public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider, IFaceRepository faceRepo, IImageService imageService)
+        public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider, IFaceRepository faceRepo, IImageProcessor imageService)
         {
             _viewModelProvider = viewModelProvider;
             _faceRepo = faceRepo;
@@ -53,7 +54,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             var faceAddDialog = new FaceAddDialog();
             faceAddDialog.DataContext = _viewModelProvider.GetViewModel<FaceAddDialogViewModel>();
             faceAddDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            var result = await faceAddDialog.ShowDialog<FaceAddDialogViewModel?>(AppUtils.GetMainWindow());
+            var result = await faceAddDialog.ShowDialog<FaceAddDialogViewModel?>(WindowUtils.GetMainWindow());
             await LoadFaces();
 
             //string s = "";
@@ -96,8 +97,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
     {
         public FaceSearchPanelViewModelDesign() : base(
             new ViewModelProvider()
-            , new FaceRepository(new AppSettings(), new FileService())
-            , new ImageService()
+            , new FaceRepository(new AppSettings(), new FileSystemProvider())
+            , new ImageProcessor()
             )
         {
         }

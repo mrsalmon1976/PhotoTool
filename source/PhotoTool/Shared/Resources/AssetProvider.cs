@@ -2,7 +2,7 @@
 using Avalonia.Platform;
 using PhotoTool.Shared.Constants;
 
-namespace PhotoTool.Providers
+namespace PhotoTool.Shared.Resources
 {
     public interface IAssetProvider
     {

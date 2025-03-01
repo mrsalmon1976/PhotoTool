@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using ReactiveUI;
 
-namespace PhotoTool.Providers
+namespace PhotoTool.Shared.ViewModels
 {
     public interface IViewModelProvider
     {

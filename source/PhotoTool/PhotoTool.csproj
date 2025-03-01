@@ -41,8 +41,4 @@
       <DependentUpon>FaceSearchPanel.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\FaceSearch\" />
-  </ItemGroup>
 </Project>

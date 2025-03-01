@@ -1,13 +1,13 @@
 ﻿using PhotoTool.Features.FaceSearch.Models;
-using PhotoTool.Services;
 using PhotoTool.Shared.Configuration;
+using PhotoTool.Shared.IO;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace PhotoTool.Repositories
+namespace PhotoTool.Features.FaceSearch.Repositories
 {
     public interface IFaceRepository
     {
@@ -19,12 +19,12 @@ namespace PhotoTool.Repositories
     public class FaceRepository : IFaceRepository
     {
         private readonly IAppSettings _appSettings;
-        private readonly IFileService _fileService;
+        private readonly IFileSystemProvider _fileService;
 
-        public FaceRepository(IAppSettings appSettings, IFileService fileService)
+        public FaceRepository(IAppSettings appSettings, IFileSystemProvider fileService)
         {
-            this._appSettings = appSettings;
-            this._fileService = fileService;
+            _appSettings = appSettings;
+            _fileService = fileService;
         }
 
         public async Task<IEnumerable<FaceModel>> GetAllAsync()

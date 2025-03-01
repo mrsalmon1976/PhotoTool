@@ -8,13 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoTool.Services
+namespace PhotoTool.Shared.Graphics
 {
-    public interface IImageService
+    public interface IImageProcessor
     {
-        // Color ConvertColor(SKColor color);
-
-        // string CopyToWorkingDirectory(string source);
 
         SKEncodedImageFormat GetImageFormatFromExtension(string extension);
 
@@ -27,20 +24,14 @@ namespace PhotoTool.Services
 
     }
 
-    public class ImageService : IImageService
+    public class ImageProcessor : IImageProcessor
     {
-        //private readonly IAppSettings _appSettings;
-        //private readonly IFileService _fileService;
-
         private Dictionary<string, SKEncodedImageFormat> _imageExtensions = new Dictionary<string, SKEncodedImageFormat>();
 
 
 
-        public ImageService()//IAppSettings appSettings, IFileService fileService)
+        public ImageProcessor()
         {
-            //_appSettings = appSettings;
-            //_fileService = fileService;
-
             _imageExtensions.Add(".bmp", SKEncodedImageFormat.Bmp);
             _imageExtensions.Add(".dng", SKEncodedImageFormat.Dng);
             _imageExtensions.Add(".gif", SKEncodedImageFormat.Gif);
