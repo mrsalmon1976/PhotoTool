@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PhotoTool\PhotoTool.csproj" />
+    <ProjectReference Include="..\PhotoTool.Old\PhotoTool.Old.csproj" />
   </ItemGroup>
 
 </Project>
