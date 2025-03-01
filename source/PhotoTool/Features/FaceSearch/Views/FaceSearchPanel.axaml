@@ -51,24 +51,28 @@
             </ItemsRepeater>
           </StackPanel>
         </Grid>
-      </Expander>      
-      <WrapPanel x:Name="FaceWrapPanel">
+      </Expander>
+      <StackPanel>
+        <DockPanel Margin="10">
+          <TextBlock DockPanel.Dock="Left" Text="Select a folder and a face to begin searching." />
+          <ProgressBar DockPanel.Dock="Right" HorizontalAlignment="Right" Width="50" Height="5" />
+        </DockPanel>
         <ItemsControl ItemsSource="{Binding SavedFaces}">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding Name}"/>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
-      </WrapPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
     </StackPanel>
     
     <GridSplitter Grid.Column="1" Background="Purple" ResizeDirection="Columns"/>
 
     <!-- Right column (buttons) -->
     <DockPanel Grid.Column="2">
-      <Button x:Name="AddFaceButton" DockPanel.Dock="Top"  Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
-      <Button x:Name="SearchButton" DockPanel.Dock="Bottom" Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
+      <Button x:Name="AddFaceButton" IsEnabled="{ Binding IsAddFaceButtonEnabled }" DockPanel.Dock="Top"  Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
+      <Button x:Name="SearchButton" IsEnabled="{ Binding IsSearchButtonEnabled }" DockPanel.Dock="Bottom" Command="{Binding SearchButtonClickCommand}" Margin="5,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
     </DockPanel>
       
   </Grid>

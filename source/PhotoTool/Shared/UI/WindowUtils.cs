@@ -25,17 +25,17 @@ namespace PhotoTool.Shared.UI
             return appLifetime!.MainWindow!;
         }
 
-        public static async Task ShowErrorDialog(string title, string message, Window? parentWindow)
+        public static async Task ShowErrorDialog(string title, string message, Window? parentWindow = null)
         {
             await ShowSimpleDialog(title, message, Icon.Error, parentWindow);
         }
 
-        public static async Task ShowInfoDialog(string title, string message, Window? parentWindow)
+        public static async Task ShowInfoDialog(string title, string message, Window? parentWindow = null)
         {
             await ShowSimpleDialog(title, message, Icon.Info, parentWindow);
         }
 
-        public static async Task ShowSimpleDialog(string title, string message, Icon icon, Window? parentWindow)
+        public static async Task ShowSimpleDialog(string title, string message, Icon icon, Window? parentWindow = null)
         {
             if (parentWindow == null)
             {
