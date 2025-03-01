@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:PhotoTool.ViewModels"
+		xmlns:i="using:Avalonia.Xaml.Interactivity"
+        xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="PhotoTool.Views.FaceSearch.FaceAddDialog"
+        x:DataType="vm:FaceAddDialogViewModel"
+        Icon="/Assets/phototool-logo.ico"
+        Title="Add a Face"
+        Width="800"
+        MinWidth="640"
+        Height="600"
+        MinHeight="480"
+        >
+
+  <Design.DataContext>
+    <vm:FaceAddDialogViewModelDesign />
+  </Design.DataContext>
+
+  <Grid ColumnDefinitions="*, 4, 250">
+    <!-- Left column (main area) -->
+    <Panel Grid.Column="0">
+      <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="LightGray"></Rectangle>
+      <TextBlock Margin="10" Text="Select the clearest image you can find of the person you want to search for - this will produce better results when comparing against other images." HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14" Foreground="Black" TextWrapping="Wrap" TextAlignment="Center" IsVisible="{Binding !IsImageSelected }" />
+      <Image Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="Uniform" Source="{Binding SelectedImage}" />      
+    </Panel>
+
+    <GridSplitter Grid.Column="1" Background="Purple" ResizeDirection="Columns"/>
+
+    <!-- Right column (buttons) -->
+    <DockPanel Grid.Column="2">
+      <StackPanel DockPanel.Dock="Top">
+        <Button x:Name="SelectFileButton" Command="{Binding SelectFileButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Select File</Button>
+        <ItemsRepeater ItemsSource="{Binding DetectedFaces}" >
+          <ItemsRepeater.ItemTemplate>
+            <DataTemplate>
+              <Border Margin="5,5,5,0" 
+                  CornerRadius="5"
+                  BorderBrush="#e0e0e0" BorderThickness="2"
+                  Padding="5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                  <Image Source="{Binding Image}" Height="40" HorizontalAlignment="Left" />
+                  <TextBox DataContext="{Binding .}" BorderBrush="{Binding ColorBrush }" BorderThickness="2" Text="{Binding Name}" MinWidth="150" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,5,0" />
+				        </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>        
+      </StackPanel>
+      
+      <Button x:Name="SaveFacesButton" IsEnabled="{ Binding IsSaveButtonEnabled }" DockPanel.Dock="Bottom" Command="{Binding SaveFacesButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Save Faces</Button>
+    </DockPanel>
+
+  </Grid>
+</Window>

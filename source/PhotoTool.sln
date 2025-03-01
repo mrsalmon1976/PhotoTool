@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoTool.Old.Test", "Photo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoToolAI", "PhotoToolAI\PhotoToolAI.csproj", "{347DF533-7B66-4FC7-B177-D482EF6848FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoToolAvalonia", "PhotoToolAvalonia\PhotoToolAvalonia.csproj", "{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoTool", "PhotoTool\PhotoTool.csproj", "{F5E2E41C-8900-4AF8-AF6E-B17D7F2758F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
