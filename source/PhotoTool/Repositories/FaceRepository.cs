@@ -1,6 +1,6 @@
-﻿using PhotoTool.Configuration;
-using PhotoTool.Models.FaceSearch;
+﻿using PhotoTool.Models.FaceSearch;
 using PhotoTool.Services;
+using PhotoTool.Shared.Configuration;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

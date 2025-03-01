@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
-using PhotoTool.Logging;
+using PhotoTool.Shared.Logging;
 using System;
 
 namespace PhotoTool;

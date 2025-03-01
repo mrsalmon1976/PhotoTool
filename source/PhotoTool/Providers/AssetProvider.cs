@@ -1,6 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using PhotoTool.Constants;
+using PhotoTool.Shared.Constants;
 
 namespace PhotoTool.Providers
 {

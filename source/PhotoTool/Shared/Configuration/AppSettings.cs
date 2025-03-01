@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace PhotoTool.Configuration
+namespace PhotoTool.Shared.Configuration
 {
 	public interface IAppSettings
 	{

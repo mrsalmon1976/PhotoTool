@@ -1,6 +1,4 @@
-﻿using PhotoTool.Configuration;
-
-namespace PhotoTool.ViewModels
+﻿namespace PhotoTool.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {

@@ -1,9 +1,9 @@
 ﻿using Avalonia.Platform;
 using Microsoft.Extensions.DependencyInjection;
-using PhotoTool.Configuration;
 using PhotoTool.Providers;
 using PhotoTool.Repositories;
 using PhotoTool.Services;
+using PhotoTool.Shared.Configuration;
 using PhotoTool.ViewModels;
 using ReactiveUI;
 

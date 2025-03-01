@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tmds.DBus.Protocol;
 
-namespace PhotoTool.Logging
+namespace PhotoTool.Shared.Logging
 {
     public interface IPerformanceLogger
     {

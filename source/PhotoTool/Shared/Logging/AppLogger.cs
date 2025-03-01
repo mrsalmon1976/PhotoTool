@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhotoTool.Logging
+namespace PhotoTool.Shared.Logging
 {
     public interface IAppLogger
     {

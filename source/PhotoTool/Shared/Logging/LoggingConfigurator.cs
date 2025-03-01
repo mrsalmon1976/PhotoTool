@@ -3,7 +3,7 @@ using NLog.Targets;
 using System;
 using System.IO;
 
-namespace PhotoTool.Logging
+namespace PhotoTool.Shared.Logging
 {
     public class LoggingConfigurator
     {
@@ -25,22 +25,22 @@ namespace PhotoTool.Logging
 
             // set up performance logging
             var perfLog = CreateFileTarget("file-perflog", perfLogPath, "${date:format=yyyy-MM-dd}|${date:format=HH\\:mm\\:ss.fff}|${event-properties:item=LogSource}|${event-properties:item=ProfileName}|${message}");
-            configuration.AddRule(LogLevel.Info, NLog.LogLevel.Fatal, perfLog, "Performance", true);
+            configuration.AddRule(LogLevel.Info, LogLevel.Fatal, perfLog, "Performance", true);
 
             // set up application logging
             var appLog = CreateFileTarget("file-applog", appLogPath, "${longdate}|${logger}|${uppercase:${level}}|${replace-newlines:${message}}|${exception:format=Message:replaceNewLines=true}");
-            configuration.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, appLog, "*", false);
+            configuration.AddRule(LogLevel.Info, LogLevel.Fatal, appLog, "*", false);
 
             // error logs to separate file with stacktrace
             var errorLog = CreateFileTarget("file-errorlog", errorLogPath, "${longdate}|${logger}|${uppercase:${level}}|${message}|${exception:format=ToString}");
-            configuration.AddRule(LogLevel.Error, NLog.LogLevel.Fatal, errorLog, "*", false);
+            configuration.AddRule(LogLevel.Error, LogLevel.Fatal, errorLog, "*", false);
 
             LogManager.Setup().LoadConfiguration(configuration);
         }
 
         private static FileTarget CreateFileTarget(string targetName, string logFilePath, string layout)
         {
-            return new NLog.Targets.FileTarget(targetName)
+            return new FileTarget(targetName)
             {
                 FileName = logFilePath,
                 Layout = layout

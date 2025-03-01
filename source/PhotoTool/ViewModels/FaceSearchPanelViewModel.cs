@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using DynamicData;
-using PhotoTool.Configuration;
+using PhotoTool.Shared.Configuration;
 using PhotoTool.Providers;
 using PhotoTool.Repositories;
 using PhotoTool.Services;

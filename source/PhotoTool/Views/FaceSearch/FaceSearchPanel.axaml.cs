@@ -1,11 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using PhotoTool.Configuration;
 using PhotoTool.ViewModels;
-using ReactiveUI;
-using System.Reactive;
-using System.Windows.Input;
 
 namespace PhotoTool.Views.FaceSearch;
 

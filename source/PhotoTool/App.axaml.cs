@@ -8,7 +8,7 @@ using PhotoTool.Views;
 using Microsoft.Extensions.DependencyInjection;
 using PhotoTool.BootStrapping;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using PhotoTool.Logging;
+using PhotoTool.Shared.Logging;
 
 namespace PhotoTool;
 

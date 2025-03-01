@@ -5,22 +5,22 @@ using Avalonia.Platform.Storage;
 using PhotoTool.Utilities;
 using Avalonia.Media.Imaging;
 using PhotoTool.Providers;
-using PhotoTool.Constants;
 using System;
 using MsBox.Avalonia;
 using PhotoTool.Views.FaceSearch;
 using PhotoTool.Services;
 using System.IO;
-using PhotoTool.Logging;
 using System.Collections.ObjectModel;
 using PhotoTool.Models.FaceSearch;
 using Avalonia.Media;
 using PhotoTool.Repositories;
-using PhotoTool.Configuration;
+using PhotoTool.Shared.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Input;
 using Tmds.DBus.Protocol;
+using PhotoTool.Shared.Constants;
+using PhotoTool.Shared.Logging;
 
 namespace PhotoTool.ViewModels
 {
