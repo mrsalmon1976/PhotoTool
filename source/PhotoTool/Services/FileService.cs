@@ -58,13 +58,12 @@ namespace PhotoTool.Services
         public string GetRandomFileName(string extension)
 		{
             string fileName = Path.GetRandomFileName();
-            return fileName.Replace(Path.GetExtension(fileName), ".json");
+            return fileName.Replace(Path.GetExtension(fileName), extension);
         }
 
         public async Task<string> ReadAllTextAsync(string filePath)
         {
-            //return await File.ReadAllTextAsync(filePath);
-            return await Task.Run(() => File.ReadAllText(filePath));
+            return await File.ReadAllTextAsync(filePath);
         }
 
         public async Task WriteAllTextAsync(string filePath, string text)

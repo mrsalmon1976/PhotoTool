@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace PhotoTool.Views;
+namespace PhotoTool;
 
 public partial class MainWindow : Window
 {
