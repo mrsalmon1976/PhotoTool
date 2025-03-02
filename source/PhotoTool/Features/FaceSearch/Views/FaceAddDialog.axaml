@@ -14,6 +14,7 @@
         MinWidth="640"
         Height="600"
         MinHeight="480"
+		Padding="5"
         >
 
   <Design.DataContext>
@@ -33,7 +34,7 @@
     <!-- Right column (buttons) -->
     <DockPanel Grid.Column="2">
       <StackPanel DockPanel.Dock="Top">
-        <Button x:Name="SelectFileButton" Command="{Binding SelectFileButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Select File</Button>
+        <Button x:Name="SelectFileButton" Command="{Binding SelectFileButtonClickCommand}" Margin="10,0,5,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Select File</Button>
         <ItemsRepeater ItemsSource="{Binding DetectedFaces}" >
           <ItemsRepeater.ItemTemplate>
             <DataTemplate>
@@ -51,7 +52,7 @@
         </ItemsRepeater>        
       </StackPanel>
       
-      <Button x:Name="SaveFacesButton" IsEnabled="{ Binding IsSaveButtonEnabled }" DockPanel.Dock="Bottom" Command="{Binding SaveFacesButtonClickCommand}" Margin="5,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Save Faces</Button>
+      <Button x:Name="SaveFacesButton" IsEnabled="{ Binding IsSaveButtonEnabled }" DockPanel.Dock="Bottom" Command="{Binding SaveFacesButtonClickCommand}" Margin="10,0,5,5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Save Faces</Button>
     </DockPanel>
 
   </Grid>

@@ -245,7 +245,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                     {
                         _cancellationTokenSource.Token.ThrowIfCancellationRequested();
                         
-                        this.UpdateProgress($"Analysing file {fileInfo.Name}...", progressValue++);
+                        this.UpdateProgress($"Analysing file {fileInfo.Name} ({(progressValue +1)} of {imageCount})...", progressValue++);
 
                         FaceSearchResult searchResult = _faceDetectionService.SearchForFace(faceEmbedding, fileInfo.FullName);
                         if (searchResult.FaceMatchProspect != FaceMatchProspect.None)
