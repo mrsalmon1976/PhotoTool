@@ -40,8 +40,13 @@ public partial class FaceSearchPanel: UserControl
             FaceAddViewModel? clickedFace = source.DataContext as FaceAddViewModel;
             if (clickedFace != null)
             {
+                // exit if the current selection has already been clicked
+                if (clickedFace.Image == clickedFace.ImageColor) return;
+
                 clickedFace.Image = clickedFace.ImageColor;
             }
+
+            // update the current selected item
             if (viewModel.SelectedFace != null)
             {
                 viewModel.SelectedFace.Image = viewModel.SelectedFace.ImageGrayscale;
