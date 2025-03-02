@@ -23,6 +23,9 @@ using PhotoTool.Shared.Comparers;
 using PhotoTool.Features.FaceSearch.Services;
 using PhotoTool.Features.FaceSearch.Models;
 using PhotoTool.Features.FaceSearch.Constants;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using Tmds.DBus.Protocol;
 
 namespace PhotoTool.Features.FaceSearch.ViewModels
 {
@@ -35,6 +38,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private readonly IImageProcessor _imageService;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IFaceDetectionService _faceDetectionService;
+        private bool _isDeleteButtonEnabled;
         private bool _isFaceListVisible;
         private bool _isSearchActive = false;
         private CancellationTokenSource? _cancellationTokenSource = null;
@@ -42,6 +46,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private string _searchPath = String.Empty;
         private uint _searchImageCount = 0;
         private uint _searchImageProgressValue = 0;
+        private FaceAddViewModel? _selectedFace;
 
         public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider
             , IFaceRepository faceRepo
@@ -56,6 +61,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             _faceDetectionService = faceDetectionService;
             AddFaceButtonClickCommand = ReactiveCommand.Create(OnAddFaceButtonClick);
             CancelButtonClickCommand = ReactiveCommand.Create(OnCancelButtonClick);
+            DeleteFaceButtonClickCommand = ReactiveCommand.Create(OnDeleteFaceButtonClick);
             SearchButtonClickCommand = ReactiveCommand.Create(OnSearchButtonClick);
             SelectFolderButtonClickCommand = ReactiveCommand.Create(OnSelectFolderButtonClickCommand);
         }
@@ -66,6 +72,12 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         {
             get => _infoText;
             private set => this.RaiseAndSetIfChanged(ref _infoText, value);
+        }
+
+        public bool IsDeleteButtonEnabled
+        {
+            get => _isDeleteButtonEnabled;
+            private set => this.RaiseAndSetIfChanged(ref _isDeleteButtonEnabled, value);
         }
 
         public bool IsFaceListVisible
@@ -98,7 +110,15 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _searchImageProgressValue, value);
         }
 
-        public FaceAddViewModel? SelectedFace { get; set; }
+        public FaceAddViewModel? SelectedFace
+        {
+            get => _selectedFace;
+            set 
+            {
+                _selectedFace = value;
+                ToggleButtonStatus();
+            }
+        }
 
 
         public ObservableCollection<FaceAddViewModel> SavedFaces { get; set; } = new ObservableCollection<FaceAddViewModel>();
@@ -112,6 +132,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         public ReactiveCommand<Unit, Unit> AddFaceButtonClickCommand { get; }
 
         public ReactiveCommand<Unit, Unit> CancelButtonClickCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> DeleteFaceButtonClickCommand { get; }
 
         public ReactiveCommand<Unit, Unit> SearchButtonClickCommand { get; }
 
@@ -129,6 +151,25 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private void OnCancelButtonClick()
         {
             _cancellationTokenSource?.Cancel();
+        }
+
+        private async void OnDeleteFaceButtonClick()
+        {
+            if (this.SelectedFace == null)
+            {
+                await WindowUtils.ShowErrorDialog("Error", "You have not selected a face image to delete.");
+                return;
+            }
+
+            var parentWindow = WindowUtils.GetMainWindow();
+            var box = MessageBoxManager.GetMessageBoxStandard("Confirm Delete", $"Are you sure you want to delete the face image for '{SelectedFace.Name}'?", ButtonEnum.YesNo, Icon.Question, WindowStartupLocation.CenterScreen);
+            ButtonResult result = await box.ShowWindowDialogAsync(parentWindow);
+            if (result == ButtonResult.Yes)
+            {
+                _fileSystemProvider.DeleteFile(this.SelectedFace.FilePath);
+                this.SelectedFace = null;
+                await LoadFaces();
+            }
         }
 
         private async void OnSelectFolderButtonClickCommand()
@@ -171,6 +212,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
                     SavedFaces.Add(new FaceAddViewModel()
                     {
+                        FilePath = f.FilePath,
                         ImageGrayscale = grayscaleImage,
                         ImageColor = image,
                         Image = grayscaleImage,
@@ -195,7 +237,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
             try
             {
-                ToggleSearchStatus(true);
+                this.IsSearchActive = true;
+                ToggleButtonStatus();
                 _cancellationTokenSource = new CancellationTokenSource();
                 this.InfoText = "Searching for images";
                 this.SearchResults.Clear();
@@ -278,9 +321,10 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             }
             finally
             {
-                ToggleSearchStatus(false);
+                this.IsSearchActive = false;
                 _cancellationTokenSource?.Dispose();
                 _cancellationTokenSource = null;
+                ToggleButtonStatus();
             }
         }
 
@@ -292,13 +336,13 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             });
         }
 
-
-        private void ToggleSearchStatus(bool isSearchActive)
+        private void ToggleButtonStatus()
         {
             Dispatcher.UIThread.Post(() => {
-                this.IsSearchActive = isSearchActive;
+                IsDeleteButtonEnabled = (!this.IsSearchActive && this.SelectedFace != null);
             });
         }
+
 
         private bool ValidateSearchInput()
         {

@@ -9,6 +9,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private Bitmap? _image = null;
 
+        public string FilePath { get; set; } = string.Empty;
+
         public string Name { get; set; } = string.Empty;
 
 

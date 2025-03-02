@@ -9,6 +9,8 @@ namespace PhotoTool.Shared.IO
 	{
 		void CopyFile(string sourceFileName, string destFileName);
 
+        void DeleteFile(string path);
+
         bool DirectoryExists(string path);
 
 		IEnumerable<string> EnumerateFiles(string path, string searchPattern);
@@ -34,6 +36,11 @@ namespace PhotoTool.Shared.IO
 		{
 			File.Copy(sourceFileName, destFileName);
 		}
+
+        public void DeleteFile(string path)
+        {
+            File.Delete(path);
+        }
 
         public bool DirectoryExists(string path)
         {

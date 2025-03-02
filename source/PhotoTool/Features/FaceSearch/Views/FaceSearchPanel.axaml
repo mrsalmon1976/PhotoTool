@@ -88,8 +88,9 @@
 
     <!-- Right column (buttons) -->
     <DockPanel Grid.Column="2">
-      <Button x:Name="AddFaceButton" IsEnabled="{ Binding !IsSearchActive }" DockPanel.Dock="Top" Command="{Binding AddFaceButtonClickCommand}" Margin="10,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
-      <Button x:Name="SearchButton" IsEnabled="{ Binding !IsSearchActive }" DockPanel.Dock="Bottom" Command="{Binding SearchButtonClickCommand}" Margin="10,0,0,5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
+        <Button x:Name="AddFaceButton" IsEnabled="{ Binding !IsSearchActive }" DockPanel.Dock="Top" Command="{Binding AddFaceButtonClickCommand}" Margin="10,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
+	    <Button x:Name="DeleteFaceButton" IsEnabled="{ Binding IsDeleteButtonEnabled }" DockPanel.Dock="Top" Command="{Binding DeleteFaceButtonClickCommand}" Margin="10,5,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Delete Face</Button>
+	    <Button x:Name="SearchButton" IsEnabled="{ Binding !IsSearchActive }" DockPanel.Dock="Bottom" Command="{Binding SearchButtonClickCommand}" Margin="10,0,0,5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
     </DockPanel>
       
   </Grid>

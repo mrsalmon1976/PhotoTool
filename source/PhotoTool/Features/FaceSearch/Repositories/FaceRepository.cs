@@ -36,7 +36,8 @@ namespace PhotoTool.Features.FaceSearch.Repositories
             foreach (string filePath in faceFiles)
             {
                 string json = await _fileService.ReadAllTextAsync(filePath);
-                FaceModel? faceModel = JsonSerializer.Deserialize<FaceModel>(json);
+                FaceModel faceModel = JsonSerializer.Deserialize<FaceModel>(json)!;
+                faceModel.FilePath = filePath;
                 if (faceModel != null)
                 {
                     faceModels.Add(faceModel);

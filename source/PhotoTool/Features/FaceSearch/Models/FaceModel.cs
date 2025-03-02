@@ -14,6 +14,8 @@ namespace PhotoTool.Features.FaceSearch.Models
             ImageData = string.Empty;
         }
 
+        public string FilePath { get; set; } = String.Empty;
+
         public string Name { get; set; }
 
         public string ImageData { get; set; }
