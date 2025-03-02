@@ -13,20 +13,20 @@
 
   <Grid ColumnDefinitions="*, 4, 200">
     <!-- Left column (main area) -->
-    <StackPanel Grid.Column="0">
-      <Expander MinWidth="400" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,0,10,0" IsExpanded="True">
-        <Expander.Header>
-          <TextBlock Text="Search Options" FontWeight="DemiBold" />
-        </Expander.Header>
-        <Grid RowDefinitions="*,10,*" ColumnDefinitions="90,*">
-          <TextBlock Grid.Row="0" Grid.Column="0">Folder</TextBlock>
+    <Grid RowDefinitions="Auto,*" Grid.Column="0" VerticalAlignment="Stretch">
+        <Expander Grid.Row="0" MinWidth="400" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,0,10,0" IsExpanded="True">
+            <Expander.Header>
+            <TextBlock Text="Search Options" FontWeight="DemiBold" />
+            </Expander.Header>
+            <Grid RowDefinitions="*,10,*" ColumnDefinitions="90,*">
+          <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Folder</TextBlock>
           <WrapPanel Grid.Row="0" Grid.Column="1">
-            <TextBox Watermark="Select a folder" Width="300" />
-            <Button Margin="5,0,0,0" IsEnabled="True">..</Button>
+            <TextBox IsEnabled="{Binding !IsSearchActive}" Text="{Binding SearchPath }" Watermark="Select a folder" Width="300" />
+            <Button IsEnabled="{Binding !IsSearchActive}" Margin="5,0,0,0" Command="{Binding SelectFolderButtonClickCommand}">...</Button>
           </WrapPanel>
           <Line Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"></Line>
-          <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Top">Face</TextBlock>
-          <StackPanel Grid.Row="2" Grid.Column="1">
+          <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Margin="0,5,0,0">Face</TextBlock>
+          <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,5,0,0">
             <TextBlock IsVisible="{Binding !IsFaceListVisible }" Text="No saved faces found - add faces on the right to begin searching." HorizontalAlignment="Left" />
             
             <ItemsRepeater IsVisible="{Binding IsFaceListVisible }" ItemsSource="{Binding SavedFaces}" >
@@ -41,8 +41,13 @@
                       BorderThickness="1"
                       HorizontalAlignment="Left"
                       Padding="5">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                      <Image Source="{Binding ImageGrayscale}" Height="70" HorizontalAlignment="Left" />
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left" PointerReleased="StackPanel_PointerReleased">
+						<StackPanel.Styles>
+							<Style Selector="StackPanel:pointerover">
+                                <Setter Property="Cursor" Value="Hand" />
+							</Style>
+						</StackPanel.Styles>
+						<Image Source="{Binding Image}" Height="70" HorizontalAlignment="Left" />
                       <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontSize="12" MaxWidth="50" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                     </StackPanel>
                   </Border>
@@ -51,28 +56,46 @@
             </ItemsRepeater>
           </StackPanel>
         </Grid>
-      </Expander>
-      <StackPanel>
-        <DockPanel Margin="10">
-          <TextBlock DockPanel.Dock="Left" Text="Select a folder and a face to begin searching." />
-          <ProgressBar DockPanel.Dock="Right" HorizontalAlignment="Right" Width="50" Height="5" />
-        </DockPanel>
-        <ItemsControl ItemsSource="{Binding SavedFaces}">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Name}"/>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </StackPanel>
-    </StackPanel>
+        </Expander>
+		<Border Grid.Row="1" Margin="0,5,10,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+	        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid RowDefinitions="Auto,*">
+                    <DockPanel Grid.Row="0" Margin="10">
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding InfoText}" VerticalAlignment="Center" />
+		                <Button IsVisible="{Binding IsSearchActive }" DockPanel.Dock="Right" Command="{Binding CancelButtonClickCommand }">Cancel</Button>
+			            <ProgressBar IsVisible="{Binding IsSearchActive }" DockPanel.Dock="Right" ShowProgressText="False" HorizontalAlignment="Right" Width="50" Height="5" Margin="0,0,5,0" Maximum="{Binding SearchImageCount }" Value="{Binding SearchImageProgressValue}" />
+                    </DockPanel>
+		            <ItemsRepeater Grid.Row="1" ItemsSource="{Binding SearchResults}" >
+			            <ItemsRepeater.Layout>
+				            <WrapLayout HorizontalSpacing="1" Orientation="Horizontal" />
+			            </ItemsRepeater.Layout>
+			            <ItemsRepeater.ItemTemplate>
+				            <DataTemplate>
+					            <Border Margin="5,5,5,0"
+						            CornerRadius="5"
+						            BorderBrush="#e0e0e0"
+						            BorderThickness="1"
+						            HorizontalAlignment="Left"
+						            Padding="5">
+						            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" PointerReleased="StackPanel_PointerReleased">
+							            <Image Source="{Binding Image}" Height="150" HorizontalAlignment="Center" />
+							            <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontSize="12" MaxWidth="200" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+						            </StackPanel>
+					            </Border>
+				            </DataTemplate>
+			            </ItemsRepeater.ItemTemplate>
+		            </ItemsRepeater>
+	            </Grid>
+	        </ScrollViewer>
+		</Border>
+    </Grid>
     
     <GridSplitter Grid.Column="1" Background="Purple" ResizeDirection="Columns"/>
 
     <!-- Right column (buttons) -->
     <DockPanel Grid.Column="2">
-      <Button x:Name="AddFaceButton" IsEnabled="{ Binding IsAddFaceButtonEnabled }" DockPanel.Dock="Top"  Command="{Binding AddFaceButtonClickCommand}" Margin="5,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
-      <Button x:Name="SearchButton" IsEnabled="{ Binding IsSearchButtonEnabled }" DockPanel.Dock="Bottom" Command="{Binding SearchButtonClickCommand}" Margin="5,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
+      <Button x:Name="AddFaceButton" IsEnabled="{ Binding !IsSearchActive }" DockPanel.Dock="Top" Command="{Binding AddFaceButtonClickCommand}" Margin="10,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
+      <Button x:Name="SearchButton" IsEnabled="{ Binding !IsSearchActive }" DockPanel.Dock="Bottom" Command="{Binding SearchButtonClickCommand}" Margin="10,0,0,5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
     </DockPanel>
       
   </Grid>

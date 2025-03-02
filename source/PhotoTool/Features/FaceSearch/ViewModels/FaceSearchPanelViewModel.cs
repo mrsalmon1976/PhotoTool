@@ -17,6 +17,12 @@ using System.Threading;
 using System;
 using PhotoTool.Shared.Logging;
 using Avalonia.Threading;
+using Avalonia.Platform.Storage;
+using System.Collections.Generic;
+using PhotoTool.Shared.Comparers;
+using PhotoTool.Features.FaceSearch.Services;
+using PhotoTool.Features.FaceSearch.Models;
+using PhotoTool.Features.FaceSearch.Constants;
 
 namespace PhotoTool.Features.FaceSearch.ViewModels
 {
@@ -27,42 +33,77 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private readonly IViewModelProvider _viewModelProvider;
         private readonly IFaceRepository _faceRepo;
         private readonly IImageProcessor _imageService;
-        private bool _IsFaceListVisible;
-        private bool _isAddFaceButtonEnabled = true;
-        private bool _isSearchButtonEnabled = true;
+        private readonly IFileSystemProvider _fileSystemProvider;
+        private readonly IFaceDetectionService _faceDetectionService;
+        private bool _isFaceListVisible;
+        private bool _isSearchActive = false;
         private CancellationTokenSource? _cancellationTokenSource = null;
+        private string _infoText = "Select a folder and a face to begin searching.";
+        private string _searchPath = String.Empty;
+        private uint _searchImageCount = 0;
+        private uint _searchImageProgressValue = 0;
 
-        public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider, IFaceRepository faceRepo, IImageProcessor imageService)
+        public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider
+            , IFaceRepository faceRepo
+            , IImageProcessor imageService
+            , IFileSystemProvider fileSystemProvider
+            , IFaceDetectionService faceDetectionService)
         {
             _viewModelProvider = viewModelProvider;
             _faceRepo = faceRepo;
             _imageService = imageService;
+            _fileSystemProvider = fileSystemProvider;
+            _faceDetectionService = faceDetectionService;
             AddFaceButtonClickCommand = ReactiveCommand.Create(OnAddFaceButtonClick);
+            CancelButtonClickCommand = ReactiveCommand.Create(OnCancelButtonClick);
             SearchButtonClickCommand = ReactiveCommand.Create(OnSearchButtonClick);
+            SelectFolderButtonClickCommand = ReactiveCommand.Create(OnSelectFolderButtonClickCommand);
         }
 
         #region Control Properties
 
+        public string InfoText
+        {
+            get => _infoText;
+            private set => this.RaiseAndSetIfChanged(ref _infoText, value);
+        }
+
         public bool IsFaceListVisible
         {
-            get => _IsFaceListVisible;
-            private set => this.RaiseAndSetIfChanged(ref _IsFaceListVisible, value);
+            get => _isFaceListVisible;
+            private set => this.RaiseAndSetIfChanged(ref _isFaceListVisible, value);
         }
 
-        public bool IsAddFaceButtonEnabled
+        public bool IsSearchActive
         {
-            get => _isAddFaceButtonEnabled;
-            private set => this.RaiseAndSetIfChanged(ref _isAddFaceButtonEnabled, value);
+            get => _isSearchActive;
+            private set => this.RaiseAndSetIfChanged(ref _isSearchActive, value);
         }
 
-        public bool IsSearchButtonEnabled
+        public string SearchPath
         {
-            get => _isSearchButtonEnabled;
-            private set => this.RaiseAndSetIfChanged(ref _isSearchButtonEnabled, value);
+            get => _searchPath;
+            set => this.RaiseAndSetIfChanged(ref _searchPath, value);
         }
+
+        public uint SearchImageCount
+        {
+            get => _searchImageCount;
+            private set => this.RaiseAndSetIfChanged(ref _searchImageCount, value);
+        }
+
+        public uint SearchImageProgressValue
+        {
+            get => _searchImageProgressValue;
+            private set => this.RaiseAndSetIfChanged(ref _searchImageProgressValue, value);
+        }
+
+        public FaceAddViewModel? SelectedFace { get; set; }
 
 
         public ObservableCollection<FaceAddViewModel> SavedFaces { get; set; } = new ObservableCollection<FaceAddViewModel>();
+
+        public ObservableCollection<FaceSearchViewModel> SearchResults { get; set; } = new ObservableCollection<FaceSearchViewModel>();
 
         #endregion
 
@@ -70,7 +111,11 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         public ReactiveCommand<Unit, Unit> AddFaceButtonClickCommand { get; }
 
+        public ReactiveCommand<Unit, Unit> CancelButtonClickCommand { get; }
+
         public ReactiveCommand<Unit, Unit> SearchButtonClickCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> SelectFolderButtonClickCommand { get; }
 
         private async void OnAddFaceButtonClick()
         {
@@ -81,13 +126,31 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             await LoadFaces();
         }
 
+        private void OnCancelButtonClick()
+        {
+            _cancellationTokenSource?.Cancel();
+        }
+
+        private async void OnSelectFolderButtonClickCommand()
+        {
+            var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
+
+            // Start async operation to open the dialog.
+            var folder = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Select Search Folder",
+                AllowMultiple = false
+            });
+            if (folder.Count > 0)
+            {
+                string? path = folder.First().TryGetLocalPath();
+                this.SearchPath = path ?? this.SearchPath;
+            }
+        }
+
         private async void OnSearchButtonClick()
         {
-            string? result = await SearchFaces();
-            if (!String.IsNullOrEmpty(result))
-            {
-                await WindowUtils.ShowErrorDialog("Search Error", $"An unexpected error occurred: {result}");
-            }
+            await SearchFaces();
         }
 
         #endregion
@@ -109,7 +172,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                     SavedFaces.Add(new FaceAddViewModel()
                     {
                         ImageGrayscale = grayscaleImage,
-                        Image = image,
+                        ImageColor = image,
+                        Image = grayscaleImage,
                         Name = f.Name
                     });
                 }
@@ -117,153 +181,134 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             IsFaceListVisible = faces.Any();
         }
 
-        private async Task<string?> SearchFaces()
+        private async Task SearchFaces()
         {
-            ToggleBusyStatus(true);
+            uint totalFileCount = 0;
+            uint imageCount = 0;
+            uint faceMatchCount = 0;
 
-            //uint totalFileCount = 0;
-            //uint imageCount = 0;
-            //uint faceMatchCount = 0;
-            //string path = SelectedPathLabel.Text;
-            //var faceModel = _selectedFaceControl.FaceModel;
+            if (!ValidateSearchInput())
+            {
+                await WindowUtils.ShowErrorDialog("Validation Error", "Please select a folder and face to search.");
+                return;
+            }
 
             try
             {
+                ToggleSearchStatus(true);
                 _cancellationTokenSource = new CancellationTokenSource();
+                this.InfoText = "Searching for images";
+                this.SearchResults.Clear();
+                this.SearchImageProgressValue = 0;
+                this.SearchImageCount = 1;          // set to 1 so progress bar looks incomplete
 
-                //    await MainThread.InvokeOnMainThreadAsync(async () =>
-                //    {
-                //        ProgressPanel.IsVisible = true;
-                //        ProgressLabel.TextColor = _resourceProvider.PrimaryDarkTextColor;
-                //        ProgressLabel.Text = "Searching for images...";
-                //        FaceSearchResults.Clear();
-                //        CancelSearchButton.IsVisible = true;
-                //        SearchButton.IsEnabled = false;
+                await Task.Run(() =>
+                {
 
-                //    });
+                    // enumerate files
+                    IEnumerable<string> files = _fileSystemProvider.EnumerateFiles(SearchPath, "*.*", SearchOption.AllDirectories);
+                    List<FileInfo> imageFiles = new List<FileInfo>();
 
-                //    // set up progress feedback listener
-                //    IProgress<string> progress = new Progress<string>(infoText =>
-                //    {
-                //        MainThread.InvokeOnMainThreadAsync(() =>
-                //        {
-                //            ProgressLabel.Text = infoText;
-                //        });
-                //    });
+                    // enumerate the files in the selected folder
+                    IPerformanceLogger perfLogger = PerformanceLogger.CreateAndStart<FaceSearchPanelViewModel>("FolderImageSearch");
+                    foreach (var file in files)
+                    {
+                        _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                //    // Perform background work
-                //    await Task.Run(async () =>
-                //    {
-                //        Stopwatch stopwatchLoad = Stopwatch.StartNew();
-                //        IEnumerable<string> files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories);
-                //        List<FileInfo> imageFiles = new List<FileInfo>();
-                //        double progressPercentage = 0D;
+                        FileInfo fileInfo = new FileInfo(file);
 
-                //        foreach (var file in files)
-                //        {
-                //            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                        if (_imageService.IsImageExtension(fileInfo.Extension))
+                        {
+                            imageFiles.Add(fileInfo);
+                            imageCount++;
+                        }
 
-                //            FileInfo fileInfo = new FileInfo(file);
+                        totalFileCount++;
+                        UpdateProgress($"Searching for images...{imageCount} images found of {totalFileCount} files.", 0);
+                    }
+                    perfLogger.Stop($"Processed {totalFileCount} files in '{SearchPath}'; {imageCount} images found");
+                    this.SearchImageCount = imageCount;
 
-                //            if (_imageService.IsImageExtension(fileInfo.Extension))
-                //            {
-                //                imageFiles.Add(fileInfo);
-                //                imageCount++;
-                //            }
+                    // sort the objects
+                    perfLogger = PerformanceLogger.CreateAndStart<FaceSearchPanelViewModel>("FolderImageSort");
+                    UpdateProgress($"Sorting {imageCount} images by date...", 0);
+                    imageFiles.Sort(new FileInfoCreateDateComparer());
+                    perfLogger.Stop($"Sorted {imageCount} images by CreateDate.");
 
-                //            totalFileCount++;
-                //            progress.Report($"Searching for images...{imageCount} images found of {totalFileCount} files.");
-                //        }
-                //        stopwatchLoad.Stop();
-                //        _logger.LogInformation($"Processed {totalFileCount} in {stopwatchLoad.ElapsedMilliseconds}ms");
+                    // get the face embedding
+                    var faceEmbedding = _faceDetectionService.GetFaceEmbedding(SelectedFace!.ImageColor!);
 
-                //        // sort the objects
-                //        Stopwatch stopwatchSort = Stopwatch.StartNew();
-                //        progress.Report($"Sorting images by date...");
-                //        imageFiles.Sort(new FileInfoCreateDateComparer());
-                //        stopwatchSort.Stop();
-                //        _logger.LogInformation($"Sorted {imageCount} images by CreateDate in {stopwatchSort.ElapsedMilliseconds}ms");
+                    // now we start trying to search through the images
+                    perfLogger = PerformanceLogger.CreateAndStart<FaceSearchPanelViewModel>("ImageFaceSearch");
+                    uint progressValue = 0;
+                    foreach (FileInfo fileInfo in imageFiles)
+                    {
+                        _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                        
+                        this.UpdateProgress($"Analysing file {fileInfo.Name}...", progressValue++);
 
-                //        // get the face embedding
-                //        var faceEmbedding = _faceDetectionService.GetFaceEmbedding(faceModel);
-
-                //        // now we start trying to search through the images
-                //        Stopwatch stopwatchSearch = Stopwatch.StartNew();
-                //        int i = 0;
-                //        foreach (FileInfo fileInfo in imageFiles)
-                //        {
-                //            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                //            progress.Report($"Analysing file {fileInfo.FullName}.");
-
-                //            i++;
-                //            progressPercentage = (double)i / imageCount;
-                //            await ProgressBar.ProgressTo(progressPercentage, imageCount, Easing.Linear);
-
-                //            FaceSearchResult searchResult = _faceDetectionService.SearchForFace(faceEmbedding, fileInfo.FullName);
-                //            if (searchResult.FaceMatchProspect != FaceMatchProspect.None)
-                //            {
-                //                await MainThread.InvokeOnMainThreadAsync(() =>
-                //                {
-                //                    FaceSearchResults.Add(new FaceSearchResultItem()
-                //                    {
-                //                        Name = fileInfo.Name,
-                //                        Path = fileInfo.FullName,
-                //                        Source = ImageSource.FromFile(fileInfo.FullName),
-                //                        MatchInfo = $"{searchResult.FaceMatchProspect.ToString()} match",
-                //                        MatchColor = (searchResult.FaceMatchProspect == FaceMatchProspect.Probable) ? Colors.Green : Colors.Orange
-                //                    });
-                //                    faceMatchCount++;
-
-                //                });
-                //            }
-                //            await MainThread.InvokeOnMainThreadAsync(() =>
-                //            {
-                //                ResultsLabel.Text = $"{totalFileCount} files, {imageCount} images, {faceMatchCount} facial matches.";
-                //            });
-                //        }
-                //        stopwatchSearch.Stop();
-                //        _logger.LogInformation($"Searched {imageCount} image files for face matches in {stopwatchSearch.ElapsedMilliseconds}ms");
-
-
-                //    }, _cancellationTokenSource.Token);
-
-                //    // Update UI when complete
-                //    await MainThread.InvokeOnMainThreadAsync(() =>
-                //    {
-                //        ResultsLabel.Text = $"{totalFileCount} files, {imageCount} images, {faceMatchCount} facial matches.";
-                //    });
-
-                //}
-                //catch (OperationCanceledException)
-                //{
-                //    await MainThread.InvokeOnMainThreadAsync(() =>
-                //    {
-                //        ProgressLabel.Text = "Image search cancelled.";
-                //        ProgressLabel.TextColor = _resourceProvider.ErrorTextColor;
-                //    });
+                        FaceSearchResult searchResult = _faceDetectionService.SearchForFace(faceEmbedding, fileInfo.FullName);
+                        if (searchResult.FaceMatchProspect != FaceMatchProspect.None)
+                        {
+                            SearchResults.Add(new FaceSearchViewModel()
+                            {
+                                Name = fileInfo.Name,
+                                Path = fileInfo.FullName,
+                                Image = new Bitmap(fileInfo.FullName)
+                                //MatchInfo = $"{searchResult.FaceMatchProspect.ToString()} match",
+                                //MatchColor = (searchResult.FaceMatchProspect == FaceMatchProspect.Probable) ? Colors.Green : Colors.Orange
+                            });
+                            faceMatchCount++;
+                        }
+                    }
+                    UpdateProgress($"Search complete: {totalFileCount} files, {imageCount} images, {faceMatchCount} facial matches.", 0);
+                    perfLogger.Stop($"{imageFiles.Count} images searched for face '{SelectedFace.Name}'");
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.Info("Search opertion cancelled");
+                UpdateProgress($"Search cancelled with {faceMatchCount} facial matches from {imageCount} images.", 0);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                return ex.Message;
+                UpdateProgress($"Error: {ex.Message}.", 0);
+                await WindowUtils.ShowErrorDialog("Search Error", $"An unexpected error occurred: {ex.Message}");
             }
             finally
             {
-                ToggleBusyStatus(false);
+                ToggleSearchStatus(false);
                 _cancellationTokenSource?.Dispose();
                 _cancellationTokenSource = null;
             }
-
-            return null;
         }
 
-        private void ToggleBusyStatus(bool isBusy)
+        private void UpdateProgress(string infoText, uint progress)
         {
             Dispatcher.UIThread.Post(() => {
-                this.IsAddFaceButtonEnabled = !isBusy;
-                this.IsSearchButtonEnabled = !isBusy;
+                this.InfoText = infoText;
+                this.SearchImageProgressValue = progress;
             });
+        }
+
+
+        private void ToggleSearchStatus(bool isSearchActive)
+        {
+            Dispatcher.UIThread.Post(() => {
+                this.IsSearchActive = isSearchActive;
+            });
+        }
+
+        private bool ValidateSearchInput()
+        {
+            if (String.IsNullOrWhiteSpace(this.SearchPath)
+                || !_fileSystemProvider.DirectoryExists(this.SearchPath)
+                || SelectedFace == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 
@@ -275,6 +320,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             new ViewModelProvider()
             , new FaceRepository(new AppSettings(), new FileSystemProvider())
             , new ImageProcessor()
+            , new FileSystemProvider()
+            , new FaceDetectionService(new ImageProcessor())
             )
         {
         }

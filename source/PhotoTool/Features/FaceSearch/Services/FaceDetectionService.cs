@@ -1,4 +1,6 @@
-﻿using FaceAiSharp;
+﻿using Avalonia.Media.Imaging;
+using FaceAiSharp;
+using FaceAiSharp.Extensions;
 using PhotoTool.Features.FaceSearch.Models;
 using PhotoTool.Shared.Graphics;
 using SixLabors.ImageSharp;
@@ -6,27 +8,35 @@ using SixLabors.ImageSharp.PixelFormats;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PhotoTool.Features.FaceSearch.Services
 {
-    public interface IFaceDetector
+    public interface IFaceDetectionService
     {
         FaceDetectionResult DecorateImageWithFaceDetections(string imagePath);
 
         IEnumerable<FaceDetectionResultItem> DetectFaces(string imagePath);
 
         IEnumerable<FaceDetectionResultItem> DetectFaces(Image<Rgb24> image);
+
+        float[] GetFaceEmbedding(Bitmap bitmap);
+
+        FaceSearchResult SearchForFace(float[] embedding, string imagePath);
     }
 
-    public class FaceDetector : IFaceDetector
+    public class FaceDetectionService : IFaceDetectionService
     {
         private readonly SKColor[] _colorPalette;
         private readonly IImageProcessor _imageService;
+        private readonly IFaceDetectorWithLandmarks _faceDetectorWithLandmarks;
+        private readonly IFaceEmbeddingsGenerator _faceEmbeddingsGenerator;
 
-        public FaceDetector(IImageProcessor imageService)
+
+        public FaceDetectionService(IImageProcessor imageService)
         {
             _colorPalette = new SKColor[]
             {
@@ -42,6 +52,9 @@ namespace PhotoTool.Features.FaceSearch.Services
                 SKColors.White
             };
             _imageService = imageService;
+            _faceDetectorWithLandmarks = FaceAiSharpBundleFactory.CreateFaceDetectorWithLandmarks();
+            _faceEmbeddingsGenerator = FaceAiSharpBundleFactory.CreateFaceEmbeddingsGenerator();
+
         }
 
         public IEnumerable<FaceDetectionResultItem> DetectFaces(string imagePath)
@@ -141,6 +154,39 @@ namespace PhotoTool.Features.FaceSearch.Services
                 }
             }
             return result;
+        }
+
+        public float[] GetFaceEmbedding(Bitmap bitmap)
+        {
+            var img = Image.Load<Rgb24>(new MemoryStream(_imageService.ConvertToByteArray(bitmap)!));
+            return _faceEmbeddingsGenerator.GenerateEmbedding(img);
+        }
+
+        public FaceSearchResult SearchForFace(float[] embedding, string imagePath)
+        {
+            try
+            {
+                var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+                var faces = _faceDetectorWithLandmarks.DetectFaces(image);
+                foreach (var face in faces)
+                {
+                    var img = image.Clone();
+                    _faceEmbeddingsGenerator.AlignFaceUsingLandmarks(img, face.Landmarks!);
+
+                    var embeddingFace = _faceEmbeddingsGenerator.GenerateEmbedding(img);
+                    var dot = embedding.Dot(embeddingFace);
+                    return new FaceSearchResult()
+                    {
+                        DotProduct = dot,
+                        Embedding = embeddingFace
+                    };
+                }
+                return FaceSearchResult.NoMatchFound;
+            }
+            catch (UnknownImageFormatException)
+            {
+                return FaceSearchResult.NoMatchFound;
+            }
         }
     }
 }

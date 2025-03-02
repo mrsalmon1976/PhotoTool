@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using PhotoTool.Features.FaceSearch.ViewModels;
+using System.Linq;
 
 namespace PhotoTool.Features.FaceSearch.Views;
 
@@ -27,4 +28,25 @@ public partial class FaceSearchPanel: UserControl
         }
     }
 
+    private void StackPanel_PointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
+    {
+
+        FaceSearchPanelViewModel? viewModel = this.DataContext as FaceSearchPanelViewModel;
+        StackPanel? source = sender as StackPanel;
+        if (viewModel != null && source != null)
+        {
+            if (viewModel.IsSearchActive) return;
+
+            FaceAddViewModel? clickedFace = source.DataContext as FaceAddViewModel;
+            if (clickedFace != null)
+            {
+                clickedFace.Image = clickedFace.ImageColor;
+            }
+            if (viewModel.SelectedFace != null)
+            {
+                viewModel.SelectedFace.Image = viewModel.SelectedFace.ImageGrayscale;
+            }
+            viewModel.SelectedFace = clickedFace;
+        }
+    }
 }

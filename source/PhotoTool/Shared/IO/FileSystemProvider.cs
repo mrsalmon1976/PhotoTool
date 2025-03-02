@@ -9,6 +9,8 @@ namespace PhotoTool.Shared.IO
 	{
 		void CopyFile(string sourceFileName, string destFileName);
 
+        bool DirectoryExists(string path);
+
 		IEnumerable<string> EnumerateFiles(string path, string searchPattern);
 
         IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption);
@@ -33,14 +35,14 @@ namespace PhotoTool.Shared.IO
 			File.Copy(sourceFileName, destFileName);
 		}
 
-		public void EnsureDirectoryExists(string path)
-		{
-			Directory.CreateDirectory(path);
-		}
+        public bool DirectoryExists(string path)
+        {
+            return Directory.Exists(path);
+        }
 
-		public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
-		{
-			return EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
+        public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
+        {
+            return EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
 
         }
 
@@ -48,6 +50,11 @@ namespace PhotoTool.Shared.IO
         {
             return Directory.EnumerateFiles(path, searchPattern, searchOption);
         }
+
+        public void EnsureDirectoryExists(string path)
+		{
+			Directory.CreateDirectory(path);
+		}
 
         public bool FileExists(string path)
         {

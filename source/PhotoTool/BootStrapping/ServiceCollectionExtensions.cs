@@ -47,7 +47,7 @@ namespace PhotoTool.BootStrapping
             services.AddSingleton<IFaceRepository, FaceRepository>();
 
             // Services
-            services.AddSingleton<IFaceDetector, FaceDetector>();
+            services.AddSingleton<IFaceDetectionService, FaceDetectionService>();
 
             // ViewModels
             services.AddTransient<FaceAddDialogViewModel>();

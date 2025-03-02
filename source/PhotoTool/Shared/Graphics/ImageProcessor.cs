@@ -1,4 +1,5 @@
-﻿using SixLabors.ImageSharp.Formats.Png;
+﻿using Avalonia.Media.Imaging;
+using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 using SkiaSharp;
 using System;
@@ -14,6 +15,10 @@ namespace PhotoTool.Shared.Graphics
     {
 
         SKEncodedImageFormat GetImageFormatFromExtension(string extension);
+
+        byte[]? ConvertToByteArray(Bitmap? image);
+
+        string? ConvertToBase64(Bitmap? image);
 
         SKEncodedImageFormat GetImageFormatFromPath(string path);
 
@@ -84,6 +89,29 @@ namespace PhotoTool.Shared.Graphics
 
         //    return newFilePath;
         //}
+
+        public string? ConvertToBase64(Bitmap? image)
+        {
+            string? result = null;
+            byte[]? data = ConvertToByteArray(image);
+            if (data != null)
+            {
+                result = Convert.ToBase64String(data);
+            }
+            return result;
+        }
+
+
+        public byte[]? ConvertToByteArray(Bitmap? image)
+        {
+            if (image == null)
+            {
+                return null;
+            }
+            using var memoryStream = new MemoryStream();
+            image.Save(memoryStream);
+            return memoryStream.ToArray();
+        }
 
         public SKEncodedImageFormat GetImageFormatFromExtension(string extension)
         {

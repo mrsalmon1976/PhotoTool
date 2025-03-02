@@ -26,19 +26,21 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private static IAppLogger _logger = AppLogger.Create<FaceAddDialogViewModel>();
 
-        private readonly IFaceDetector _faceDetector;
+        private readonly IFaceDetectionService _faceDetector;
         private readonly IFaceRepository _faceRepo;
+        private readonly IImageProcessor _imageProcessor;
         private bool _isImageSelected;
         private bool _isSaveButtonEnabled;
         private Bitmap? _selectedImage = null;
 
-        public FaceAddDialogViewModel(IAssetProvider assetProvider, IFaceDetector faceDetectionService, IFaceRepository faceRepo)
+        public FaceAddDialogViewModel(IAssetProvider assetProvider, IFaceDetectionService faceDetectionService, IFaceRepository faceRepo, IImageProcessor imageProcessor)
         {
             SaveFacesButtonClickCommand = ReactiveCommand.Create(OnSaveFacesButtonClickCommand);
             SelectFileButtonClickCommand = ReactiveCommand.Create(OnSelectFileButtonClick);
             SelectedImage = assetProvider.GetImage(Assets.PhotoToolLogo_300x300_800bg);
             _faceDetector = faceDetectionService;
             _faceRepo = faceRepo;
+            _imageProcessor = imageProcessor;
         }
 
         #region Control Properties
@@ -87,7 +89,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
                 FaceModel faceModel = new FaceModel()
                 {
-                    ImageData = Convert.ToBase64String(detectedFace.GetImageDataAsByteArray()!),
+                    ImageData = _imageProcessor.ConvertToBase64(detectedFace.ImageColor)!,
                     Name = detectedFace.Name
                 };
 
@@ -114,7 +116,6 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private async void OnSelectFileButtonClick()
         {
             // Get top level from the current control. Alternatively, you can use Window reference instead.
-            //var topLevel = TopLevel.GetTopLevel(this);
             var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
 
             // Start async operation to open the dialog.
@@ -140,7 +141,13 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                     {
                         Bitmap faceImage = new Bitmap(new MemoryStream(f.ImageData!));
                         uint brushColor = (uint)f.Color;
-                        DetectedFaces.Add(new FaceAddViewModel() { Name = string.Empty, Image = faceImage, ColorBrush = new SolidColorBrush(brushColor) });
+                        DetectedFaces.Add(new FaceAddViewModel() 
+                        { 
+                            Name = string.Empty, 
+                            ImageColor = faceImage, 
+                            Image = faceImage,
+                            ColorBrush = new SolidColorBrush(brushColor) 
+                        });
                     });
 
 
@@ -171,8 +178,9 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
     {
         public FaceAddDialogViewModelDesign() : base(
             new AssetProvider(),
-            new FaceDetector(new ImageProcessor()),
-            new FaceRepository(new AppSettings(), new FileSystemProvider())
+            new FaceDetectionService(new ImageProcessor()),
+            new FaceRepository(new AppSettings(), new FileSystemProvider()),
+            new ImageProcessor()
             )
         {
         }

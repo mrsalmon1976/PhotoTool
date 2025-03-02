@@ -19,12 +19,12 @@ namespace PhotoTool.Shared.Logging
             string appLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", $"infolog-{dt}.log");
             string errorLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", $"errorlog-{dt}.log");
 
-            WriteLogHeader(perfLogPath, $"LogDate|LogTime|LogSource|ProfileName|ExecutionTimeMilliseconds");
+            WriteLogHeader(perfLogPath, $"LogDate|LogTime|LogSource|ProfileName|ExecutionTimeMilliseconds|Message");
             WriteLogHeader(appLogPath, $"LogTime|Logger|LogLevel|Message|Exception");
             WriteLogHeader(errorLogPath, $"LogTime|Logger|LogLevel|Message|Exception");
 
             // set up performance logging
-            var perfLog = CreateFileTarget("file-perflog", perfLogPath, "${date:format=yyyy-MM-dd}|${date:format=HH\\:mm\\:ss.fff}|${event-properties:item=LogSource}|${event-properties:item=ProfileName}|${message}");
+            var perfLog = CreateFileTarget("file-perflog", perfLogPath, "${date:format=yyyy-MM-dd}|${date:format=HH\\:mm\\:ss.fff}|${event-properties:item=LogSource}|${event-properties:item=ProfileName}|${event-properties:ExecutionTimeMilliseconds}|${message}");
             configuration.AddRule(LogLevel.Info, LogLevel.Fatal, perfLog, "Performance", true);
 
             // set up application logging
