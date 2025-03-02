@@ -11,7 +11,12 @@
     <vm:FaceSearchPanelViewModelDesign />
   </Design.DataContext>
 
-  <Grid ColumnDefinitions="*, 4, 200">
+  <Grid>
+	  <Grid.ColumnDefinitions>
+		  <ColumnDefinition Width="*" MinWidth="600" />
+		  <ColumnDefinition Width="4" />
+		  <ColumnDefinition Width="200" MinWidth="120" />
+	  </Grid.ColumnDefinitions>
     <!-- Left column (main area) -->
     <Grid RowDefinitions="Auto,*" Grid.Column="0" VerticalAlignment="Stretch">
       <Expander Grid.Row="0" MinWidth="400" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,0,10,0" IsExpanded="True">
@@ -84,7 +89,7 @@
 		  </Border>
     </Grid>
     
-    <GridSplitter Grid.Column="1" Background="Purple" ResizeDirection="Columns"/>
+    <GridSplitter Grid.Column="1" Background="#0078D4" ResizeDirection="Columns"/>
 
     <!-- Right column (buttons) -->
     <DockPanel Grid.Column="2">
