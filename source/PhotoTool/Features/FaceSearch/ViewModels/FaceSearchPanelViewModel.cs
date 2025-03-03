@@ -26,6 +26,9 @@ using PhotoTool.Features.FaceSearch.Constants;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia;
 using Tmds.DBus.Protocol;
+using PhotoTool.Shared.Constants;
+using PhotoTool.Shared.Resources;
+using System.ComponentModel;
 
 namespace PhotoTool.Features.FaceSearch.ViewModels
 {
@@ -47,18 +50,21 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private uint _searchImageCount = 0;
         private uint _searchImageProgressValue = 0;
         private FaceAddViewModel? _selectedFace;
+        private FaceSearchViewModel? _previewImageModel;
 
         public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider
             , IFaceRepository faceRepo
             , IImageProcessor imageService
             , IFileSystemProvider fileSystemProvider
-            , IFaceDetectionService faceDetectionService)
+            , IFaceDetectionService faceDetectionService
+            , IAssetProvider assetProvider)
         {
             _viewModelProvider = viewModelProvider;
             _faceRepo = faceRepo;
             _imageService = imageService;
             _fileSystemProvider = fileSystemProvider;
             _faceDetectionService = faceDetectionService;
+
             AddFaceButtonClickCommand = ReactiveCommand.Create(OnAddFaceButtonClick);
             CancelButtonClickCommand = ReactiveCommand.Create(OnCancelButtonClick);
             DeleteFaceButtonClickCommand = ReactiveCommand.Create(OnDeleteFaceButtonClick);
@@ -90,6 +96,14 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         {
             get => _isSearchActive;
             private set => this.RaiseAndSetIfChanged(ref _isSearchActive, value);
+        }
+
+        public FaceSearchViewModel? PreviewImageModel
+        {
+            get => _previewImageModel;
+            set {
+                this.RaiseAndSetIfChanged(ref _previewImageModel, value);
+            }
         }
 
         public string SearchPath
@@ -366,6 +380,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             , new ImageProcessor()
             , new FileSystemProvider()
             , new FaceDetectionService(new ImageProcessor())
+            , new AssetProvider()
             )
         {
         }

@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="using:PhotoTool.Features.FaceSearch.ViewModels"
+             xmlns:shared="using:PhotoTool.Shared.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" 
              x:DataType="vm:FaceSearchPanelViewModel"
@@ -40,7 +41,7 @@
                 <ItemsRepeater.ItemTemplate>
                   <DataTemplate>
                     <Border Margin="0,5,10,0" CornerRadius="5" BorderBrush="#e0e0e0" BorderThickness="1" HorizontalAlignment="Left" Padding="5">
-                      <StackPanel Orientation="Vertical" HorizontalAlignment="Left" PointerReleased="StackPanel_PointerReleased">
+                      <StackPanel Orientation="Vertical" HorizontalAlignment="Left" PointerReleased="OnSavedFacePointerReleased">
 						            <StackPanel.Styles>
 							            <Style Selector="StackPanel:pointerover">
                             <Setter Property="Cursor" Value="Hand" />
@@ -76,8 +77,13 @@
 						        BorderThickness="1"
 						        HorizontalAlignment="Left"
 						        Padding="5">
-						        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" PointerReleased="StackPanel_PointerReleased">
-							        <Image Source="{Binding Image}" Height="150" HorizontalAlignment="Center" />
+						        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" PointerReleased="OnSearchResultPointerReleased">
+                      <StackPanel.Styles>
+                        <Style Selector="StackPanel:pointerover">
+                          <Setter Property="Cursor" Value="Hand" />
+                        </Style>
+                      </StackPanel.Styles>
+                      <Image Source="{Binding Image}" Height="150" HorizontalAlignment="Center" />
 							        <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontSize="12" MaxWidth="200" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
 						        </StackPanel>
 					        </Border>
@@ -93,8 +99,17 @@
 
     <!-- Right column (buttons) -->
     <DockPanel Grid.Column="2">
-        <Button x:Name="AddFaceButton" IsEnabled="{ Binding !IsSearchActive }" DockPanel.Dock="Top" Command="{Binding AddFaceButtonClickCommand}" Margin="10,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
-	    <Button x:Name="DeleteFaceButton" IsEnabled="{ Binding IsDeleteButtonEnabled }" DockPanel.Dock="Top" Command="{Binding DeleteFaceButtonClickCommand}" Margin="10,5,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Delete Face</Button>
+      <StackPanel DockPanel.Dock="Top">
+        <Button x:Name="AddFaceButton" IsEnabled="{ Binding !IsSearchActive }" Command="{Binding AddFaceButtonClickCommand}" Margin="10,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
+	      <Button x:Name="DeleteFaceButton" IsEnabled="{ Binding IsDeleteButtonEnabled }" Command="{Binding DeleteFaceButtonClickCommand}" Margin="10,5,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Delete Face</Button>
+        <Border Margin="10,20,0,0" Padding="3" CornerRadius="5" BorderBrush="#e0e0e0" BorderThickness="1" Background="Transparent">
+          <StackPanel>
+            <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill" Source="{ Binding PreviewImageModel.Image }" />
+            <TextBlock Text="{ Binding PreviewImageModel.Name }" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14" TextWrapping="Wrap" TextAlignment="Center" />
+            <TextBlock Text="ImageDimensions" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="12" TextWrapping="Wrap" TextAlignment="Center" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
 	    <Button x:Name="SearchButton" IsEnabled="{ Binding !IsSearchActive }" DockPanel.Dock="Bottom" Command="{Binding SearchButtonClickCommand}" Margin="10,0,0,5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
     </DockPanel>
       
