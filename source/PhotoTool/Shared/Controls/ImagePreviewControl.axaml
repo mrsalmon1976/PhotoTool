@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PhotoTool.Shared.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="350"
+             x:Class="PhotoTool.Shared.Controls.ImagePreviewControl"
+             x:DataType="vm:ImagePreviewViewModel">
+  <Border Margin="10,20,0,0" Padding="5" CornerRadius="5"
+          BorderBrush="#e0e0e0" BorderThickness="1" Background="Transparent">
+    <StackPanel>
+      <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             MaxHeight="300" Stretch="UniformToFill"
+             Source="{Binding Image}" />
+      <TextBlock Text="{Binding Name}"
+                 HorizontalAlignment="Center" VerticalAlignment="Top"
+                 FontSize="12" TextWrapping="Wrap"
+                 TextAlignment="Center" Margin="0,3,0,0" />
+      <TextBlock Text="{Binding Dimensions}"
+                 HorizontalAlignment="Center" VerticalAlignment="Top"
+                 FontSize="12" TextWrapping="Wrap"
+                 TextAlignment="Center" Margin="0,3,0,0" />
+    </StackPanel>
+  </Border>
+</UserControl>

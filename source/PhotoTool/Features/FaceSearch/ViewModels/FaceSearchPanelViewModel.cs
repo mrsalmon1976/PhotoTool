@@ -50,7 +50,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private uint _searchImageCount = 0;
         private uint _searchImageProgressValue = 0;
         private FaceAddViewModel? _selectedFace;
-        private FaceSearchViewModel? _previewImageModel;
+        private ImagePreviewViewModel? _previewImageModel;
 
         public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider
             , IFaceRepository faceRepo
@@ -98,7 +98,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _isSearchActive, value);
         }
 
-        public FaceSearchViewModel? PreviewImageModel
+        public ImagePreviewViewModel? PreviewImageModel
         {
             get => _previewImageModel;
             set {
