@@ -12,14 +12,19 @@
       <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              MaxHeight="300" Stretch="UniformToFill"
              Source="{Binding Image}" />
-      <TextBlock Text="{Binding Name}"
-                 HorizontalAlignment="Center" VerticalAlignment="Top"
-                 FontSize="12" TextWrapping="Wrap"
-                 TextAlignment="Center" Margin="0,3,0,0" />
+      <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,0">
+        <TextBlock Text="{Binding Name}"
+                   VerticalAlignment="Top"
+                   FontSize="12" TextWrapping="Wrap"
+                   TextAlignment="Center" Margin="0" Padding="5" />
+        <Image Source="/Assets/icon-window-open.png" Width="20" />
+      </StackPanel>
       <TextBlock Text="{Binding Dimensions}"
                  HorizontalAlignment="Center" VerticalAlignment="Top"
                  FontSize="12" TextWrapping="Wrap"
                  TextAlignment="Center" Margin="0,3,0,0" />
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+      </StackPanel>
     </StackPanel>
   </Border>
 </UserControl>
