@@ -357,6 +357,19 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             });
         }
 
+        public void UpdatePreviewImage(FaceSearchViewModel faceSearchViewModel)
+        {
+            IFileSystemProvider fileSystemProvider = new FileSystemProvider();
+            this.PreviewImageModel = new ImagePreviewViewModel()
+            {
+                Image = faceSearchViewModel.Image,
+                Name = faceSearchViewModel.Name,
+                Path = faceSearchViewModel.Path,
+                Dimensions = string.Format("{0}x{1} / {2}", faceSearchViewModel.Image?.Size.Width, faceSearchViewModel.Image?.Size.Height, fileSystemProvider.GetFileSizeReadable(faceSearchViewModel.Path))
+            };
+
+        }
+
 
         private bool ValidateSearchInput()
         {

@@ -1,8 +1,14 @@
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.VisualTree;
 using PhotoTool.Features.FaceSearch.ViewModels;
+using PhotoTool.Shared.Graphics;
 using PhotoTool.Shared.IO;
 using PhotoTool.Shared.ViewModels;
+using SixLabors.ImageSharp.Drawing.Processing;
+using System;
+using System.Drawing;
 using System.Linq;
 
 namespace PhotoTool.Features.FaceSearch.Views;
@@ -10,6 +16,7 @@ namespace PhotoTool.Features.FaceSearch.Views;
 public partial class FaceSearchPanel: UserControl
 {
     private bool _isLoaded;
+    private Border? _selectedBorder;
 
     public FaceSearchPanel()
     {
@@ -49,6 +56,20 @@ public partial class FaceSearchPanel: UserControl
                 clickedFace.Image = clickedFace.ImageColor;
             }
 
+            // reset borders
+            Border parentBorder = (Border)source.Parent!;
+            if (_selectedBorder != null)
+            {
+                _selectedBorder.BorderThickness = new Avalonia.Thickness(1);
+                // TODO: get this color from styles
+                _selectedBorder.BorderBrush = ColorUtils.ConvertHexToColorBrush("#e0e0e0");
+            }
+
+            parentBorder.BorderThickness = new Avalonia.Thickness(2);
+            // TODO: get this color from styles
+            parentBorder.BorderBrush = ColorUtils.ConvertHexToColorBrush("#0078D4");
+            _selectedBorder = parentBorder;
+
             // update the current selected item
             if (viewModel.SelectedFace != null)
             {
@@ -61,20 +82,12 @@ public partial class FaceSearchPanel: UserControl
     private void OnSearchResultPointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
     {
 
-        // todo: should be moved into viewmodel
         FaceSearchPanelViewModel? viewModel = this.DataContext as FaceSearchPanelViewModel;
         StackPanel? source = sender as StackPanel;
         if (viewModel != null && source != null)
         {
-            FaceSearchViewModel? clickedImage = (FaceSearchViewModel)source.DataContext!;
-            IFileSystemProvider fileSystemProvider = new FileSystemProvider();
-            viewModel.PreviewImageModel = new ImagePreviewViewModel()
-            {
-                Image = clickedImage.Image,
-                Name = clickedImage.Name,
-                Path = clickedImage.Path,
-                Dimensions = string.Format("{0}x{1} / {2}", clickedImage?.Image?.Size.Width, clickedImage?.Image?.Size.Height, fileSystemProvider.GetFileSizeReadable(clickedImage!.Path))
-            };
+            FaceSearchViewModel? clickedImageViewModel = (FaceSearchViewModel)source.DataContext!;
+            viewModel.UpdatePreviewImage(clickedImageViewModel);
         }
     }
 }
