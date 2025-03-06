@@ -7,7 +7,8 @@
              x:Class="PhotoTool.Shared.Controls.ImagePreviewControl"
              x:DataType="vm:ImagePreviewViewModel">
   <Border Margin="10,20,0,0" Padding="5" CornerRadius="5"
-          BorderBrush="#e0e0e0" BorderThickness="1" Background="Transparent">
+          BorderBrush="#e0e0e0" BorderThickness="1" Background="Transparent"
+          >
     <StackPanel>
       <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              MaxHeight="300" Stretch="UniformToFill"
@@ -16,15 +17,20 @@
         <TextBlock Text="{Binding Name}"
                    VerticalAlignment="Top"
                    FontSize="12" TextWrapping="Wrap"
-                   TextAlignment="Center" Margin="0" Padding="5" />
-        <Image Source="/Assets/icon-window-open.png" Width="20" />
+                   TextAlignment="Center" Margin="0" Padding="5"
+                   />
+        <Image Source="/Assets/icon-window-open.png" Width="16" PointerReleased="OnWindowOpenClick">
+          <Image.Styles>
+            <Style Selector="Image:pointerover">
+              <Setter Property="Cursor" Value="Hand" />
+            </Style>
+          </Image.Styles>
+          </Image>
       </StackPanel>
       <TextBlock Text="{Binding Dimensions}"
                  HorizontalAlignment="Center" VerticalAlignment="Top"
-                 FontSize="12" TextWrapping="Wrap"
+                 FontSize="11" TextWrapping="Wrap"
                  TextAlignment="Center" Margin="0,3,0,0" />
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-      </StackPanel>
     </StackPanel>
   </Border>
 </UserControl>

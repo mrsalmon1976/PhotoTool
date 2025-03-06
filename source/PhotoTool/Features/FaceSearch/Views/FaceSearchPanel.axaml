@@ -102,7 +102,7 @@
       <StackPanel DockPanel.Dock="Top">
         <Button x:Name="AddFaceButton" IsEnabled="{ Binding !IsSearchActive }" Command="{Binding AddFaceButtonClickCommand}" Margin="10,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Face</Button>
 	      <Button x:Name="DeleteFaceButton" IsEnabled="{ Binding IsDeleteButtonEnabled }" Command="{Binding DeleteFaceButtonClickCommand}" Margin="10,5,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Delete Face</Button>
-        <shared:ImagePreviewControl DataContext="{Binding PreviewImageModel }" />
+        <shared:ImagePreviewControl DataContext="{Binding PreviewImageModel }" IsVisible="{Binding ., Converter={x:Static ObjectConverters.IsNotNull}}" />
       </StackPanel>
 	    <Button x:Name="SearchButton" IsEnabled="{ Binding !IsSearchActive }" DockPanel.Dock="Bottom" Command="{Binding SearchButtonClickCommand}" Margin="10,0,0,5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Search</Button>
     </DockPanel>

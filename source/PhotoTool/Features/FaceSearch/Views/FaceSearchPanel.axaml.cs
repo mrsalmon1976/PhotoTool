@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using PhotoTool.Features.FaceSearch.ViewModels;
+using PhotoTool.Shared.IO;
 using PhotoTool.Shared.ViewModels;
 using System.Linq;
 
@@ -60,16 +61,19 @@ public partial class FaceSearchPanel: UserControl
     private void OnSearchResultPointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
     {
 
+        // todo: should be moved into viewmodel
         FaceSearchPanelViewModel? viewModel = this.DataContext as FaceSearchPanelViewModel;
         StackPanel? source = sender as StackPanel;
         if (viewModel != null && source != null)
         {
             FaceSearchViewModel? clickedImage = (FaceSearchViewModel)source.DataContext!;
+            IFileSystemProvider fileSystemProvider = new FileSystemProvider();
             viewModel.PreviewImageModel = new ImagePreviewViewModel()
             {
                 Image = clickedImage.Image,
-                Dimensions = "dimensions!",
-                Name = clickedImage.Name
+                Name = clickedImage.Name,
+                Path = clickedImage.Path,
+                Dimensions = string.Format("{0}x{1} / {2}", clickedImage?.Image?.Size.Width, clickedImage?.Image?.Size.Height, fileSystemProvider.GetFileSizeReadable(clickedImage!.Path))
             };
         }
     }

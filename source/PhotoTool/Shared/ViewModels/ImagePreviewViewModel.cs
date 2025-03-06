@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
+using PhotoTool.Shared.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace PhotoTool.Shared.ViewModels
     public class ImagePreviewViewModel
     {
         public string Name { get; set; } = string.Empty;
+
+        public string Path { get; set; } = string.Empty;
 
         public Bitmap? Image { get; set; }
 
