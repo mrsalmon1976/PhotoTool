@@ -9,6 +9,8 @@ namespace PhotoTool.Shared.Logging
 {
     public interface IAppLogger
     {
+        void Error(string message);
+
         void Error(Exception exception);
 
         void Error(Exception exception, string message);
@@ -22,6 +24,11 @@ namespace PhotoTool.Shared.Logging
         private AppLogger(Logger logger)
         {
             _logger = logger;
+        }
+
+        public void Error(string message)
+        {
+            _logger.Error(message);
         }
 
         public void Error(Exception exception)
