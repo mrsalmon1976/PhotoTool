@@ -318,7 +318,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                             faceMatchCount++;
                         }
                     }
-                    UpdateProgress($"Search complete: {totalFileCount} files, {imageCount} images, {faceMatchCount} facial matches.", 0);
+                    UpdateProgress($"Search for {SelectedFace.Name} complete: {totalFileCount} files, {imageCount} images, {faceMatchCount} facial matches.", 0);
                     perfLogger.Stop($"{imageFiles.Count} images searched for face '{SelectedFace.Name}'");
                 });
             }

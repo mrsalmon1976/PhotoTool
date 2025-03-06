@@ -10,9 +10,5 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         public string Path { get; set; } = string.Empty;
 
         public Bitmap? Image { get; set; }
-
-        //public string MatchInfo { get; set; }
-
-        //public Color MatchColor { get; set; } = Colors.Black;
     }
 }

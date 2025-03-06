@@ -1,7 +1,9 @@
 using Avalonia.Controls;
+using Clowd.Clipboard;
 using PhotoTool.Shared.Logging;
 using PhotoTool.Shared.ViewModels;
 using System;
+using System.Diagnostics;
 
 namespace PhotoTool.Shared.Controls;
 
@@ -14,6 +16,22 @@ public partial class ImagePreviewControl : UserControl
         InitializeComponent();
     }
 
+    private void OnCopyClick(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
+    {
+        ImagePreviewViewModel? viewModel = this.DataContext as ImagePreviewViewModel;
+        if (viewModel != null)
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                ClipboardAvalonia.SetImage(viewModel.Image);
+            }
+            else
+            {
+                _logger.Error("Copy functionality is only supported on Windows.");
+            }
+        }
+    }
+
     private void OnWindowOpenClick(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
     {
         ImagePreviewViewModel? viewModel = this.DataContext as ImagePreviewViewModel;
@@ -21,7 +39,7 @@ public partial class ImagePreviewControl : UserControl
         {
             if (OperatingSystem.IsWindows())
             {
-                System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", viewModel.Path));
+                Process.Start("explorer.exe", string.Format("/select,\"{0}\"", viewModel.Path));
             }
             else
             {
@@ -29,4 +47,5 @@ public partial class ImagePreviewControl : UserControl
             }
         }
     }
+
 }

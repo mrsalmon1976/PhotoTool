@@ -26,6 +26,7 @@
     </PackageReference>
     <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.2.0.9" />
     <PackageReference Include="Avalonia.Xaml.Interactivity" Version="11.2.0.9" />
+    <PackageReference Include="Clowd.Clipboard.Avalonia" Version="1.1.4" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
     <PackageReference Include="FaceAiSharp" Version="0.5.23" />
     <PackageReference Include="FaceAiSharp.Bundle" Version="0.5.23" />

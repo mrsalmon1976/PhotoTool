@@ -13,20 +13,27 @@
       <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              MaxHeight="300" Stretch="UniformToFill"
              Source="{Binding Image}" />
-      <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,0">
+      <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,0">
         <TextBlock Text="{Binding Name}"
                    VerticalAlignment="Top"
                    FontSize="12" TextWrapping="Wrap"
                    TextAlignment="Center" Margin="0" Padding="5"
                    />
-        <Image Source="/Assets/icon-window-open.png" Width="16" PointerReleased="OnWindowOpenClick">
+        <Image Source="/Assets/icon-window-open.png" ToolTip.Tip="Reveal image in file explorer" Width="15" PointerReleased="OnWindowOpenClick" Margin="0,0,3,0">
           <Image.Styles>
             <Style Selector="Image:pointerover">
               <Setter Property="Cursor" Value="Hand" />
             </Style>
           </Image.Styles>
-          </Image>
-      </StackPanel>
+        </Image>
+        <Image Source="/Assets/icon-copy.png" ToolTip.Tip="Copy image" Width="15" PointerReleased="OnCopyClick" Margin="0,0,3,0">
+          <Image.Styles>
+            <Style Selector="Image:pointerover">
+              <Setter Property="Cursor" Value="Hand" />
+            </Style>
+          </Image.Styles>
+        </Image>
+      </WrapPanel>
       <TextBlock Text="{Binding Dimensions}"
                  HorizontalAlignment="Center" VerticalAlignment="Top"
                  FontSize="11" TextWrapping="Wrap"
