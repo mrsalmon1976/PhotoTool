@@ -1,5 +1,6 @@
 ﻿using Avalonia.Platform;
 using Microsoft.Extensions.DependencyInjection;
+using PhotoTool.Features.BatchResizer.ViewModels;
 using PhotoTool.Features.FaceSearch.Repositories;
 using PhotoTool.Features.FaceSearch.Services;
 using PhotoTool.Features.FaceSearch.ViewModels;
@@ -17,6 +18,7 @@ namespace PhotoTool.BootStrapping
 		public static void AddDependencies(this IServiceCollection services)
         {
             AddShared(services);
+            AddBatchResizerFeature(services);
             AddFaceSearchFeature(services);
         }
 
@@ -39,7 +41,11 @@ namespace PhotoTool.BootStrapping
             services.AddSingleton<IViewModelProvider, ViewModelProvider>();
         }
 
-
+        private static void AddBatchResizerFeature(this IServiceCollection services)
+        {
+            // ViewModels
+            services.AddTransient<BatchResizerPanelViewModel>();
+        }
 
         private static void AddFaceSearchFeature(this IServiceCollection services)
         {

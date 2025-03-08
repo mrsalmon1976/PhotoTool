@@ -25,10 +25,7 @@ using PhotoTool.Features.FaceSearch.Models;
 using PhotoTool.Features.FaceSearch.Constants;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia;
-using Tmds.DBus.Protocol;
-using PhotoTool.Shared.Constants;
 using PhotoTool.Shared.Resources;
-using System.ComponentModel;
 
 namespace PhotoTool.Features.FaceSearch.ViewModels
 {

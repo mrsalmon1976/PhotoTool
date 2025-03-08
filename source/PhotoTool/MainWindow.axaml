@@ -6,6 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PhotoTool.MainWindow"
         xmlns:fs="clr-namespace:PhotoTool.Features.FaceSearch.Views"
+        xmlns:br="clr-namespace:PhotoTool.Features.BatchResizer.Views"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/phototool-logo.ico"
         Title="PhotoTool" 
@@ -15,10 +16,10 @@
   <Grid>
     <TabControl Margin="5">
       <TabItem Header="Batch Resizer">
-        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <br:BatchResizerPanel DataContext="{Binding BatchResizerPanelViewModel}" />
       </TabItem>
       <TabItem Header="Face Search">
-        <fs:FaceSearchPanel DataContext="{Binding FaceSearchDataContext}" />
+        <fs:FaceSearchPanel DataContext="{Binding FaceSearchPanelViewModel}" />
       </TabItem>
     </TabControl>
   </Grid>

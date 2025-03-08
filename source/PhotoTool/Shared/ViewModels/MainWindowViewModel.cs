@@ -1,15 +1,19 @@
-﻿using PhotoTool.Features.FaceSearch.ViewModels;
+﻿using PhotoTool.Features.BatchResizer.ViewModels;
+using PhotoTool.Features.FaceSearch.ViewModels;
 
 namespace PhotoTool.Shared.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
-        public MainWindowViewModel(FaceSearchPanelViewModel faceSearchViewModel)
+        public MainWindowViewModel(BatchResizerPanelViewModel batchResizerPanelViewModel, FaceSearchPanelViewModel faceSearchViewModel)
         {
-            FaceSearchDataContext = faceSearchViewModel;
+            BatchResizerPanelViewModel = batchResizerPanelViewModel;
+            FaceSearchPanelViewModel = faceSearchViewModel;
         }
 
-        public FaceSearchPanelViewModel FaceSearchDataContext { get; set; }
+        public BatchResizerPanelViewModel BatchResizerPanelViewModel { get; set; }
+
+        public FaceSearchPanelViewModel FaceSearchPanelViewModel { get; set; }
 
         public string Greeting { get; } = "Welcome to Avalonia!";
     }
