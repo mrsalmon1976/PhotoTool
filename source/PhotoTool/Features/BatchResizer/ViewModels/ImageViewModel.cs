@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ReactiveUI;
 
@@ -12,6 +13,19 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         public string FilePath { get; set; } = string.Empty;
 
         public string Name { get; set; } = string.Empty;
+
+        public string FileSize { get; set; } = string.Empty;
+
+        public string Dimensions
+        {
+            get
+            {
+                if (this.Image == null) return string.Empty;
+
+                Size sz = this.Image.Size;
+                return $"{sz.Width} x {sz.Height}";
+            }
+        }
 
 
         public Bitmap? Image

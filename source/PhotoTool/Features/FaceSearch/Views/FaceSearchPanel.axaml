@@ -61,9 +61,9 @@
 	      <ScrollViewer VerticalScrollBarVisibility="Auto">
           <Grid RowDefinitions="Auto,*">
             <DockPanel Grid.Row="0" Margin="10">
-              <TextBlock DockPanel.Dock="Left" Text="{Binding InfoText}" VerticalAlignment="Center" />
-    		      <Button IsVisible="{Binding IsSearchActive }" DockPanel.Dock="Right" Command="{Binding CancelButtonClickCommand }">Cancel</Button>
-		      	  <ProgressBar IsVisible="{Binding IsSearchActive }" DockPanel.Dock="Right" ShowProgressText="False" HorizontalAlignment="Right" Width="50" Height="5" Margin="0,0,5,0" Maximum="{Binding SearchImageCount }" Value="{Binding SearchImageProgressValue}" />
+                <TextBlock DockPanel.Dock="Left" Text="{Binding InfoText}" VerticalAlignment="Center" />
+    	            <Button IsVisible="{Binding IsSearchActive }" DockPanel.Dock="Right" Command="{Binding CancelButtonClickCommand }">Cancel</Button>
+		            <ProgressBar IsVisible="{Binding IsSearchActive }" DockPanel.Dock="Right" ShowProgressText="False" HorizontalAlignment="Right" Width="50" Height="5" Margin="0,0,5,0" Maximum="{Binding SearchImageCount }" Value="{Binding SearchImageProgressValue}" />
             </DockPanel>
 		        <ItemsRepeater Grid.Row="1" ItemsSource="{Binding SearchResults}" >
 			        <ItemsRepeater.Layout>
