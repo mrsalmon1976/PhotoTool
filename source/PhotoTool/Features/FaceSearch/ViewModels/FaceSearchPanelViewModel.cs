@@ -35,7 +35,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private readonly IViewModelProvider _viewModelProvider;
         private readonly IFaceRepository _faceRepo;
-        private readonly IImageProcessor _imageService;
+        private readonly IImageProcessor _imageProcessor;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IFaceDetectionService _faceDetectionService;
         private bool _isDeleteButtonEnabled;
@@ -51,14 +51,14 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider
             , IFaceRepository faceRepo
-            , IImageProcessor imageService
+            , IImageProcessor imageProcessor
             , IFileSystemProvider fileSystemProvider
             , IFaceDetectionService faceDetectionService
             , IAssetProvider assetProvider)
         {
             _viewModelProvider = viewModelProvider;
             _faceRepo = faceRepo;
-            _imageService = imageService;
+            _imageProcessor = imageProcessor;
             _fileSystemProvider = fileSystemProvider;
             _faceDetectionService = faceDetectionService;
 
@@ -219,7 +219,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                 {
                     var imageData = f.GetImageDataAsBytes();
                     var image = new Bitmap(new MemoryStream(imageData));
-                    var grayscaleImage = new Bitmap(new MemoryStream(_imageService.ConvertToGrayscale(imageData)));
+                    var grayscaleImage = new Bitmap(new MemoryStream(_imageProcessor.ConvertToGrayscale(imageData)));
 
                     SavedFaces.Add(new FaceAddViewModel()
                     {
@@ -271,7 +271,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
                         FileInfo fileInfo = new FileInfo(file);
 
-                        if (_imageService.IsImageExtension(fileInfo.Extension))
+                        if (_imageProcessor.IsImageExtension(fileInfo.Extension))
                         {
                             imageFiles.Add(fileInfo);
                             imageCount++;
@@ -321,7 +321,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             }
             catch (OperationCanceledException)
             {
-                _logger.Info("Search opertion cancelled");
+                _logger.Info("Search operation cancelled");
                 UpdateProgress($"Search cancelled with {faceMatchCount} facial matches from {imageCount} images.", 0);
             }
             catch (Exception ex)

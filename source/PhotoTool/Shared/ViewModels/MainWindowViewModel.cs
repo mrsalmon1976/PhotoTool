@@ -15,6 +15,5 @@ namespace PhotoTool.Shared.ViewModels
 
         public FaceSearchPanelViewModel FaceSearchPanelViewModel { get; set; }
 
-        public string Greeting { get; } = "Welcome to Avalonia!";
     }
 }
