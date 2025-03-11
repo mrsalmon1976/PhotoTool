@@ -55,7 +55,7 @@
 				  CanUserResizeColumns="True"
 				  CanUserSortColumns="False"
 				  GridLinesVisibility="All"
-				  
+				  FontSize="11"
 				  BorderThickness="1" BorderBrush="Gray">
 				  <DataGrid.Columns>
 					  <DataGridTemplateColumn Header="Image" Width="80">
@@ -65,9 +65,9 @@
 							  </DataTemplate>
 						  </DataGridTemplateColumn.CellTemplate>
 					  </DataGridTemplateColumn>
-					  <DataGridTextColumn Header="File" Width="*" Binding="{Binding FilePath}"/>
-					  <DataGridTextColumn Header="Dimensions" Width="150" Binding="{Binding Dimensions}"/>
-					  <DataGridTextColumn Header="Size" Width="100" Binding="{Binding FileSize}"/>
+					  <DataGridTextColumn Header="File" Width="*" FontSize="11" Binding="{Binding FilePath}"/>
+					  <DataGridTextColumn Header="Dimensions" Width="150" FontSize="11" Binding="{Binding Dimensions}"/>
+					  <DataGridTextColumn Header="Size" Width="100" FontSize="11" Binding="{Binding FileSize}"/>
 				  </DataGrid.Columns>
 			  </DataGrid>
 		  </Grid>
@@ -81,10 +81,30 @@
     <!-- Right column (buttons) -->
     <DockPanel Grid.Column="2">
       <StackPanel DockPanel.Dock="Top">
-        <Button x:Name="AddFolderButton" IsEnabled="{ Binding !IsBusy}" Command="{Binding AddFolderButtonClickCommand}" Margin="10,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add Folder</Button>
-		<Button x:Name="AddFileButton" IsEnabled="{ Binding !IsBusy}" Command="{Binding AddFileButtonClickCommand}" Margin="10,5,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add File(s)</Button>
+        <Button x:Name="AddFolderButton" 
+                IsEnabled="{ Binding !IsBusy}" 
+                Command="{Binding AddFolderButtonClickCommand}" 
+                Margin="10,0,0,0" 
+                HorizontalAlignment="Stretch" 
+                HorizontalContentAlignment="Center"
+                >Add Folder</Button>
+		<Button x:Name="AddFileButton" 
+            IsEnabled="{ Binding !IsBusy}" 
+            Command="{Binding AddFileButtonClickCommand}" 
+            Margin="10,5,0,0" 
+            HorizontalAlignment="Stretch" 
+            HorizontalContentAlignment="Center"
+            >Add File(s)</Button>
 	  </StackPanel>
-      <Button x:Name="ResizeButton" IsEnabled="{ Binding !IsBusy }" DockPanel.Dock="Bottom" Margin="10,0,0,5" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Bottom">Resize</Button>
+      <Button x:Name="ResizeButton" 
+              IsEnabled="{ Binding !IsBusy }" 
+              DockPanel.Dock="Bottom" 
+              Margin="10,0,0,5" 
+              HorizontalAlignment="Stretch" 
+              HorizontalContentAlignment="Center" 
+              VerticalAlignment="Bottom"
+              Command="{Binding ResizeButtonClickCommand}"
+              >Resize</Button>
     </DockPanel>
 
   </Grid>

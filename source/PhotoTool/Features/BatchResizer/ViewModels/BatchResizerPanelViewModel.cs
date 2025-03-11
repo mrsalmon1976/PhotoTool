@@ -38,10 +38,10 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IImageProcessor _imageProcessor;
         private uint _imageResizeProgressValue = 0;
-        private ImageResizeOptionsViewModel _imageResizeOptions = new ImageResizeOptionsViewModel();
 
-        public BatchResizerPanelViewModel(IFileSystemProvider fileSystemProvider, IImageProcessor imageProcessor)
+        public BatchResizerPanelViewModel(ImageResizeOptionsViewModel resizeOptionsViewModel, IFileSystemProvider fileSystemProvider, IImageProcessor imageProcessor)
         {
+            ImageResizeOptions = resizeOptionsViewModel;
             _fileSystemProvider = fileSystemProvider;
             _imageProcessor = imageProcessor;
 
@@ -50,6 +50,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             AddFileButtonClickCommand = ReactiveCommand.Create(OnAddFileButtonClick);
             AddFolderButtonClickCommand = ReactiveCommand.Create(OnAddFolderButtonClick);
             CancelButtonClickCommand = ReactiveCommand.Create(OnCancelButtonClick);
+            ResizeButtonClickCommand = ReactiveCommand.Create(OnResizeButtonClick);
 
         }
 
@@ -61,16 +62,13 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         public ReactiveCommand<Unit, Unit> CancelButtonClickCommand { get; }
 
+        public ReactiveCommand<Unit, Unit> ResizeButtonClickCommand { get; }
 
         #endregion
 
         #region Properties
 
-        public ImageResizeOptionsViewModel ImageResizeOptions
-        {
-            get => _imageResizeOptions;
-            private set => this.RaiseAndSetIfChanged(ref _imageResizeOptions, value);
-        }
+        public ImageResizeOptionsViewModel ImageResizeOptions { get; set; }
 
         public uint ImageResizeProgressValue
         {
@@ -140,6 +138,11 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         private void OnCancelButtonClick()
         {
             _cancellationTokenSource?.Cancel();
+        }
+
+        private async void OnResizeButtonClick()
+        {
+            await ResizeImages();
         }
 
 
@@ -282,6 +285,37 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             UpdateProgress($"{SelectedImages.Count} images selected for resizing.", 0);
         }
 
+        private async Task ResizeImages()
+        {
+
+            try
+            {
+                this.IsBatchResizeInProgress = true;
+                this.IsBusy = true;
+
+                await Task.Run(() =>
+                {
+                    Thread.Sleep(3000);
+                });
+
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.Info("Resize operation cancelled");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                UpdateProgress($"Error: {ex.Message}.", 0);
+                await WindowUtils.ShowErrorDialog("Resize Error", $"An unexpected error occurred: {ex.Message}");
+            }
+            finally
+            {
+                this.IsBatchResizeInProgress = false;
+                this.IsBusy = false;
+            }
+        } 
+
         private void UpdateProgress(string infoText, uint progress)
         {
             Dispatcher.UIThread.Post(() => {
@@ -297,7 +331,8 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
     public class BatchResizerPanelViewModelDesign : BatchResizerPanelViewModel
     {
-        public BatchResizerPanelViewModelDesign() : base(new FileSystemProvider()
+        public BatchResizerPanelViewModelDesign() : base(new ImageResizeOptionsViewModel()
+            , new FileSystemProvider()
             , new ImageProcessor()
             )
         {

@@ -44,6 +44,7 @@ namespace PhotoTool.BootStrapping
         private static void AddBatchResizerFeature(this IServiceCollection services)
         {
             // ViewModels
+            services.AddTransient<ImageResizeOptionsViewModel>();
             services.AddTransient<ImageViewModel>();
             services.AddTransient<BatchResizerPanelViewModel>();
         }
