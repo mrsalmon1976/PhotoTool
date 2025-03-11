@@ -2,11 +2,16 @@
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using NLog.Filters;
+using PhotoTool.Features.FaceSearch.Services;
+using PhotoTool.Features.FaceSearch.ViewModels;
 using PhotoTool.Shared.Comparers;
+using PhotoTool.Shared.Configuration;
 using PhotoTool.Shared.Graphics;
 using PhotoTool.Shared.IO;
 using PhotoTool.Shared.Logging;
+using PhotoTool.Shared.Resources;
 using PhotoTool.Shared.UI;
+using PhotoTool.Shared.ViewModels;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -33,7 +38,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IImageProcessor _imageProcessor;
         private uint _imageResizeProgressValue = 0;
-        private ImageResizeOptions _imageResizeOptions = new ImageResizeOptions();
+        private ImageResizeOptionsViewModel _imageResizeOptions = new ImageResizeOptionsViewModel();
 
         public BatchResizerPanelViewModel(IFileSystemProvider fileSystemProvider, IImageProcessor imageProcessor)
         {
@@ -61,7 +66,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         #region Properties
 
-        public ImageResizeOptions ImageResizeOptions
+        public ImageResizeOptionsViewModel ImageResizeOptions
         {
             get => _imageResizeOptions;
             private set => this.RaiseAndSetIfChanged(ref _imageResizeOptions, value);
@@ -287,4 +292,17 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
 
     }
+
+    #region Design time mode
+
+    public class BatchResizerPanelViewModelDesign : BatchResizerPanelViewModel
+    {
+        public BatchResizerPanelViewModelDesign() : base(new FileSystemProvider()
+            , new ImageProcessor()
+            )
+        {
+        }
+    }
+
+    #endregion
 }
