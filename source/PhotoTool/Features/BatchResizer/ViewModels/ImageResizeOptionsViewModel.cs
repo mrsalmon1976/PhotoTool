@@ -9,10 +9,10 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 {
     public class ImageResizeOptionsViewModel : ReactiveObject
     {
-        private uint _imageQuality = 90;
+        private string _imageQuality = "90";
         private bool _generateThumbnails = false;
-        private uint _maxImageLength = 1024;
-        private uint _maxThumbnailLength = 100;
+        private string _maxImageLength = "1024";
+        private string _maxThumbnailLength = "100";
         private bool _overwriteFiles = false;
         private bool _replaceSpacesWithUnderscores = false;
 
@@ -22,19 +22,19 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             set => this.RaiseAndSetIfChanged(ref _generateThumbnails, value);
         }
 
-        public uint ImageQuality
+        public string ImageQuality
         {
             get => _imageQuality;
             set => this.RaiseAndSetIfChanged(ref _imageQuality, value);
         }
 
-        public uint MaxImageLength
+        public string MaxImageLength
         {
             get => _maxImageLength;
             set => this.RaiseAndSetIfChanged(ref _maxImageLength, value);
         }
 
-        public uint MaxThumbnailLength
+        public string MaxThumbnailLength
         {
             get => _maxThumbnailLength;
             set => this.RaiseAndSetIfChanged(ref _maxThumbnailLength, value);
