@@ -4,7 +4,10 @@ using ReactiveUI;
 
 namespace PhotoTool.Features.FaceSearch.ViewModels
 {
-    public class FaceAddViewModel : ReactiveObject
+    /// <summary>
+    /// Viewmodel used to display faces saved to disk.
+    /// </summary>
+    public class SavedFaceViewModel : ReactiveObject
     {
 
         private Bitmap? _image = null;
@@ -23,8 +26,6 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         public Bitmap? ImageColor { get; set; } = null;
 
         public Bitmap? ImageGrayscale { get; set; } = null;
-
-        public SolidColorBrush ColorBrush { get; set; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));
 
 
     }

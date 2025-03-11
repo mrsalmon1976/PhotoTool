@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace PhotoTool.Features.FaceSearch.Models
 {
+    /// <summary>
+    /// Represents a face image saved to disk.
+    /// </summary>
     public class FaceModel
     {
         public FaceModel()

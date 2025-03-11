@@ -63,7 +63,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _selectedImage, value);
         }
 
-        public ObservableCollection<FaceAddViewModel> DetectedFaces { get; set; } = new ObservableCollection<FaceAddViewModel>();
+        public ObservableCollection<DetectedFaceViewModel> DetectedFaces { get; set; } = new ObservableCollection<DetectedFaceViewModel>();
 
 
 
@@ -89,7 +89,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
                 FaceModel faceModel = new FaceModel()
                 {
-                    ImageData = _imageProcessor.ConvertToBase64(detectedFace.ImageColor)!,
+                    ImageData = _imageProcessor.ConvertToBase64(detectedFace.Image)!,
                     Name = detectedFace.Name
                 };
 
@@ -141,10 +141,9 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                     {
                         Bitmap faceImage = new Bitmap(new MemoryStream(f.ImageData!));
                         uint brushColor = (uint)f.Color;
-                        DetectedFaces.Add(new FaceAddViewModel() 
+                        DetectedFaces.Add(new DetectedFaceViewModel() 
                         { 
                             Name = string.Empty, 
-                            ImageColor = faceImage, 
                             Image = faceImage,
                             ColorBrush = new SolidColorBrush(brushColor) 
                         });

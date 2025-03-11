@@ -25,7 +25,7 @@ namespace PhotoTool.Features.FaceSearch.Services
 
         float[] GetFaceEmbedding(Bitmap bitmap);
 
-        FaceSearchResult SearchForFace(float[] embedding, string imagePath);
+        FaceComparison SearchForFace(float[] embedding, string imagePath);
     }
 
     public class FaceDetectionService : IFaceDetectionService
@@ -162,7 +162,7 @@ namespace PhotoTool.Features.FaceSearch.Services
             return _faceEmbeddingsGenerator.GenerateEmbedding(img);
         }
 
-        public FaceSearchResult SearchForFace(float[] embedding, string imagePath)
+        public FaceComparison SearchForFace(float[] embedding, string imagePath)
         {
             try
             {
@@ -175,17 +175,17 @@ namespace PhotoTool.Features.FaceSearch.Services
 
                     var embeddingFace = _faceEmbeddingsGenerator.GenerateEmbedding(img);
                     var dot = embedding.Dot(embeddingFace);
-                    return new FaceSearchResult()
+                    return new FaceComparison()
                     {
                         DotProduct = dot,
                         Embedding = embeddingFace
                     };
                 }
-                return FaceSearchResult.NoMatchFound;
+                return FaceComparison.NoMatchFound;
             }
             catch (UnknownImageFormatException)
             {
-                return FaceSearchResult.NoMatchFound;
+                return FaceComparison.NoMatchFound;
             }
         }
     }

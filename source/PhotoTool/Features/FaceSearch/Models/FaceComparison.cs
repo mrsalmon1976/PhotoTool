@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace PhotoTool.Features.FaceSearch.Models
 {
-    public class FaceSearchResult
+    /// <summary>
+    /// Represents the result of a comparison between two face regions detected in a larger image.
+    /// </summary>
+    public class FaceComparison
     {
         public float[]? Embedding { get; set; }
 
@@ -31,11 +34,11 @@ namespace PhotoTool.Features.FaceSearch.Models
 
 
 
-        public static FaceSearchResult NoMatchFound
+        public static FaceComparison NoMatchFound
         {
             get
             {
-                return new FaceSearchResult() { DotProduct = 0 }; 
+                return new FaceComparison() { DotProduct = 0 }; 
             }
         }
     }

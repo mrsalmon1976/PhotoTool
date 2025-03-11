@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace PhotoTool.Features.FaceSearch.Models
 {
+    /// <summary>
+    /// Model used for when an image is scanned for all faces within the image. Each item in Faces 
+    /// collection represents a face found in the image.
+    /// </summary>
     public class FaceDetectionResult
     {
         public byte[] OriginalImageData { get; set; } = new byte[] { };

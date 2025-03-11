@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace PhotoTool.Features.FaceSearch.Models
 {
+    /// <summary>
+    /// Represents a face found in an image.
+    /// </summary>
     public class FaceDetectionResultItem
 	{
 		public RectangleF Box { get; set; }

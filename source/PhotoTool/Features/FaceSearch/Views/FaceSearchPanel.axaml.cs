@@ -47,7 +47,7 @@ public partial class FaceSearchPanel: UserControl
         {
             if (viewModel.IsSearchActive) return;
 
-            FaceAddViewModel? clickedFace = source.DataContext as FaceAddViewModel;
+            SavedFaceViewModel? clickedFace = source.DataContext as SavedFaceViewModel;
             if (clickedFace != null)
             {
                 // exit if the current selection has already been clicked
@@ -86,8 +86,8 @@ public partial class FaceSearchPanel: UserControl
         StackPanel? source = sender as StackPanel;
         if (viewModel != null && source != null)
         {
-            FaceSearchViewModel? clickedImageViewModel = (FaceSearchViewModel)source.DataContext!;
-            viewModel.UpdatePreviewImage(clickedImageViewModel);
+            SearchFaceViewModel? faceViewModel = (SearchFaceViewModel)source.DataContext!;
+            viewModel.UpdatePreviewImage(faceViewModel);
         }
     }
 }

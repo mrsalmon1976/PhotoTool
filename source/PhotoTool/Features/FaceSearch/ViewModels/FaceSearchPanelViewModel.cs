@@ -46,7 +46,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private string _searchPath = String.Empty;
         private uint _searchImageCount = 0;
         private uint _searchImageProgressValue = 0;
-        private FaceAddViewModel? _selectedFace;
+        private SavedFaceViewModel? _selectedFace;
         private ImagePreviewViewModel? _previewImageModel;
 
         public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider
@@ -121,7 +121,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _searchImageProgressValue, value);
         }
 
-        public FaceAddViewModel? SelectedFace
+        public SavedFaceViewModel? SelectedFace
         {
             get => _selectedFace;
             set 
@@ -132,9 +132,9 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         }
 
 
-        public ObservableCollection<FaceAddViewModel> SavedFaces { get; set; } = new ObservableCollection<FaceAddViewModel>();
+        public ObservableCollection<SavedFaceViewModel> SavedFaces { get; set; } = new ObservableCollection<SavedFaceViewModel>();
 
-        public ObservableCollection<FaceSearchViewModel> SearchResults { get; set; } = new ObservableCollection<FaceSearchViewModel>();
+        public ObservableCollection<SearchFaceViewModel> SearchResults { get; set; } = new ObservableCollection<SearchFaceViewModel>();
 
         #endregion
 
@@ -221,7 +221,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                     var image = new Bitmap(new MemoryStream(imageData));
                     var grayscaleImage = new Bitmap(new MemoryStream(_imageProcessor.ConvertToGrayscale(imageData)));
 
-                    SavedFaces.Add(new FaceAddViewModel()
+                    SavedFaces.Add(new SavedFaceViewModel()
                     {
                         FilePath = f.FilePath,
                         ImageGrayscale = grayscaleImage,
@@ -301,16 +301,17 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                         
                         this.UpdateProgress($"Analysing file {fileInfo.Name} ({(progressValue +1)} of {imageCount})...", progressValue++);
 
-                        FaceSearchResult searchResult = _faceDetectionService.SearchForFace(faceEmbedding, fileInfo.FullName);
-                        if (searchResult.FaceMatchProspect != FaceMatchProspect.None)
+                        FaceComparison faceComparison = _faceDetectionService.SearchForFace(faceEmbedding, fileInfo.FullName);
+                        if (faceComparison.FaceMatchProspect != FaceMatchProspect.None)
                         {
-                            SearchResults.Add(new FaceSearchViewModel()
+                            Dispatcher.UIThread.Invoke(() =>
                             {
-                                Name = fileInfo.Name,
-                                Path = fileInfo.FullName,
-                                Image = new Bitmap(fileInfo.FullName)
-                                //MatchInfo = $"{searchResult.FaceMatchProspect.ToString()} match",
-                                //MatchColor = (searchResult.FaceMatchProspect == FaceMatchProspect.Probable) ? Colors.Green : Colors.Orange
+                                SearchResults.Add(new SearchFaceViewModel()
+                                {
+                                    Name = fileInfo.Name,
+                                    FilePath = fileInfo.FullName,
+                                    Image = new Bitmap(fileInfo.FullName)
+                                });
                             });
                             faceMatchCount++;
                         }
@@ -354,15 +355,15 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             });
         }
 
-        public void UpdatePreviewImage(FaceSearchViewModel faceSearchViewModel)
+        public void UpdatePreviewImage(SearchFaceViewModel faceViewModel)
         {
             IFileSystemProvider fileSystemProvider = new FileSystemProvider();
             this.PreviewImageModel = new ImagePreviewViewModel()
             {
-                Image = faceSearchViewModel.Image,
-                Name = faceSearchViewModel.Name,
-                Path = faceSearchViewModel.Path,
-                Dimensions = string.Format("{0}x{1} / {2}", faceSearchViewModel.Image?.Size.Width, faceSearchViewModel.Image?.Size.Height, fileSystemProvider.GetFileSizeReadable(faceSearchViewModel.Path))
+                Image = faceViewModel.Image,
+                Name = faceViewModel.Name,
+                Path = faceViewModel.FilePath,
+                Dimensions = string.Format("{0}x{1} / {2}", faceViewModel.Image?.Size.Width, faceViewModel.Image?.Size.Height, fileSystemProvider.GetFileSizeReadable(faceViewModel.FilePath))
             };
 
         }
