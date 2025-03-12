@@ -23,6 +23,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PhotoTool.Features.BatchResizer.ViewModels
 {
@@ -51,7 +52,6 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             AddFolderButtonClickCommand = ReactiveCommand.Create(OnAddFolderButtonClick);
             CancelButtonClickCommand = ReactiveCommand.Create(OnCancelButtonClick);
             ResizeButtonClickCommand = ReactiveCommand.Create(OnResizeButtonClick);
-
         }
 
         #region Commands

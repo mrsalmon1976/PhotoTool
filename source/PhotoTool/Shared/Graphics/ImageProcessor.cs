@@ -1,13 +1,11 @@
 ﻿using Avalonia.Media.Imaging;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoTool.Shared.Graphics
 {
@@ -20,13 +18,13 @@ namespace PhotoTool.Shared.Graphics
 
         string? ConvertToBase64(Bitmap? image);
 
+        byte[] ConvertToGrayscale(byte[] imageBytes);
+
         SKEncodedImageFormat GetImageFormatFromPath(string path);
 
         bool IsImageExtension(string extension);
 
-        byte[] ConvertToGrayscale(byte[] imageBytes);
-
-
+        Bitmap ResizeImage(string path, int length, string outPath);
     }
 
     public class ImageProcessor : IImageProcessor
@@ -51,19 +49,9 @@ namespace PhotoTool.Shared.Graphics
             _imageExtensions.Add(".webp", SKEncodedImageFormat.Webp);
         }
 
-        //public Color ConvertColor(SKColor color)
-        //{
-        //    return new Microsoft.Maui.Graphics.Color(
-        //        color.Red / 255.0F,
-        //        color.Green / 255.0F,
-        //        color.Blue / 255.0F,
-        //        color.Alpha / 255.0F
-        //    );
-        //}
-
         public byte[] ConvertToGrayscale(byte[] imageBytes)
         {
-            using (SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(imageBytes)) // Load image from byte array
+            using (Image image = Image.Load(imageBytes)) // Load image from byte array
             {
                 image.Mutate(x => x.Grayscale()); // Apply grayscale transformation
 
@@ -74,21 +62,6 @@ namespace PhotoTool.Shared.Graphics
                 }
             }
         }
-
-        //public string CopyToWorkingDirectory(string source)
-        //{
-        //    string workDir = _appSettings.WorkingDirectory;
-        //    _fileService.EnsureDirectoryExists(workDir);
-
-        //    string fileName = Path.GetFileNameWithoutExtension(source);
-        //    string extension = Path.GetExtension(source);
-        //    string newFileName = $"{fileName}_{Guid.NewGuid()}{extension}";
-
-        //    string newFilePath = Path.Combine(workDir, newFileName);
-        //    _fileService.CopyFile(source, newFilePath);
-
-        //    return newFilePath;
-        //}
 
         public string? ConvertToBase64(Bitmap? image)
         {
@@ -134,6 +107,25 @@ namespace PhotoTool.Shared.Graphics
         {
             var ext = extension.ToLowerInvariant();
             return _imageExtensions.ContainsKey(ext);
+        }
+
+        /// <summary>
+        /// This function can be used to resize images, while retaining image quality.
+        /// </summary>
+        /// <param name="path">Source image path.</param>
+        /// <param name="length">Length of the output image (longest side - other length will be calculated).</param>
+        /// <param name="outPath">Where the file will be written to - note that if path = outPath, the original image will be overwritten</param>
+        public virtual Bitmap ResizeImage(string path, int length, string outPath)
+        {
+            using (Image image = Image.Load(path))
+            {
+                // SixLabors will do the calculation - we just need to know which side is smaller in the original image and set it to 0
+                int width = (image.Width >= image.Height ? length : 0);
+                int height = (width == 0 ? length : 0);
+                image.Mutate(x => x.Resize(width, height));
+                image.Save(outPath);
+            }
+            return new Bitmap(outPath);
         }
 
 
