@@ -24,7 +24,7 @@ namespace PhotoTool.Shared.Graphics
 
         bool IsImageExtension(string extension);
 
-        Bitmap ResizeImage(string path, int length, string outPath);
+        Bitmap ResizeImage(string path, uint length, string outPath);
     }
 
     public class ImageProcessor : IImageProcessor
@@ -115,14 +115,14 @@ namespace PhotoTool.Shared.Graphics
         /// <param name="path">Source image path.</param>
         /// <param name="length">Length of the output image (longest side - other length will be calculated).</param>
         /// <param name="outPath">Where the file will be written to - note that if path = outPath, the original image will be overwritten</param>
-        public virtual Bitmap ResizeImage(string path, int length, string outPath)
+        public virtual Bitmap ResizeImage(string path, uint length, string outPath)
         {
             using (Image image = Image.Load(path))
             {
                 // SixLabors will do the calculation - we just need to know which side is smaller in the original image and set it to 0
-                int width = (image.Width >= image.Height ? length : 0);
-                int height = (width == 0 ? length : 0);
-                image.Mutate(x => x.Resize(width, height));
+                uint width = (image.Width >= image.Height ? length : 0);
+                uint height = (width == 0 ? length : 0);
+                image.Mutate(x => x.Resize((int)width, (int)height));
                 image.Save(outPath);
             }
             return new Bitmap(outPath);

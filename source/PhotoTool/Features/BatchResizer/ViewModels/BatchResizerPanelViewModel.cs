@@ -150,7 +150,20 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         private async void OnResizeButtonClick()
         {
-            await ResizeImages();
+            var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
+
+            // Start async operation to open the dialog.
+            var folder = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Select Output Folder",
+                AllowMultiple = false
+            });
+            if (folder.Count > 0)
+            {
+                string? path = folder.First().TryGetLocalPath();
+                await ResizeImages(path);
+            }
+
         }
 
 
@@ -288,12 +301,30 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             }
         }
 
+        private string GetOutputFilename(string filePath, string outFolder, bool overwrite)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            string extension = Path.GetExtension(filePath);
+            string newFilePath = Path.Combine(outFolder, $"{fileName}{extension}");
+
+            if (!overwrite)
+            {
+                int num = 1;
+                while (_fileSystemProvider.FileExists(newFilePath))
+                {
+                    newFilePath = Path.Combine(outFolder, $"{fileName}_{num++}{extension}");
+                }
+            }
+
+            return newFilePath;
+        }
+
         private void ResetInfoText()
         {
             UpdateProgress($"{SelectedImages.Count} images selected for resizing.", 0);
         }
 
-        private async Task ResizeImages()
+        private async Task ResizeImages(string folder)
         {
 
             try
@@ -301,12 +332,22 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
                 this.IsBatchResizeInProgress = true;
                 this.IsBusy = true;
 
+                UpdateProgress("Preparing to resize images...", 0);
+
                 await Task.Run(() =>
                 {
                     ImageResizeOptions options = ImageResizeOptions.FromViewModel(this.ImageResizeOptionsViewModel);
                     _imageResizeOptionsValidator.Validate(options);
 
-                    Thread.Sleep(3000);
+                    uint num = 1;
+                    foreach (var imageViewModel in SelectedImages)
+                    {
+                        UpdateProgress($"Resizing {imageViewModel.Name}", num++);
+
+                        string outputPath = GetOutputFilename(imageViewModel.FilePath, folder, options.OverwriteFiles);
+                        _imageProcessor.ResizeImage(imageViewModel.FilePath, options.MaxImageLength, outputPath);
+                    }
+
                 });
 
             }
