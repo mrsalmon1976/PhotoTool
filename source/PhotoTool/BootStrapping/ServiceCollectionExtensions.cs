@@ -1,5 +1,6 @@
 ﻿using Avalonia.Platform;
 using Microsoft.Extensions.DependencyInjection;
+using PhotoTool.Features.BatchResizer.Validators;
 using PhotoTool.Features.BatchResizer.ViewModels;
 using PhotoTool.Features.FaceSearch.Repositories;
 using PhotoTool.Features.FaceSearch.Services;
@@ -43,6 +44,8 @@ namespace PhotoTool.BootStrapping
 
         private static void AddBatchResizerFeature(this IServiceCollection services)
         {
+            services.AddTransient<IImageResizeOptionsValidator, ImageResizeOptionsValidator>();
+
             // ViewModels
             services.AddTransient<ImageResizeOptionsViewModel>();
             services.AddTransient<ImageViewModel>();

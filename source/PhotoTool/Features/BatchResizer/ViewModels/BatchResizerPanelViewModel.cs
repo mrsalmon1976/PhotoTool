@@ -2,10 +2,13 @@
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using NLog.Filters;
+using PhotoTool.Features.BatchResizer.Models;
+using PhotoTool.Features.BatchResizer.Validators;
 using PhotoTool.Features.FaceSearch.Services;
 using PhotoTool.Features.FaceSearch.ViewModels;
 using PhotoTool.Shared.Comparers;
 using PhotoTool.Shared.Configuration;
+using PhotoTool.Shared.Exceptions;
 using PhotoTool.Shared.Graphics;
 using PhotoTool.Shared.IO;
 using PhotoTool.Shared.Logging;
@@ -38,14 +41,19 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         private bool _isBatchResizeInProgress = false;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IImageProcessor _imageProcessor;
+        private readonly IImageResizeOptionsValidator _imageResizeOptionsValidator;
         private uint _imageResizeProgressValue = 0;
 
-        public BatchResizerPanelViewModel(ImageResizeOptionsViewModel resizeOptionsViewModel, IFileSystemProvider fileSystemProvider, IImageProcessor imageProcessor)
+        public BatchResizerPanelViewModel(ImageResizeOptionsViewModel resizeOptionsViewModel
+            , IFileSystemProvider fileSystemProvider
+            , IImageProcessor imageProcessor
+            , IImageResizeOptionsValidator imageResizeOptionsValidator
+            )
         {
-            ImageResizeOptions = resizeOptionsViewModel;
+            ImageResizeOptionsViewModel = resizeOptionsViewModel;
             _fileSystemProvider = fileSystemProvider;
             _imageProcessor = imageProcessor;
-
+            _imageResizeOptionsValidator = imageResizeOptionsValidator;
             this.IsBusy = false;
 
             AddFileButtonClickCommand = ReactiveCommand.Create(OnAddFileButtonClick);
@@ -68,7 +76,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         #region Properties
 
-        public ImageResizeOptionsViewModel ImageResizeOptions { get; set; }
+        public ImageResizeOptionsViewModel ImageResizeOptionsViewModel { get; set; }
 
         public uint ImageResizeProgressValue
         {
@@ -295,6 +303,9 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
                 await Task.Run(() =>
                 {
+                    ImageResizeOptions options = ImageResizeOptions.FromViewModel(this.ImageResizeOptionsViewModel);
+                    _imageResizeOptionsValidator.Validate(options);
+
                     Thread.Sleep(3000);
                 });
 
@@ -302,6 +313,10 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             catch (OperationCanceledException)
             {
                 _logger.Info("Resize operation cancelled");
+            }
+            catch (ValidationException ex)
+            {
+                await WindowUtils.ShowErrorDialog("Validation Error", ex);
             }
             catch (Exception ex)
             {
@@ -334,6 +349,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         public BatchResizerPanelViewModelDesign() : base(new ImageResizeOptionsViewModel()
             , new FileSystemProvider()
             , new ImageProcessor()
+            , new ImageResizeOptionsValidator()
             )
         {
         }
