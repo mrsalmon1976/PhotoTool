@@ -19,7 +19,7 @@ namespace PhotoTool.Features.BatchResizer.Models
 
         public bool ReplaceSpacesWithUnderscores { get; set; }
 
-        public static ImageResizeOptions FromViewModel(ImageResizeOptionsViewModel viewModel)
+        public static ImageResizeOptions ConvertFromViewModel(ImageResizeOptionsViewModel viewModel)
         {
             ImageResizeOptions options = new ImageResizeOptions()
             {

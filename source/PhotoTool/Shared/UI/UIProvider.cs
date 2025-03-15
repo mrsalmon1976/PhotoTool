@@ -10,6 +10,7 @@ namespace PhotoTool.Shared.UI
     public interface IUIProvider
     {
         void InvokeOnUIThread(Action action);
+        void PostOnUIThread(Action action);
     }
     public class UIProvider : IUIProvider
     {
@@ -17,5 +18,11 @@ namespace PhotoTool.Shared.UI
         {
             Dispatcher.UIThread.Invoke(action);
         }
+
+        public void PostOnUIThread(Action action)
+        {
+            Dispatcher.UIThread.Post(action);
+        }
+
     }
 }

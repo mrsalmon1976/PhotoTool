@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using DynamicData;
 using PhotoTool.Features.BatchResizer.Models;
 using PhotoTool.Features.BatchResizer.Validators;
 using PhotoTool.Shared.Exceptions;
@@ -174,12 +174,11 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         private void AddFile(IFileInfoWrapper fileInfoWrapper)
         {
-            //Dispatcher.UIThread.Invoke
-             _uiProvider.InvokeOnUIThread(() => {
+            _uiProvider.InvokeOnUIThread(() => {
                 SelectedImages.Add(new ImageViewModel()
                 {
                     FilePath = fileInfoWrapper.FullName,
-                    Image = new Avalonia.Media.Imaging.Bitmap(fileInfoWrapper.FullName),
+                    Image = new Bitmap(fileInfoWrapper.FullName),
                     Name = fileInfoWrapper.Name,
                     FileSize = fileInfoWrapper.GetFileSizeReadable()
                 });
@@ -188,7 +187,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         public void RemoveImages(IEnumerable<ImageViewModel> imageViewModels)
         {
-            Dispatcher.UIThread.Invoke(() =>
+            _uiProvider.InvokeOnUIThread(() =>
             {
                 foreach (var item in imageViewModels)
                 {
@@ -328,7 +327,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
                 await Task.Run(() =>
                 {
-                    ImageResizeOptions options = ImageResizeOptions.FromViewModel(this.ImageResizeOptionsViewModel);
+                    ImageResizeOptions options = ImageResizeOptions.ConvertFromViewModel(this.ImageResizeOptionsViewModel);
                     _imageResizeOptionsValidator.Validate(options);
 
                     uint num = 1;
@@ -372,7 +371,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         private void UpdateProgress(string infoText, uint progress)
         {
-            Dispatcher.UIThread.Post(() => {
+            _uiProvider.PostOnUIThread(() => {
                 this.InfoText = infoText;
                 this.ImageResizeProgressValue = progress;
             });
