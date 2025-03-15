@@ -301,13 +301,19 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             }
         }
 
-        private string GetOutputFilename(string filePath, string outFolder, bool overwrite)
+        private string GetOutputFilename(string filePath, string outFolder, ImageResizeOptions options)
         {
             string fileName = Path.GetFileNameWithoutExtension(filePath);
             string extension = Path.GetExtension(filePath);
+
+            if (options.ReplaceSpacesWithUnderscores)
+            {
+                fileName = fileName.Replace(" ", "_");
+            }
+
             string newFilePath = Path.Combine(outFolder, $"{fileName}{extension}");
 
-            if (!overwrite)
+            if (!options.OverwriteFiles)
             {
                 int num = 1;
                 while (_fileSystemProvider.FileExists(newFilePath))
@@ -344,7 +350,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
                     {
                         UpdateProgress($"Resizing {imageViewModel.Name}", num++);
 
-                        string outputPath = GetOutputFilename(imageViewModel.FilePath, folder, options.OverwriteFiles);
+                        string outputPath = GetOutputFilename(imageViewModel.FilePath, folder, options);
                         _imageProcessor.ResizeImage(imageViewModel.FilePath, options.MaxImageLength, outputPath);
                     }
 
