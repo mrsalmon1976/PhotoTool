@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using NLog.Filters;
@@ -131,7 +132,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
             if (files.Count > 0)
             {
-                await AddFiles(files);
+                await AddStorageItems(files);
             }
         }
 
@@ -147,8 +148,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             });
             if (folder.Count > 0)
             {
-                string? path = folder.First().TryGetLocalPath();
-                await AddFolder(path!);
+                await AddStorageItems(folder);
             }
         }
 
@@ -160,6 +160,8 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         private async void OnResizeButtonClick()
         {
+            if (this.SelectedImages.Count == 0) return;
+
             var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
 
             // Start async operation to open the dialog.
@@ -170,12 +172,11 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             });
             if (folder.Count > 0)
             {
-                string? path = folder.First().TryGetLocalPath();
+                string path = folder.First().TryGetLocalPath()!;
                 await ResizeImages(path);
             }
 
         }
-
 
         private void AddFile(FileInfo fileInfo)
         {
@@ -190,10 +191,25 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             });
         }
 
-        private async Task AddFiles(IEnumerable<IStorageFile> files)
+        public void RemoveImages(IEnumerable<ImageViewModel> imageViewModels)
         {
-            int totalFileCount = files.Count();
-            uint index = 1;
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                foreach (var item in imageViewModels)
+                {
+                    this.SelectedImages.Remove(item);
+                    if (this.PreviewImageModel != null && this.PreviewImageModel.Path == item.FilePath)
+                    {
+                        this.PreviewImageModel = null;
+                    }
+                }
+            });
+            ResetInfoText();
+        }
+
+        public async Task AddStorageItems(IEnumerable<IStorageItem> storageItems)
+        {
+            int totalItemCount = 0;
             uint imageCount = 0;
 
             try
@@ -204,17 +220,41 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
                 await Task.Run(() =>
                 {
 
-                    // enumerate the files in the selected folder
+                    // enumerate the storage items
                     IPerformanceLogger perfLogger = PerformanceLogger.CreateAndStart<BatchResizerPanelViewModel>("AddFiles");
-                    foreach (var file in files)
+                    List<string> filesToAdd = new List<string>();
+
+                    foreach (var item in storageItems)
                     {
                         _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                        string? filePath = file.TryGetLocalPath();
+                        string? itemPath = item.TryGetLocalPath();
+                        if (itemPath == null) continue;
+                        
+                        bool isFile = _fileSystemProvider.FileExists(itemPath);
 
-                        UpdateProgress($"Adding {filePath}...({index++} of {totalFileCount})", 0);
+                        if (isFile)
+                        {
+                            filesToAdd.Add(itemPath!);
+                            totalItemCount++;
+                            continue;
+                        }
 
-                        if (filePath == null || SelectedImages.Any(x => x.FilePath == filePath))
+                        bool isFolder = _fileSystemProvider.DirectoryExists(itemPath);
+                        if (isFolder)
+                        {
+                            UpdateProgress($"Enumerating folder {itemPath}...", 0);
+                            IEnumerable<string> files = _fileSystemProvider.EnumerateFiles(itemPath, "*.*", SearchOption.AllDirectories);
+                            filesToAdd.AddRange(files);
+                            totalItemCount += files.Count();
+                        }
+                    }
+
+                    UpdateProgress($"{totalItemCount} files found, scanning for images...", 0);
+
+                    foreach (string filePath in filesToAdd)
+                    {
+                        if (SelectedImages.Any(x => x.FilePath == filePath))
                         {
                             continue;
                         }
@@ -228,74 +268,13 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
                         }
 
                     }
-                    perfLogger.Stop($"Processed {totalFileCount} selected files; {imageCount} images found");
 
+                    perfLogger.Stop($"Processed {totalItemCount} files; {imageCount} images found");
                 });
             }
             catch (OperationCanceledException)
             {
                 _logger.Info("Image load operation cancelled");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                await WindowUtils.ShowErrorDialog("Error", $"An unexpected error occurred: {ex.Message}");
-            }
-            finally
-            {
-                ResetInfoText();
-                this.IsBusy = false;
-                _cancellationTokenSource?.Dispose();
-                _cancellationTokenSource = null;
-            }
-        }
-
-        private async Task AddFolder(string folder)
-        {
-            uint totalFileCount = 0;
-            uint imageCount = 0;
-
-            try
-            {
-                this.IsBusy = true;
-                _cancellationTokenSource = new CancellationTokenSource();
-                this.InfoText = "Searching for images";
-
-                await Task.Run(() =>
-                {
-
-                    // enumerate files
-                    IEnumerable<string> files = _fileSystemProvider.EnumerateFiles(folder, "*.*", SearchOption.AllDirectories);
-
-                    // enumerate the files in the selected folder
-                    IPerformanceLogger perfLogger = PerformanceLogger.CreateAndStart<BatchResizerPanelViewModel>("AddFolder");
-                    foreach (var file in files)
-                    {
-                        _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                        if (SelectedImages.Any(x => x.FilePath == file))
-                        {
-                            continue;
-                        }
-
-                        FileInfo fileInfo = new FileInfo(file);
-
-                        if (_imageProcessor.IsImageExtension(fileInfo.Extension))
-                        {
-                            AddFile(fileInfo);
-                            imageCount++;
-                        }
-
-                        totalFileCount++;
-                        UpdateProgress($"Searching {folder} for images...{imageCount} images found of {totalFileCount} files.", 0);
-                    }
-                    perfLogger.Stop($"Processed {totalFileCount} files in '{folder}'; {imageCount} images found");
-
-                });
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.Info("Image search operation cancelled");
             }
             catch (Exception ex)
             {
@@ -345,7 +324,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         private void ResetInfoText()
         {
-            UpdateProgress($"{SelectedImages.Count} images selected for resizing.", 0);
+            UpdateProgress($"{SelectedImages.Count} images loaded for resizing.", 0);
         }
 
         private async Task ResizeImages(string folder)
@@ -392,7 +371,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                UpdateProgress($"Error: {ex.Message}.", 0);
+                UpdateProgress($"Error: {ex.Message}", 0);
                 await WindowUtils.ShowErrorDialog("Resize Error", $"An unexpected error occurred: {ex.Message}");
             }
             finally

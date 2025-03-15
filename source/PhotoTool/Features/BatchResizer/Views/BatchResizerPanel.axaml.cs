@@ -1,10 +1,9 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using DynamicData;
+using Avalonia.Input;
 using PhotoTool.Features.BatchResizer.ViewModels;
 using PhotoTool.Shared.ViewModels;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PhotoTool.Features.BatchResizer.Views;
@@ -16,6 +15,31 @@ public partial class BatchResizerPanel : UserControl
     public BatchResizerPanel()
     {
         InitializeComponent();
+
+        SetupDragDrop();
+    }
+
+    private void SetupDragDrop()
+    {
+        ImageDataGrid.AddHandler(DragDrop.DropEvent, Drop);
+        ImageDataGrid.AddHandler(DragDrop.DragOverEvent, DragOver);
+    }
+
+    private void DragOver(object? sender, DragEventArgs e)
+    {
+        e.DragEffects = DragDropEffects.Copy;
+        e.Handled = true;
+    }
+
+    private async void Drop(object? sender, DragEventArgs e)
+    {
+        BatchResizerPanelViewModel? viewModel = this.DataContext as BatchResizerPanelViewModel;
+        var files = e.Data.GetFiles();
+        if (viewModel != null && files != null && files.Count() > 0)
+        {
+            await viewModel!.AddStorageItems(files);
+        }
+        e.Handled = true;
     }
 
     private void TextBoxKeyDownDigitsOnly(object? sender, Avalonia.Input.KeyEventArgs e)
@@ -34,16 +58,16 @@ public partial class BatchResizerPanel : UserControl
 
     private void DataGridSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        DataGrid dataGrid = (DataGrid)sender!;
         if (_isDeleting) return;
 
+        DataGrid dataGrid = (DataGrid)sender!;
         UpdatePreviewImage(dataGrid);
     }
 
     private void DataGridKeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
     {
         DataGrid dataGrid = (DataGrid)sender!;
-        if (e.Key == Avalonia.Input.Key.Delete && dataGrid.SelectedItems.Count > 0)
+        if (e.Key == Key.Delete && dataGrid.SelectedItems.Count > 0)
         {
             RemoveSelectedImages();
         }
@@ -64,18 +88,9 @@ public partial class BatchResizerPanel : UserControl
                     selectedItems.Add(imageViewModel);
                 }
             }
-
-            foreach (var item in selectedItems)
-            {
-                viewModel.SelectedImages.Remove(item);
-                if (viewModel.PreviewImageModel != null && viewModel.PreviewImageModel.Path == item.FilePath)
-                {
-                    viewModel.PreviewImageModel = null;
-                }
-            }
+            viewModel.RemoveImages(selectedItems);
         }
         _isDeleting = false;
-        UpdatePreviewImage(ImageDataGrid);
     }
 
     private void UpdatePreviewImage(DataGrid dataGrid)
