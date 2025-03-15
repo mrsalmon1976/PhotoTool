@@ -23,7 +23,7 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
     [TestFixture]
     public class BatchResizerPanelViewModelTests
     {
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+        #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         private ImageResizeOptionsViewModel _imageResizeOptionsViewModel = null;
         private IFileSystemProvider _fileSystemProvider = null;
         private IUIProvider _uiProvider = null;
@@ -41,12 +41,12 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             _imageResizeOptionsValidator = new SubstituteBuilder<IImageResizeOptionsValidator>().Build();
         }
 
+        #region AddStorageItems Tests
+
         [AvaloniaTest]
         public async Task AddStorageItems_FilesNotImages_NotAddedToSelectedItems()
         {
             // Arrange
-            var viewModel = CreateBatchResizerPanelViewModel();
-
             IStorageItem storageItem1 = new SubstituteBuilder<IStorageItem>().WithRandomProperties().Build();
             IStorageItem storageItem2 = new SubstituteBuilder<IStorageItem>().WithRandomProperties().Build();
             List<IStorageItem> storageItems = new List<IStorageItem> { storageItem1, storageItem2 };
@@ -59,6 +59,7 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             _imageProcessor.IsImageExtension(Arg.Any<string>()).Returns(false);
 
             // Act
+            var viewModel = CreateBatchResizerPanelViewModel();
             await viewModel.AddStorageItems(storageItems);
 
             // Assert
@@ -70,8 +71,6 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
         public async Task AddStorageItems_WhenFilesSelected_AddedToSelectedImages()
         {
             // Arrange
-            var viewModel = CreateBatchResizerPanelViewModel();
-
             IStorageItem storageItem1 = new SubstituteBuilder<IStorageItem>().WithRandomProperties().Build();
             IStorageItem storageItem2 = new SubstituteBuilder<IStorageItem>().WithRandomProperties().Build();
             List<IStorageItem> storageItems = new List<IStorageItem> { storageItem1, storageItem2 };
@@ -84,6 +83,7 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             _imageProcessor.IsImageExtension(Arg.Any<string>()).Returns(true);
 
             // Act
+            var viewModel = CreateBatchResizerPanelViewModel();
             await viewModel.AddStorageItems(storageItems);
 
             // Assert
@@ -96,8 +96,6 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
         public async Task AddStorageItems_WhenFoldersSelected_AddedToSelectedImages()
         {
             // Arrange
-            var viewModel = CreateBatchResizerPanelViewModel();
-
             IStorageItem storageItem1 = new SubstituteBuilder<IStorageItem>().WithRandomProperties().Build();
             IStorageItem storageItem2 = new SubstituteBuilder<IStorageItem>().WithRandomProperties().Build();
             List<IStorageItem> storageItems = new List<IStorageItem> { storageItem1, storageItem2 };
@@ -117,6 +115,7 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             _imageProcessor.IsImageExtension(Arg.Any<string>()).Returns(true);
 
             // Act
+            var viewModel = CreateBatchResizerPanelViewModel();
             await viewModel.AddStorageItems(storageItems);
 
             // Assert
@@ -128,6 +127,9 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             }
         }
 
+        #endregion
+
+        #region Private Methods
 
         private BatchResizerPanelViewModel CreateBatchResizerPanelViewModel()
         {
@@ -143,6 +145,8 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             }
             return files;
         }
+
+        #endregion
 
     }
 }
