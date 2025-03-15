@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Avalonia.Platform.Storage;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,6 +22,10 @@ namespace PhotoTool.Shared.IO
         void EnsureDirectoryExists(string path);
 
         bool FileExists(string path);
+
+        DirectoryInfo? GetDirectoryInfo(IStorageItem storageItem);
+
+        FileInfo? GetFileInfo(IStorageItem storageItem);
 
         string GetFileSizeReadable(string path);
 
@@ -71,6 +76,27 @@ namespace PhotoTool.Shared.IO
         public bool FileExists(string path)
         {
             return File.Exists(path);
+        }
+
+        public DirectoryInfo? GetDirectoryInfo(IStorageItem storageItem)
+        {
+            string? path = storageItem.TryGetLocalPath();
+            if (path != null && Directory.Exists(path))
+            {
+                return new DirectoryInfo(path);
+            }
+            return null;
+        }
+
+
+        public FileInfo? GetFileInfo(IStorageItem storageItem)
+        {
+            string? path = storageItem.TryGetLocalPath();
+            if (path != null && File.Exists(path))
+            {
+                return new FileInfo(path);
+            }
+            return null;
         }
 
 

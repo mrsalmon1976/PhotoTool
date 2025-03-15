@@ -1,19 +1,13 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using NLog.Filters;
+using DynamicData;
 using PhotoTool.Features.BatchResizer.Models;
 using PhotoTool.Features.BatchResizer.Validators;
-using PhotoTool.Features.FaceSearch.Services;
-using PhotoTool.Features.FaceSearch.ViewModels;
-using PhotoTool.Shared.Comparers;
-using PhotoTool.Shared.Configuration;
 using PhotoTool.Shared.Exceptions;
 using PhotoTool.Shared.Graphics;
 using PhotoTool.Shared.IO;
 using PhotoTool.Shared.Logging;
-using PhotoTool.Shared.Resources;
 using PhotoTool.Shared.UI;
 using PhotoTool.Shared.ViewModels;
 using ReactiveUI;
@@ -23,11 +17,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace PhotoTool.Features.BatchResizer.ViewModels
 {
@@ -228,23 +219,19 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
                     {
                         _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                        string? itemPath = item.TryGetLocalPath();
-                        if (itemPath == null) continue;
-                        
-                        bool isFile = _fileSystemProvider.FileExists(itemPath);
-
-                        if (isFile)
+                        FileInfo? fileInfo = _fileSystemProvider.GetFileInfo(item);
+                        if (fileInfo != null)
                         {
-                            filesToAdd.Add(itemPath!);
+                            filesToAdd.Add(fileInfo.FullName);
                             totalItemCount++;
                             continue;
                         }
 
-                        bool isFolder = _fileSystemProvider.DirectoryExists(itemPath);
-                        if (isFolder)
+                        DirectoryInfo? directoryInfo = _fileSystemProvider.GetDirectoryInfo(item);
+                        if (directoryInfo != null)
                         {
-                            UpdateProgress($"Enumerating folder {itemPath}...", 0);
-                            IEnumerable<string> files = _fileSystemProvider.EnumerateFiles(itemPath, "*.*", SearchOption.AllDirectories);
+                            UpdateProgress($"Enumerating folder {directoryInfo.FullName}...", 0);
+                            IEnumerable<string> files = _fileSystemProvider.EnumerateFiles(directoryInfo.FullName, "*.*", SearchOption.AllDirectories);
                             filesToAdd.AddRange(files);
                             totalItemCount += files.Count();
                         }
