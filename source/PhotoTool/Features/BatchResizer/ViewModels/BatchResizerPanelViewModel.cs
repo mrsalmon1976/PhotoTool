@@ -43,6 +43,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         private readonly IImageProcessor _imageProcessor;
         private readonly IImageResizeOptionsValidator _imageResizeOptionsValidator;
         private uint _imageResizeProgressValue = 0;
+        private ImagePreviewViewModel? _previewImageModel;
 
         public BatchResizerPanelViewModel(ImageResizeOptionsViewModel resizeOptionsViewModel
             , IFileSystemProvider fileSystemProvider
@@ -100,6 +101,15 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         {
             get => _isBusy;
             private set => this.RaiseAndSetIfChanged(ref _isBusy, value);
+        }
+
+        public ImagePreviewViewModel? PreviewImageModel
+        {
+            get => _previewImageModel;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _previewImageModel, value);
+            }
         }
 
         public ObservableCollection<ImageViewModel> SelectedImages { get; set; } = new ObservableCollection<ImageViewModel>();

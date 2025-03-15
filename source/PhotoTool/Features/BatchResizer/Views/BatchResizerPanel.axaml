@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="using:PhotoTool.Features.BatchResizer.ViewModels"
+             xmlns:shared="using:PhotoTool.Shared.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:BatchResizerPanelViewModel"
@@ -58,14 +59,14 @@
               <Button IsVisible="{Binding IsBatchResizeInProgress }" DockPanel.Dock="Right" Command="{Binding CancelButtonClickCommand }">Cancel</Button>
               <ProgressBar IsVisible="{Binding IsBatchResizeInProgress }" DockPanel.Dock="Right" ShowProgressText="False" HorizontalAlignment="Right" Width="50" Height="5" Margin="0,0,5,0" Maximum="{Binding SelectedImages.Count }" Value="{Binding ImageResizeProgressValue}" />
             </DockPanel>
-			  <DataGrid Grid.Row="1" Margin="0" ItemsSource="{Binding SelectedImages}"
+			  <DataGrid x:Name="ImageDataGrid" Grid.Row="1" Margin="0" ItemsSource="{Binding SelectedImages}"
 				  IsReadOnly="True"
 				  CanUserReorderColumns="True"
 				  CanUserResizeColumns="True"
 				  CanUserSortColumns="False"
 				  GridLinesVisibility="All"
 				  FontSize="11"
-				  BorderThickness="1" BorderBrush="Gray">
+				  BorderThickness="1" BorderBrush="Gray" SelectionChanged="DataGridSelectionChanged" KeyUp="DataGridKeyUp">
 				  <DataGrid.Columns>
 					  <DataGridTemplateColumn Header="Image" Width="80">
 						  <DataGridTemplateColumn.CellTemplate>
@@ -97,14 +98,22 @@
                 HorizontalAlignment="Stretch" 
                 HorizontalContentAlignment="Center"
                 >Add Folder</Button>
-		<Button x:Name="AddFileButton" 
-            IsEnabled="{ Binding !IsBusy}" 
-            Command="{Binding AddFileButtonClickCommand}" 
-            Margin="10,5,0,0" 
-            HorizontalAlignment="Stretch" 
-            HorizontalContentAlignment="Center"
-            >Add File(s)</Button>
-	  </StackPanel>
+		  <Button x:Name="AddFileButton" 
+              IsEnabled="{ Binding !IsBusy}" 
+              Command="{Binding AddFileButtonClickCommand}" 
+              Margin="10,5,0,0" 
+              HorizontalAlignment="Stretch" 
+              HorizontalContentAlignment="Center"
+              >Add File(s)</Button>
+        <Button x:Name="RemoveFilesButton"
+                IsEnabled="{ Binding !IsBusy}"
+                Margin="10,5,0,0"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Click="RemoveFilesButtonClick"
+            >Remove File(s)</Button>
+        <shared:ImagePreviewControl DataContext="{Binding PreviewImageModel }" IsVisible="{Binding ., Converter={x:Static ObjectConverters.IsNotNull}}" />
+      </StackPanel>
       <Button x:Name="ResizeButton" 
               IsEnabled="{ Binding !IsBusy }" 
               DockPanel.Dock="Bottom" 
