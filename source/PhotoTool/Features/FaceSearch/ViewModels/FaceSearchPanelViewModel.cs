@@ -260,16 +260,14 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                 {
 
                     // enumerate files
-                    IEnumerable<string> files = _fileSystemProvider.EnumerateFiles(SearchPath, "*.*", SearchOption.AllDirectories);
-                    List<FileInfo> imageFiles = new List<FileInfo>();
+                    IEnumerable<IFileInfoWrapper> files = _fileSystemProvider.EnumerateFiles(SearchPath, "*.*", SearchOption.AllDirectories);
+                    List<IFileInfoWrapper> imageFiles = new List<IFileInfoWrapper>();
 
                     // enumerate the files in the selected folder
                     IPerformanceLogger perfLogger = PerformanceLogger.CreateAndStart<FaceSearchPanelViewModel>("FolderImageSearch");
-                    foreach (var file in files)
+                    foreach (var fileInfo in files)
                     {
                         _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                        FileInfo fileInfo = new FileInfo(file);
 
                         if (_imageProcessor.IsImageExtension(fileInfo.Extension))
                         {
@@ -295,7 +293,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                     // now we start trying to search through the images
                     perfLogger = PerformanceLogger.CreateAndStart<FaceSearchPanelViewModel>("ImageFaceSearch");
                     uint progressValue = 0;
-                    foreach (FileInfo fileInfo in imageFiles)
+                    foreach (IFileInfoWrapper fileInfo in imageFiles)
                     {
                         _cancellationTokenSource.Token.ThrowIfCancellationRequested();
                         

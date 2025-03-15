@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using PhotoTool.Shared.IO;
+using System.Collections.Generic;
 using System.IO;
 
 namespace PhotoTool.Shared.Comparers
 {
-    internal class FileInfoCreateDateComparer : IComparer<FileInfo>
+    internal class FileInfoCreateDateComparer : IComparer<IFileInfoWrapper>
     {
-        public int Compare(FileInfo? fileInfo1, FileInfo? fileInfo2)
+        public int Compare(IFileInfoWrapper? fileInfo1, IFileInfoWrapper? fileInfo2)
         {
             if (fileInfo1 == null && fileInfo2 == null)
                 return 0;

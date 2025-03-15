@@ -9,6 +9,7 @@ using PhotoTool.Shared.Configuration;
 using PhotoTool.Shared.Graphics;
 using PhotoTool.Shared.IO;
 using PhotoTool.Shared.Resources;
+using PhotoTool.Shared.UI;
 using PhotoTool.Shared.ViewModels;
 using ReactiveUI;
 
@@ -36,6 +37,9 @@ namespace PhotoTool.BootStrapping
 
             // Resources
             services.AddSingleton<IAssetProvider, AssetProvider>();
+
+            // UI
+            services.AddSingleton<IUIProvider, UIProvider>();
 
             // ViewModels
             services.AddTransient<MainWindowViewModel>();

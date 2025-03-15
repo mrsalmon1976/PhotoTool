@@ -32,6 +32,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         private bool _isBusy = false;
         private bool _isBatchResizeInProgress = false;
         private readonly IFileSystemProvider _fileSystemProvider;
+        private readonly IUIProvider _uiProvider;
         private readonly IImageProcessor _imageProcessor;
         private readonly IImageResizeOptionsValidator _imageResizeOptionsValidator;
         private uint _imageResizeProgressValue = 0;
@@ -39,12 +40,14 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         public BatchResizerPanelViewModel(ImageResizeOptionsViewModel resizeOptionsViewModel
             , IFileSystemProvider fileSystemProvider
+            , IUIProvider uiProvider
             , IImageProcessor imageProcessor
             , IImageResizeOptionsValidator imageResizeOptionsValidator
             )
         {
             ImageResizeOptionsViewModel = resizeOptionsViewModel;
             _fileSystemProvider = fileSystemProvider;
+            _uiProvider = uiProvider;
             _imageProcessor = imageProcessor;
             _imageResizeOptionsValidator = imageResizeOptionsValidator;
             this.IsBusy = false;
@@ -169,15 +172,16 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         }
 
-        private void AddFile(FileInfo fileInfo)
+        private void AddFile(IFileInfoWrapper fileInfoWrapper)
         {
-            Dispatcher.UIThread.Invoke(() => {
+            //Dispatcher.UIThread.Invoke
+             _uiProvider.InvokeOnUIThread(() => {
                 SelectedImages.Add(new ImageViewModel()
                 {
-                    FilePath = fileInfo.FullName,
-                    Image = new Avalonia.Media.Imaging.Bitmap(fileInfo.FullName),
-                    Name = fileInfo.Name,
-                    FileSize = _fileSystemProvider.GetFileSizeReadable(fileInfo.Length)
+                    FilePath = fileInfoWrapper.FullName,
+                    Image = new Avalonia.Media.Imaging.Bitmap(fileInfoWrapper.FullName),
+                    Name = fileInfoWrapper.Name,
+                    FileSize = fileInfoWrapper.GetFileSizeReadable()
                 });
             });
         }
@@ -213,25 +217,25 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
                     // enumerate the storage items
                     IPerformanceLogger perfLogger = PerformanceLogger.CreateAndStart<BatchResizerPanelViewModel>("AddFiles");
-                    List<string> filesToAdd = new List<string>();
+                    List<IFileInfoWrapper> filesToAdd = new List<IFileInfoWrapper>();
 
                     foreach (var item in storageItems)
                     {
                         _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                        FileInfo? fileInfo = _fileSystemProvider.GetFileInfo(item);
+                        IFileInfoWrapper? fileInfo = _fileSystemProvider.GetFileInfo(item);
                         if (fileInfo != null)
                         {
-                            filesToAdd.Add(fileInfo.FullName);
+                            filesToAdd.Add(fileInfo);
                             totalItemCount++;
                             continue;
                         }
 
-                        DirectoryInfo? directoryInfo = _fileSystemProvider.GetDirectoryInfo(item);
+                        IDirectoryInfoWrapper? directoryInfo = _fileSystemProvider.GetDirectoryInfo(item);
                         if (directoryInfo != null)
                         {
                             UpdateProgress($"Enumerating folder {directoryInfo.FullName}...", 0);
-                            IEnumerable<string> files = _fileSystemProvider.EnumerateFiles(directoryInfo.FullName, "*.*", SearchOption.AllDirectories);
+                            IEnumerable<IFileInfoWrapper> files = _fileSystemProvider.EnumerateFiles(directoryInfo.FullName, "*.*", SearchOption.AllDirectories);
                             filesToAdd.AddRange(files);
                             totalItemCount += files.Count();
                         }
@@ -239,14 +243,12 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
                     UpdateProgress($"{totalItemCount} files found, scanning for images...", 0);
 
-                    foreach (string filePath in filesToAdd)
+                    foreach (IFileInfoWrapper fileInfo in filesToAdd)
                     {
-                        if (SelectedImages.Any(x => x.FilePath == filePath))
+                        if (SelectedImages.Any(x => x.FilePath == fileInfo.FullName))
                         {
                             continue;
                         }
-
-                        FileInfo fileInfo = new FileInfo(filePath);
 
                         if (_imageProcessor.IsImageExtension(fileInfo.Extension))
                         {
@@ -385,6 +387,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
     {
         public BatchResizerPanelViewModelDesign() : base(new ImageResizeOptionsViewModel()
             , new FileSystemProvider()
+            , new UIProvider()
             , new ImageProcessor()
             , new ImageResizeOptionsValidator()
             )

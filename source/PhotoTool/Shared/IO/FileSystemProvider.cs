@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PhotoTool.Shared.IO
@@ -14,23 +15,23 @@ namespace PhotoTool.Shared.IO
 
         bool DirectoryExists(string path);
 
-		IEnumerable<string> EnumerateFiles(string path, string searchPattern);
+		IEnumerable<IFileInfoWrapper> EnumerateFiles(string path, string searchPattern);
 
-        IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption);
+        IEnumerable<IFileInfoWrapper> EnumerateFiles(string path, string searchPattern, SearchOption searchOption);
 
 
         void EnsureDirectoryExists(string path);
 
         bool FileExists(string path);
 
-        DirectoryInfo? GetDirectoryInfo(IStorageItem storageItem);
+        IDirectoryInfoWrapper? GetDirectoryInfo(IStorageItem storageItem);
 
-        FileInfo? GetFileInfo(IStorageItem storageItem);
+        IFileInfoWrapper? GetFileInfo(string path);
+
+        IFileInfoWrapper? GetFileInfo(IStorageItem storageItem);
+
 
         string GetFileSizeReadable(string path);
-
-        string GetFileSizeReadable(long i);
-
 
         string GetRandomFileName(string extension);
 
@@ -57,15 +58,16 @@ namespace PhotoTool.Shared.IO
             return Directory.Exists(path);
         }
 
-        public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
+        public IEnumerable<IFileInfoWrapper> EnumerateFiles(string path, string searchPattern)
         {
             return EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
 
         }
 
-        public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption)
+        public IEnumerable<IFileInfoWrapper> EnumerateFiles(string path, string searchPattern, SearchOption searchOption)
         {
-            return Directory.EnumerateFiles(path, searchPattern, searchOption);
+            IEnumerable<string> files = Directory.EnumerateFiles(path, searchPattern, searchOption);
+            return files.Select(x => new FileInfoWrapper(x));
         }
 
         public void EnsureDirectoryExists(string path)
@@ -78,23 +80,32 @@ namespace PhotoTool.Shared.IO
             return File.Exists(path);
         }
 
-        public DirectoryInfo? GetDirectoryInfo(IStorageItem storageItem)
+        public IDirectoryInfoWrapper? GetDirectoryInfo(IStorageItem storageItem)
         {
             string? path = storageItem.TryGetLocalPath();
             if (path != null && Directory.Exists(path))
             {
-                return new DirectoryInfo(path);
+                return new DirectoryInfoWrapper(path);
             }
             return null;
         }
 
 
-        public FileInfo? GetFileInfo(IStorageItem storageItem)
+        public IFileInfoWrapper? GetFileInfo(string path)
+        {
+            if (File.Exists(path))
+            {
+                return new FileInfoWrapper(path);
+            }
+            return null;
+        }
+
+        public IFileInfoWrapper? GetFileInfo(IStorageItem storageItem)
         {
             string? path = storageItem.TryGetLocalPath();
             if (path != null && File.Exists(path))
             {
-                return new FileInfo(path);
+                return new FileInfoWrapper(path);
             }
             return null;
         }
@@ -108,56 +119,11 @@ namespace PhotoTool.Shared.IO
 
         public string GetFileSizeReadable(string path)
         {
-            FileInfo fileInfo = new FileInfo(path);
-            return GetFileSizeReadable(fileInfo.Length);
+            IFileInfoWrapper fileInfo = new FileInfoWrapper(path);
+            return fileInfo.GetFileSizeReadable();
         }
 
-        public string GetFileSizeReadable(long i)
-        {
-            // Get absolute value
-            long absolute_i = (i < 0 ? -i : i);
-            // Determine the suffix and readable value
-            string suffix;
-            double readable;
-            if (absolute_i >= 0x1000000000000000) // Exabyte
-            {
-                suffix = "EB";
-                readable = (i >> 50);
-            }
-            else if (absolute_i >= 0x4000000000000) // Petabyte
-            {
-                suffix = "PB";
-                readable = (i >> 40);
-            }
-            else if (absolute_i >= 0x10000000000) // Terabyte
-            {
-                suffix = "TB";
-                readable = (i >> 30);
-            }
-            else if (absolute_i >= 0x40000000) // Gigabyte
-            {
-                suffix = "GB";
-                readable = (i >> 20);
-            }
-            else if (absolute_i >= 0x100000) // Megabyte
-            {
-                suffix = "MB";
-                readable = (i >> 10);
-            }
-            else if (absolute_i >= 0x400) // Kilobyte
-            {
-                suffix = "KB";
-                readable = i;
-            }
-            else
-            {
-                return i.ToString("0 B"); // Byte
-            }
-            // Divide by 1024 to get fractional value
-            readable = (readable / 1024);
-            // Return formatted number with suffix
-            return readable.ToString("0.##") + suffix;
-        }
+        
 
         public async Task<string> ReadAllTextAsync(string filePath)
         {

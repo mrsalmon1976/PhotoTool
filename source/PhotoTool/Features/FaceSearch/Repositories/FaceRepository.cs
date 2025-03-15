@@ -32,12 +32,12 @@ namespace PhotoTool.Features.FaceSearch.Repositories
             List<FaceModel> faceModels = new List<FaceModel>();
 
             _fileService.EnsureDirectoryExists(_appSettings.FaceDataDirectory);
-            IEnumerable<string> faceFiles = _fileService.EnumerateFiles(_appSettings.FaceDataDirectory, "*.json");
-            foreach (string filePath in faceFiles)
+            IEnumerable<IFileInfoWrapper> faceFiles = _fileService.EnumerateFiles(_appSettings.FaceDataDirectory, "*.json");
+            foreach (IFileInfoWrapper fileInfo in faceFiles)
             {
-                string json = await _fileService.ReadAllTextAsync(filePath);
+                string json = await _fileService.ReadAllTextAsync(fileInfo.FullName);
                 FaceModel faceModel = JsonSerializer.Deserialize<FaceModel>(json)!;
-                faceModel.FilePath = filePath;
+                faceModel.FilePath = fileInfo.FullName;
                 if (faceModel != null)
                 {
                     faceModels.Add(faceModel);
