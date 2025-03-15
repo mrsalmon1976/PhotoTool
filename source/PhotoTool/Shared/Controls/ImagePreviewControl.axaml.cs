@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Clowd.Clipboard;
 using PhotoTool.Shared.Logging;
 using PhotoTool.Shared.ViewModels;
@@ -24,6 +25,11 @@ public partial class ImagePreviewControl : UserControl
             if (OperatingSystem.IsWindows())
             {
                 ClipboardAvalonia.SetImage(viewModel.Image);
+                var ctl = sender as Control;
+                if (ctl != null)
+                {
+                    FlyoutBase.ShowAttachedFlyout(ctl);
+                }
             }
             else
             {

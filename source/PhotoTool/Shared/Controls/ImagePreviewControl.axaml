@@ -6,6 +6,7 @@
              mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="350"
              x:Class="PhotoTool.Shared.Controls.ImagePreviewControl"
              x:DataType="vm:ImagePreviewViewModel">
+  
   <Border Margin="10,20,0,0" Padding="5" CornerRadius="5"
           BorderBrush="#e0e0e0" BorderThickness="1" Background="Transparent"
           >
@@ -32,6 +33,11 @@
               <Setter Property="Cursor" Value="Hand" />
             </Style>
           </Image.Styles>
+          <FlyoutBase.AttachedFlyout>
+            <Flyout ShowMode="TransientWithDismissOnPointerMoveAway">
+              <TextBlock Foreground="#0078D4" Text="Image copied to clipboard!" />
+            </Flyout>
+          </FlyoutBase.AttachedFlyout>          
         </Image>
       </WrapPanel>
       <TextBlock Text="{Binding Dimensions}"
