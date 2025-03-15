@@ -301,6 +301,14 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             }
         }
 
+        private string GetOutputThumbnailFilename(string filePath, string outFolder, ImageResizeOptions options)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            string extension = Path.GetExtension(filePath);
+            string thumbFilePath = Path.Combine(outFolder, $"{fileName}_tn{extension}");
+            return GetOutputFilename(thumbFilePath, outFolder, options);
+        }
+
         private string GetOutputFilename(string filePath, string outFolder, ImageResizeOptions options)
         {
             string fileName = Path.GetFileNameWithoutExtension(filePath);
@@ -352,6 +360,12 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
                         string outputPath = GetOutputFilename(imageViewModel.FilePath, folder, options);
                         _imageProcessor.ResizeImage(imageViewModel.FilePath, options.MaxImageLength, outputPath);
+
+                        if (options.GenerateThumbnails)
+                        {
+                            string thumbPath = GetOutputThumbnailFilename(imageViewModel.FilePath, folder, options);
+                            _imageProcessor.ResizeImage(imageViewModel.FilePath, options.MaxThumbnailLength, thumbPath);
+                        }
                     }
 
                 });
