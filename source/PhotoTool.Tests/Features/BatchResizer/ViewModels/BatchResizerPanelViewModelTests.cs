@@ -39,7 +39,7 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
         {
             _imageResizeOptionsViewModel = new SubstituteBuilder<ImageResizeOptionsViewModel>().WithRandomProperties().Build();
             _fileSystemProvider = new SubstituteBuilder<IFileSystemProvider>().Build();
-            _uiProvider = new TestUIProvider();// new SubstituteBuilder<IWindowProvider>().Build();
+            _uiProvider = new SubstituteBuilder<IUIProvider>().Build();
             _imageProcessor = new SubstituteBuilder<IImageProcessor>().Build();
             _imageResizeOptionsValidator = new SubstituteBuilder<IImageResizeOptionsValidator>().Build();
         }
@@ -62,7 +62,7 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             _imageProcessor.IsImageExtension(Arg.Any<string>()).Returns(false);
 
             // Act
-            var viewModel = CreateBatchResizerPanelViewModel();
+            var viewModel = CreateBatchResizerPanelViewModel(true);
             await viewModel.AddStorageItems(storageItems);
 
             // Assert
@@ -86,7 +86,7 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             _imageProcessor.IsImageExtension(Arg.Any<string>()).Returns(true);
 
             // Act
-            var viewModel = CreateBatchResizerPanelViewModel();
+            var viewModel = CreateBatchResizerPanelViewModel(true);
             await viewModel.AddStorageItems(storageItems);
 
             // Assert
@@ -118,7 +118,7 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             _imageProcessor.IsImageExtension(Arg.Any<string>()).Returns(true);
 
             // Act
-            var viewModel = CreateBatchResizerPanelViewModel();
+            var viewModel = CreateBatchResizerPanelViewModel(true);
             await viewModel.AddStorageItems(storageItems);
 
             // Assert
@@ -142,15 +142,14 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
 
 
             _fileSystemProvider.When(x => x.GetFileInfo(Arg.Any<IStorageItem>())).Throw(ex);
-            IUIProvider uiProvider = new SubstituteBuilder<IUIProvider>().Build();
 
             // Act
-            var viewModel = new BatchResizerPanelViewModel(_imageResizeOptionsViewModel!, _fileSystemProvider, uiProvider, _imageProcessor, _imageResizeOptionsValidator);
+            var viewModel = CreateBatchResizerPanelViewModel(false);
             await viewModel.AddStorageItems(storageItems);
 
 
             // Assert
-            await uiProvider.Received(1).ShowErrorDialog("Error", $"An unexpected error occurred: {ex.Message}");
+            await _uiProvider.Received(1).ShowErrorDialog("Error", $"An unexpected error occurred: {ex.Message}");
         }
 
 
@@ -187,8 +186,12 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
 
         #region Private Methods
 
-        private BatchResizerPanelViewModel CreateBatchResizerPanelViewModel()
+        private BatchResizerPanelViewModel CreateBatchResizerPanelViewModel(bool useTestUiProvider)
         {
+            if (useTestUiProvider)
+            {
+                _uiProvider = new TestUIProvider();
+            }
             return new BatchResizerPanelViewModel(_imageResizeOptionsViewModel!, _fileSystemProvider, _uiProvider, _imageProcessor, _imageResizeOptionsValidator);
         }
 
