@@ -12,6 +12,8 @@ namespace PhotoTool.Shared.Graphics
     public interface IImageProcessor
     {
 
+        IReadOnlyDictionary<string, SKEncodedImageFormat> ImageExtensions { get; }
+
         SKEncodedImageFormat GetImageFormatFromExtension(string extension);
 
         byte[]? ConvertToByteArray(Bitmap? image);
@@ -24,7 +26,7 @@ namespace PhotoTool.Shared.Graphics
 
         bool IsImageExtension(string extension);
 
-        Bitmap ResizeImage(string path, uint length, string outPath);
+        void ResizeImage(string path, uint length, string outPath);
     }
 
     public class ImageProcessor : IImageProcessor
@@ -36,18 +38,24 @@ namespace PhotoTool.Shared.Graphics
         public ImageProcessor()
         {
             _imageExtensions.Add(".bmp", SKEncodedImageFormat.Bmp);
-            _imageExtensions.Add(".dng", SKEncodedImageFormat.Dng);
+            //_imageExtensions.Add(".dng", SKEncodedImageFormat.Dng); // not supported by SixLabors.ImageSharp
             _imageExtensions.Add(".gif", SKEncodedImageFormat.Gif);
-            _imageExtensions.Add(".heif", SKEncodedImageFormat.Heif);
+            //_imageExtensions.Add(".heif", SKEncodedImageFormat.Heif); // not supported by SixLabors.ImageSharp
             _imageExtensions.Add(".jpeg", SKEncodedImageFormat.Jpeg);
             _imageExtensions.Add(".jpg", SKEncodedImageFormat.Jpeg);
-            _imageExtensions.Add(".ktx", SKEncodedImageFormat.Ktx);
-            _imageExtensions.Add(".ico", SKEncodedImageFormat.Ico);
-            _imageExtensions.Add(".pkm", SKEncodedImageFormat.Pkm);
+            // _imageExtensions.Add(".ktx", SKEncodedImageFormat.Ktx);  // not supported by SixLabors.ImageSharp
+            // _imageExtensions.Add(".ico", SKEncodedImageFormat.Ico); // not supported by SixLabors.ImageSharp
+            // _imageExtensions.Add(".pbm", SKEncodedImageFormat);  // not supported by SkiaSharp
+            // _imageExtensions.Add(".pkm", SKEncodedImageFormat.Pkm); // not supported by SixLabors.ImageSharp
             _imageExtensions.Add(".png", SKEncodedImageFormat.Png);
-            _imageExtensions.Add(".wbmp", SKEncodedImageFormat.Wbmp);
+            // _imageExtensions.Add(".qoi", SKEncodedImageFormat);  // not supported by SkiaSharp
+            // _imageExtensions.Add(".tga", SKEncodedImageFormat);  // not supported by SkiaSharp
+            // _imageExtensions.Add(".tiff", SKEncodedImageFormat);  // not supported by SkiaSharp
+            // _imageExtensions.Add(".wbmp", SKEncodedImageFormat.Wbmp);    // not supported by SixLabors.ImageSharp
             _imageExtensions.Add(".webp", SKEncodedImageFormat.Webp);
         }
+
+        public IReadOnlyDictionary<string, SKEncodedImageFormat> ImageExtensions => _imageExtensions;
 
         public byte[] ConvertToGrayscale(byte[] imageBytes)
         {
@@ -89,7 +97,7 @@ namespace PhotoTool.Shared.Graphics
         public SKEncodedImageFormat GetImageFormatFromExtension(string extension)
         {
             var ext = extension.ToLowerInvariant();
-            if (!_imageExtensions.ContainsKey(ext))
+            if (!_imageExtensions.ContainsKey(ext.ToLower()))
             {
                 throw new NotSupportedException($"Extension {extension} is not a supported image extension");
             }
@@ -115,7 +123,7 @@ namespace PhotoTool.Shared.Graphics
         /// <param name="path">Source image path.</param>
         /// <param name="length">Length of the output image (longest side - other length will be calculated).</param>
         /// <param name="outPath">Where the file will be written to - note that if path = outPath, the original image will be overwritten</param>
-        public virtual Bitmap ResizeImage(string path, uint length, string outPath)
+        public virtual void ResizeImage(string path, uint length, string outPath)
         {
             using (Image image = Image.Load(path))
             {
@@ -125,7 +133,6 @@ namespace PhotoTool.Shared.Graphics
                 image.Mutate(x => x.Resize((int)width, (int)height));
                 image.Save(outPath);
             }
-            return new Bitmap(outPath);
         }
 
 
