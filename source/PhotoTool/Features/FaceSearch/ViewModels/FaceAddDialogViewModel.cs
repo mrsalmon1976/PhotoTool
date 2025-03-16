@@ -26,7 +26,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
     {
 
         private static IAppLogger _logger = AppLogger.Create<FaceAddDialogViewModel>();
-
+        private readonly IUIProvider _uiProvider;
         private readonly IFaceDetectionService _faceDetector;
         private readonly IFaceRepository _faceRepo;
         private readonly IImageProcessor _imageProcessor;
@@ -34,14 +34,15 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private bool _isSaveButtonEnabled;
         private Bitmap? _selectedImage = null;
 
-        public FaceAddDialogViewModel(IAssetProvider assetProvider, IFaceDetectionService faceDetectionService, IFaceRepository faceRepo, IImageProcessor imageProcessor)
+        public FaceAddDialogViewModel(IAssetProvider assetProvider, IUIProvider uiProvider, IFaceDetectionService faceDetectionService, IFaceRepository faceRepo, IImageProcessor imageProcessor)
         {
             SaveFacesButtonClickCommand = ReactiveCommand.Create(OnSaveFacesButtonClickCommand);
             SelectFileButtonClickCommand = ReactiveCommand.Create(OnSelectFileButtonClick);
             SelectedImage = assetProvider.GetImage(Assets.PhotoToolLogo_300x300_800bg);
-            _faceDetector = faceDetectionService;
-            _faceRepo = faceRepo;
-            _imageProcessor = imageProcessor;
+            this._uiProvider = uiProvider;
+            this._faceDetector = faceDetectionService;
+            this._faceRepo = faceRepo;
+            this._imageProcessor = imageProcessor;
         }
 
         #region Control Properties
@@ -98,17 +99,17 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                 facesSaved++;
             }
 
-            var dialog = WindowUtils.GetWindow<FaceAddDialog>();
+            var dialog = _uiProvider.GetWindow<FaceAddDialog>();
 
             if (facesSaved == 0)
             {
-                await WindowUtils.ShowErrorDialog("No Named Faces", "You need to assign names to at least one face.", dialog);
+                await _uiProvider.ShowErrorDialog("No Named Faces", "You need to assign names to at least one face.", dialog);
             }
             else
             {
                 var message = facesSaved == 1 ? "face has" : "faces have";
                 message = $"{facesSaved} {message} been successfully saved";
-                await WindowUtils.ShowWarningDialog("Faces Saved", message, dialog);
+                await _uiProvider.ShowWarningDialog("Faces Saved", message, dialog);
                 dialog!.Close();
             }
 
@@ -116,11 +117,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private async void OnSelectFileButtonClick()
         {
-            // Get top level from the current control. Alternatively, you can use Window reference instead.
-            var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
-
             // Start async operation to open the dialog.
-            var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            var files = await _uiProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "Select Image File",
                 FileTypeFilter = new[] { FilePickerFileTypes.ImageAll },
@@ -165,8 +163,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             catch (Exception ex)
             {
                 string message = $"An error occurred loading the selected image: {ex.Message}";
-                var dialog = WindowUtils.GetWindow<FaceAddDialog>();
-                await WindowUtils.ShowErrorDialog("Image Load Error", message, dialog);
+                var dialog = _uiProvider.GetWindow<FaceAddDialog>();
+                await _uiProvider.ShowErrorDialog("Image Load Error", message, dialog);
 
                 // Handle errors - often due to permission issues
                 _logger.Error(ex, $"Image selection failed: {ex.Message}");
@@ -183,6 +181,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
     {
         public FaceAddDialogViewModelDesign() : base(
             new AssetProvider(),
+            new UIProvider(),
             new FaceDetectionService(new ImageProcessor()),
             new FaceRepository(new AppSettings(), new FileSystemProvider()),
             new ImageProcessor()

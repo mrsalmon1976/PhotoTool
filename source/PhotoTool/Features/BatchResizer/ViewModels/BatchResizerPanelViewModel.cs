@@ -114,11 +114,8 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         private async void OnAddFileButtonClick()
         {
-            // TODO: move into UIProvider
-            var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
-
             // Start async operation to open the dialog.
-            var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            var files = await _uiProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "Select Image File",
                 FileTypeFilter = new[] { FilePickerFileTypes.ImageAll },
@@ -133,11 +130,8 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         private async void OnAddFolderButtonClick()
         {
-            // TODO: move into UIProvider
-            var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
-
             // Start async operation to open the dialog.
-            var folder = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            var folder = await _uiProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = "Select Folder",
                 AllowMultiple = false
@@ -148,7 +142,6 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             }
         }
 
-
         private void OnCancelButtonClick()
         {
             _cancellationTokenSource?.Cancel();
@@ -158,11 +151,8 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         {
             if (this.SelectedImages.Count == 0) return;
 
-            // TODO: move into UIProvider
-            var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
-
             // Start async operation to open the dialog.
-            var folder = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            var folder = await _uiProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = "Select Output Folder",
                 AllowMultiple = false
@@ -270,7 +260,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                await WindowUtils.ShowErrorDialog("Error", $"An unexpected error occurred: {ex.Message}");
+                await _uiProvider.ShowErrorDialog("Error", $"An unexpected error occurred: {ex.Message}");
             }
             finally
             {
@@ -357,13 +347,13 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             }
             catch (ValidationException ex)
             {
-                await WindowUtils.ShowErrorDialog("Validation Error", ex);
+                await _uiProvider.ShowErrorDialog("Validation Error", ex);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
                 UpdateProgress($"Error: {ex.Message}", 0);
-                await WindowUtils.ShowErrorDialog("Resize Error", $"An unexpected error occurred: {ex.Message}");
+                await _uiProvider.ShowErrorDialog("Resize Error", $"An unexpected error occurred: {ex.Message}");
             }
             finally
             {

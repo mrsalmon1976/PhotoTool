@@ -34,6 +34,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private static IAppLogger _logger = AppLogger.Create<FaceSearchPanelViewModel>();
 
         private readonly IViewModelProvider _viewModelProvider;
+        private readonly IUIProvider _uiProvider;
         private readonly IFaceRepository _faceRepo;
         private readonly IImageProcessor _imageProcessor;
         private readonly IFileSystemProvider _fileSystemProvider;
@@ -50,6 +51,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
         private ImagePreviewViewModel? _previewImageModel;
 
         public FaceSearchPanelViewModel(IViewModelProvider viewModelProvider
+            , IUIProvider uiProvider
             , IFaceRepository faceRepo
             , IImageProcessor imageProcessor
             , IFileSystemProvider fileSystemProvider
@@ -57,6 +59,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             , IAssetProvider assetProvider)
         {
             _viewModelProvider = viewModelProvider;
+            this._uiProvider = uiProvider;
             _faceRepo = faceRepo;
             _imageProcessor = imageProcessor;
             _fileSystemProvider = fileSystemProvider;
@@ -155,7 +158,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             var faceAddDialog = new FaceAddDialog();
             faceAddDialog.DataContext = _viewModelProvider.GetViewModel<FaceAddDialogViewModel>();
             faceAddDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            var result = await faceAddDialog.ShowDialog<FaceAddDialogViewModel?>(WindowUtils.GetMainWindow());
+            var result = await faceAddDialog.ShowDialog<FaceAddDialogViewModel?>(_uiProvider.GetMainWindow());
             await LoadFaces();
         }
 
@@ -166,14 +169,13 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private async void OnDeleteFaceButtonClick()
         {
-            // TODO: use UIProvider
             if (this.SelectedFace == null)
             {
-                await WindowUtils.ShowErrorDialog("Error", "You have not selected a face image to delete.");
+                await _uiProvider.ShowErrorDialog("Error", "You have not selected a face image to delete.");
                 return;
             }
 
-            var parentWindow = WindowUtils.GetMainWindow();
+            var parentWindow = _uiProvider.GetMainWindow();
             var box = MessageBoxManager.GetMessageBoxStandard("Confirm Delete", $"Are you sure you want to delete the face image for '{SelectedFace.Name}'?", ButtonEnum.YesNo, Icon.Question, WindowStartupLocation.CenterScreen);
             ButtonResult result = await box.ShowWindowDialogAsync(parentWindow);
             if (result == ButtonResult.Yes)
@@ -186,11 +188,8 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private async void OnSelectFolderButtonClickCommand()
         {
-            // TODO: use UIProvider
-            var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
-
             // Start async operation to open the dialog.
-            var folder = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            var folder = await _uiProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = "Select Search Folder",
                 AllowMultiple = false
@@ -244,7 +243,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
             if (!ValidateSearchInput())
             {
-                await WindowUtils.ShowErrorDialog("Validation Error", "Please select a folder and face to search.");
+                await _uiProvider.ShowErrorDialog("Validation Error", "Please select a folder and face to search.");
                 return;
             }
 
@@ -299,7 +298,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                     {
                         _cancellationTokenSource.Token.ThrowIfCancellationRequested();
                         
-                        this.UpdateProgress($"Analysing file {fileInfo.Name} ({(progressValue +1)} of {imageCount})...", progressValue++);
+                        this.UpdateProgress($"Analysing {(progressValue + 1)} of {imageCount} files; {fileInfo.Name}...", progressValue++);
 
                         FaceComparison faceComparison = _faceDetectionService.SearchForFace(faceEmbedding, fileInfo.FullName);
                         if (faceComparison.FaceMatchProspect != FaceMatchProspect.None)
@@ -329,7 +328,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             {
                 _logger.Error(ex);
                 UpdateProgress($"Error: {ex.Message}.", 0);
-                await WindowUtils.ShowErrorDialog("Search Error", $"An unexpected error occurred: {ex.Message}");
+                await _uiProvider.ShowErrorDialog("Search Error", $"An unexpected error occurred: {ex.Message}");
             }
             finally
             {
@@ -386,6 +385,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
     {
         public FaceSearchPanelViewModelDesign() : base(
             new ViewModelProvider()
+            , new UIProvider()
             , new FaceRepository(new AppSettings(), new FileSystemProvider())
             , new ImageProcessor()
             , new FileSystemProvider()
