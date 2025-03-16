@@ -308,7 +308,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
             UpdateProgress($"{SelectedImages.Count} images loaded for resizing.", 0);
         }
 
-        private async Task ResizeImages(string folder)
+        public async Task ResizeImages(string folder)
         {
 
             try

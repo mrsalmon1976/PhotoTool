@@ -6,6 +6,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
+using PhotoTool.Features.BatchResizer.Models;
 using PhotoTool.Features.BatchResizer.Validators;
 using PhotoTool.Features.BatchResizer.ViewModels;
 using PhotoTool.Shared.Graphics;
@@ -139,14 +140,11 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             List<IStorageItem> storageItems = new List<IStorageItem> { storageItem1, storageItem2 };
 
             Exception ex = new Exception("Test exception");
-
-
             _fileSystemProvider.When(x => x.GetFileInfo(Arg.Any<IStorageItem>())).Throw(ex);
 
             // Act
             var viewModel = CreateBatchResizerPanelViewModel(false);
             await viewModel.AddStorageItems(storageItems);
-
 
             // Assert
             await _uiProvider.Received(1).ShowErrorDialog("Error", $"An unexpected error occurred: {ex.Message}");
@@ -158,27 +156,90 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
         #region ResizeImages Tests
 
         [Test]
-        public void ResizeImages_WhenNoImagesSelected_NothingHappens()
+        public async Task ResizeImages_WhenNoImagesSelected_NothingHappens()
         {
-            Assert.Fail();
+            // Arrange
+            string folder = Path.GetTempPath();
+
+            // Act
+            var viewModel = CreateBatchResizerPanelViewModel(false);
+            await viewModel.ResizeImages(folder);
+
+            // Assert
+            _imageResizeOptionsValidator.Received(1).Validate(Arg.Any<ImageResizeOptions>());
+            _imageProcessor.DidNotReceive().ResizeImage(Arg.Any<string>(), Arg.Any<uint>(), Arg.Any<string>());
+        }
+
+        [AvaloniaTest]
+        public async Task ResizeImages_WhenImagesSelected_ImagesResized()
+        {
+            // Arrange
+            string folder = Path.GetTempPath();
+            const uint maxImageLength = 1024;
+
+            ImageViewModel imageViewModel1 = new SubstituteBuilder<ImageViewModel>().WithRandomProperties().Build();
+            ImageViewModel imageViewModel2 = new SubstituteBuilder<ImageViewModel>().WithRandomProperties().Build();
+
+            ImageResizeOptionsViewModel options = new ImageResizeOptionsViewModel();
+            options.MaxImageLength = maxImageLength.ToString();
+
+            var viewModel = CreateBatchResizerPanelViewModel(true);
+            viewModel.ImageResizeOptionsViewModel = options;
+            viewModel.SelectedImages.Add(imageViewModel1);
+            viewModel.SelectedImages.Add(imageViewModel2);
+
+            // Act
+            await viewModel.ResizeImages(folder);
+
+            // Assert
+            _imageProcessor.Received(2).ResizeImage(Arg.Any<string>(), Arg.Any<uint>(), Arg.Any<string>());
+            _imageProcessor.Received(1).ResizeImage(imageViewModel1.FilePath, maxImageLength, Arg.Any<String>());
+            _imageProcessor.Received(1).ResizeImage(imageViewModel2.FilePath, maxImageLength, Arg.Any<String>());
+        }
+
+        [AvaloniaTest]
+        public async Task ResizeImages_WhenGenerateThumbnailsTrue_ImagesResizedWithThumbnails()
+        {
+            // Arrange
+            string folder = Path.GetTempPath();
+            const uint maxThumbnailLength = 100;
+
+            ImageViewModel imageViewModel1 = new SubstituteBuilder<ImageViewModel>().WithRandomProperties().Build();
+            ImageViewModel imageViewModel2 = new SubstituteBuilder<ImageViewModel>().WithRandomProperties().Build();
+
+            ImageResizeOptionsViewModel options = new ImageResizeOptionsViewModel();
+            options.MaxThumbnailLength = maxThumbnailLength.ToString();
+            options.GenerateThumbnails = true;
+
+            var viewModel = CreateBatchResizerPanelViewModel(true);
+            viewModel.ImageResizeOptionsViewModel = options;
+            viewModel.SelectedImages.Add(imageViewModel1);
+            viewModel.SelectedImages.Add(imageViewModel2);
+
+            // Act
+            await viewModel.ResizeImages(folder);
+
+            // Assert
+            _imageProcessor.Received(4).ResizeImage(Arg.Any<string>(), Arg.Any<uint>(), Arg.Any<string>());
+            _imageProcessor.Received(1).ResizeImage(imageViewModel1.FilePath, maxThumbnailLength, Arg.Any<String>());
+            _imageProcessor.Received(1).ResizeImage(imageViewModel2.FilePath, maxThumbnailLength, Arg.Any<String>());
         }
 
         [Test]
-        public void ResizeImages_WhenImagesSelected_ImagesResized()
+        public async Task ResizeImages_WhenUnhandledExceptionThrown_DialogShown()
         {
-            Assert.Fail();
-        }
+            // Arrange
+            string folder = Path.GetTempPath();
 
-        [Test]
-        public void ResizeImages_WhenGenerateThumbnailsTrue_ImagesResizedWithThumbnails()
-        {
-            Assert.Fail();
-        }
+            Exception ex = new Exception("Test exception");
+            _imageResizeOptionsValidator.When(x => x.Validate(Arg.Any<ImageResizeOptions>())).Throw(ex);
 
-        [Test]
-        public void ResizeImages_WhenUnhandledExceptionThrown_DialogShown()
-        {
-            Assert.Fail();
+            // Act
+            var viewModel = CreateBatchResizerPanelViewModel(false);
+            await viewModel.ResizeImages(folder);
+
+            // Assert
+            await _uiProvider.Received(1).ShowErrorDialog("Resize Error", $"An unexpected error occurred: {ex.Message}");
         }
 
 
