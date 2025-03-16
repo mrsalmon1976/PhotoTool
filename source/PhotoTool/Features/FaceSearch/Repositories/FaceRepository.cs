@@ -19,23 +19,23 @@ namespace PhotoTool.Features.FaceSearch.Repositories
     public class FaceRepository : IFaceRepository
     {
         private readonly IAppSettings _appSettings;
-        private readonly IFileSystemProvider _fileSystemService;
+        private readonly IFileSystemProvider _fileSystemProvider;
 
-        public FaceRepository(IAppSettings appSettings, IFileSystemProvider fileService)
+        public FaceRepository(IAppSettings appSettings, IFileSystemProvider fileSystemProvider)
         {
             _appSettings = appSettings;
-            _fileSystemService = fileService;
+            _fileSystemProvider = fileSystemProvider;
         }
 
         public async Task<IEnumerable<FaceModel>> GetAllAsync()
         {
             List<FaceModel> faceModels = new List<FaceModel>();
 
-            _fileSystemService.EnsureDirectoryExists(_appSettings.FaceDataDirectory);
-            IEnumerable<IFileInfoWrapper> faceFiles = _fileSystemService.EnumerateFiles(_appSettings.FaceDataDirectory, "*.json");
+            _fileSystemProvider.EnsureDirectoryExists(_appSettings.FaceDataDirectory);
+            IEnumerable<IFileInfoWrapper> faceFiles = _fileSystemProvider.EnumerateFiles(_appSettings.FaceDataDirectory, "*.json");
             foreach (IFileInfoWrapper fileInfo in faceFiles)
             {
-                string json = await _fileSystemService.ReadAllTextAsync(fileInfo.FullName);
+                string json = await _fileSystemProvider.ReadAllTextAsync(fileInfo.FullName);
                 FaceModel faceModel = JsonSerializer.Deserialize<FaceModel>(json)!;
                 faceModel.FilePath = fileInfo.FullName;
                 if (faceModel != null)
@@ -49,13 +49,13 @@ namespace PhotoTool.Features.FaceSearch.Repositories
 
         public async Task SaveAsync(FaceModel faceModel)
         {
-            string filePath = Path.Combine(_appSettings.FaceDataDirectory, _fileSystemService.GetRandomFileName(".json"));
+            string filePath = Path.Combine(_appSettings.FaceDataDirectory, _fileSystemProvider.GetRandomFileName(".json"));
 
             var json = JsonSerializer.Serialize(faceModel, new JsonSerializerOptions { WriteIndented = true  });
 
-            _fileSystemService.EnsureDirectoryExists(_appSettings.FaceDataDirectory);
+            _fileSystemProvider.EnsureDirectoryExists(_appSettings.FaceDataDirectory);
 
-            await _fileSystemService.WriteAllTextAsync(filePath, json);
+            await _fileSystemProvider.WriteAllTextAsync(filePath, json);
         }
     }
 }
