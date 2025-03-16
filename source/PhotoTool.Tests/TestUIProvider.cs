@@ -1,10 +1,4 @@
-﻿using Avalonia.Threading;
-using PhotoTool.Shared.UI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PhotoTool.Shared.UI;
 
 namespace PhotoTool.Tests
 {
@@ -15,5 +9,9 @@ namespace PhotoTool.Tests
             action();
         }
 
+        public void PostOnUIThread(Action action)
+        {
+            action();
+        }
     }
 }

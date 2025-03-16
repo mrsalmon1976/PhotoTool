@@ -127,6 +127,42 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             }
         }
 
+        [AvaloniaTest]
+        public async Task AddStorageItems_WhenUnhandledExceptionThrown_ErrorDialogShown()
+        {
+            Assert.Fail();
+        }
+
+
+        #endregion
+
+        #region ResizeImages Tests
+
+        [Test]
+        public void ResizeImages_WhenNoImagesSelected_NothingHappens()
+        {
+            Assert.Fail();
+        }
+
+        [Test]
+        public void ResizeImages_WhenImagesSelected_ImagesResized()
+        {
+            Assert.Fail();
+        }
+
+        [Test]
+        public void ResizeImages_WhenGenerateThumbnailsTrue_ImagesResizedWithThumbnails()
+        {
+            Assert.Fail();
+        }
+
+        [Test]
+        public void ResizeImages_WhenUnhandledExceptionThrown_DialogShown()
+        {
+            Assert.Fail();
+        }
+
+
         #endregion
 
         #region Private Methods

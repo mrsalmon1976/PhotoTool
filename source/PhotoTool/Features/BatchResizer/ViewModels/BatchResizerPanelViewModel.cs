@@ -114,6 +114,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         private async void OnAddFileButtonClick()
         {
+            // TODO: move into UIProvider
             var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
 
             // Start async operation to open the dialog.
@@ -132,6 +133,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
         private async void OnAddFolderButtonClick()
         {
+            // TODO: move into UIProvider
             var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
 
             // Start async operation to open the dialog.
@@ -156,6 +158,7 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
         {
             if (this.SelectedImages.Count == 0) return;
 
+            // TODO: move into UIProvider
             var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
 
             // Start async operation to open the dialog.

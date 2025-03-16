@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace PhotoTool.Shared.UI
 {
+    // TODO: Move everything into UIProvider
     class WindowUtils
     {
         public static Window? GetWindow<T>() where T : Window

@@ -166,6 +166,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private async void OnDeleteFaceButtonClick()
         {
+            // TODO: use UIProvider
             if (this.SelectedFace == null)
             {
                 await WindowUtils.ShowErrorDialog("Error", "You have not selected a face image to delete.");
@@ -185,6 +186,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private async void OnSelectFolderButtonClickCommand()
         {
+            // TODO: use UIProvider
             var topLevel = TopLevel.GetTopLevel(WindowUtils.GetMainWindow());
 
             // Start async operation to open the dialog.
@@ -355,13 +357,12 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         public void UpdatePreviewImage(SearchFaceViewModel faceViewModel)
         {
-            IFileSystemProvider fileSystemProvider = new FileSystemProvider();
             this.PreviewImageModel = new ImagePreviewViewModel()
             {
                 Image = faceViewModel.Image,
                 Name = faceViewModel.Name,
                 Path = faceViewModel.FilePath,
-                Dimensions = string.Format("{0}x{1} / {2}", faceViewModel.Image?.Size.Width, faceViewModel.Image?.Size.Height, fileSystemProvider.GetFileSizeReadable(faceViewModel.FilePath))
+                Dimensions = string.Format("{0}x{1} / {2}", faceViewModel.Image?.Size.Width, faceViewModel.Image?.Size.Height, _fileSystemProvider.GetFileSizeReadable(faceViewModel.FilePath))
             };
 
         }

@@ -18,6 +18,7 @@ using PhotoTool.Features.FaceSearch.Services;
 using PhotoTool.Shared.IO;
 using PhotoTool.Shared.Graphics;
 using PhotoTool.Shared.UI;
+using System.Threading.Tasks;
 
 namespace PhotoTool.Features.FaceSearch.ViewModels
 {
@@ -128,43 +129,48 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
             if (files.Count >= 1)
             {
-                try
-                {
-                    IPerformanceLogger profiler = PerformanceLogger.CreateAndStart<FaceAddDialogViewModel>("DecorateImageWithFaceDetections");
-                    string filePath = files[0].Path.LocalPath;
-                    var result = _faceDetector.DecorateImageWithFaceDetections(filePath);
-                    profiler.Stop();
-
-                    // reset the detected faces
-                    DetectedFaces.Clear();
-                    result.Faces.ForEach(f =>
-                    {
-                        Bitmap faceImage = new Bitmap(new MemoryStream(f.ImageData!));
-                        uint brushColor = (uint)f.Color;
-                        DetectedFaces.Add(new DetectedFaceViewModel() 
-                        { 
-                            Name = string.Empty, 
-                            Image = faceImage,
-                            ColorBrush = new SolidColorBrush(brushColor) 
-                        });
-                    });
-
-
-                    SelectedImage = new Bitmap(new MemoryStream(result.DecoratedImageData));
-                    IsImageSelected = true;
-                    IsSaveButtonEnabled = DetectedFaces.Count > 0;
-                }
-                catch (Exception ex)
-                {
-                    string message = $"An error occurred loading the selected image: {ex.Message}";
-                    var dialog = WindowUtils.GetWindow<FaceAddDialog>();
-                    await WindowUtils.ShowErrorDialog("Image Load Error", message, dialog);
-
-                    // Handle errors - often due to permission issues
-                    _logger.Error(ex, $"Image selection failed: {ex.Message}");
-                }
+                string filePath = files[0].Path.LocalPath;
+                await LoadImage(filePath);
             }
 
+        }
+
+        public async Task LoadImage(string filePath)
+        {
+            try
+            {
+                IPerformanceLogger profiler = PerformanceLogger.CreateAndStart<FaceAddDialogViewModel>("DecorateImageWithFaceDetections");
+                var result = _faceDetector.DecorateImageWithFaceDetections(filePath);
+                profiler.Stop();
+
+                // reset the detected faces
+                DetectedFaces.Clear();
+                result.Faces.ForEach(f =>
+                {
+                    Bitmap faceImage = new Bitmap(new MemoryStream(f.ImageData!));
+                    uint brushColor = (uint)f.Color;
+                    DetectedFaces.Add(new DetectedFaceViewModel()
+                    {
+                        Name = string.Empty,
+                        Image = faceImage,
+                        ColorBrush = new SolidColorBrush(brushColor)
+                    });
+                });
+
+
+                SelectedImage = new Bitmap(new MemoryStream(result.DecoratedImageData));
+                IsImageSelected = true;
+                IsSaveButtonEnabled = DetectedFaces.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                string message = $"An error occurred loading the selected image: {ex.Message}";
+                var dialog = WindowUtils.GetWindow<FaceAddDialog>();
+                await WindowUtils.ShowErrorDialog("Image Load Error", message, dialog);
+
+                // Handle errors - often due to permission issues
+                _logger.Error(ex, $"Image selection failed: {ex.Message}");
+            }
         }
 
         #endregion
