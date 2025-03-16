@@ -1,9 +1,6 @@
 ﻿using Avalonia.Headless.NUnit;
 using Avalonia.Platform.Storage;
-using Avalonia.Threading;
-using Microsoft.Extensions.Options;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
 using PhotoTool.Features.BatchResizer.Models;
@@ -13,14 +10,6 @@ using PhotoTool.Shared.Graphics;
 using PhotoTool.Shared.IO;
 using PhotoTool.Shared.UI;
 using PhotoTool.Test;
-using PhotoTool.Tests.Random;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
 {
@@ -33,7 +22,7 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
         private IUIProvider _uiProvider = null;
         private IImageProcessor _imageProcessor = null;
         private IImageResizeOptionsValidator _imageResizeOptionsValidator = null;
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+        #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
         [SetUp]
         public void SetUp()
