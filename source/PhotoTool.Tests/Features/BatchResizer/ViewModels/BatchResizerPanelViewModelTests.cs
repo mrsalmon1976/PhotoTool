@@ -1,7 +1,9 @@
 ﻿using Avalonia.Headless.NUnit;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Microsoft.Extensions.Options;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
 using PhotoTool.Features.BatchResizer.Validators;
@@ -13,6 +15,7 @@ using PhotoTool.Test;
 using PhotoTool.Tests.Random;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -127,10 +130,27 @@ namespace PhotoTool.Tests.Features.BatchResizer.ViewModels
             }
         }
 
-        [AvaloniaTest]
+        [Test]
         public async Task AddStorageItems_WhenUnhandledExceptionThrown_ErrorDialogShown()
         {
-            Assert.Fail();
+            // Arrange
+            IStorageItem storageItem1 = new SubstituteBuilder<IStorageItem>().WithRandomProperties().Build();
+            IStorageItem storageItem2 = new SubstituteBuilder<IStorageItem>().WithRandomProperties().Build();
+            List<IStorageItem> storageItems = new List<IStorageItem> { storageItem1, storageItem2 };
+
+            Exception ex = new Exception("Test exception");
+
+
+            _fileSystemProvider.When(x => x.GetFileInfo(Arg.Any<IStorageItem>())).Throw(ex);
+            IUIProvider uiProvider = new SubstituteBuilder<IUIProvider>().Build();
+
+            // Act
+            var viewModel = new BatchResizerPanelViewModel(_imageResizeOptionsViewModel!, _fileSystemProvider, uiProvider, _imageProcessor, _imageResizeOptionsValidator);
+            await viewModel.AddStorageItems(storageItems);
+
+
+            // Assert
+            await uiProvider.Received(1).ShowErrorDialog("Error", $"An unexpected error occurred: {ex.Message}");
         }
 
 
