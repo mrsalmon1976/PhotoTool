@@ -5,6 +5,7 @@ using Avalonia.VisualTree;
 using PhotoTool.Features.FaceSearch.ViewModels;
 using PhotoTool.Shared.Graphics;
 using PhotoTool.Shared.IO;
+using PhotoTool.Shared.Resources;
 using PhotoTool.Shared.ViewModels;
 using SixLabors.ImageSharp.Drawing.Processing;
 using System;
@@ -61,13 +62,11 @@ public partial class FaceSearchPanel: UserControl
             if (_selectedBorder != null)
             {
                 _selectedBorder.BorderThickness = new Avalonia.Thickness(1);
-                // TODO: get this color from styles
-                _selectedBorder.BorderBrush = ColorUtils.ConvertHexToColorBrush("#e0e0e0");
+                _selectedBorder.BorderBrush = StyleProvider.SelectionBorderColorDefault;
             }
 
             parentBorder.BorderThickness = new Avalonia.Thickness(2);
-            // TODO: get this color from styles
-            parentBorder.BorderBrush = ColorUtils.ConvertHexToColorBrush("#0078D4");
+            parentBorder.BorderBrush = StyleProvider.SelectionBorderColorPrimary;
             _selectedBorder = parentBorder;
 
             // update the current selected item
