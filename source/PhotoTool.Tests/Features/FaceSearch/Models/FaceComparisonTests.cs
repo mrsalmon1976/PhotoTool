@@ -12,28 +12,49 @@ namespace PhotoTool.Tests.Features.FaceSearch.Models
     [TestFixture]
     public class FaceComparisonTests
     {
-        [Test]
-        public void FaceMatchProspect_WhenDotProductIndicatesProbable_ReturnsProbable()
+        [TestCase(0.61f)]
+        [TestCase(0.53f)]
+        [TestCase(0.42f)]
+        public void FaceMatchProspect_WhenDotProductIndicatesProbable_ReturnsProbable(float dotProduct)
         {
-            Assert.Fail();
-            //// Arrange
-            //var faceComparison = new FaceComparison { DotProduct = 0.42f };
-            //// Act
-            //var result = faceComparison.FaceMatchProspect;
-            //// Assert
-            //Assert.AreEqual(FaceMatchProspect.Probable, result);
+            // Arrange
+            var faceComparison = new FaceComparison { DotProduct = dotProduct };
+            
+            // Act
+            var result = faceComparison.FaceMatchProspect;
+
+            // Assert
+            Assert.That(result, Is.EqualTo(FaceMatchProspect.Probable));
         }
 
-        [Test]
-        public void FaceMatchProspect_WhenDotProductIndicatesPossible_ReturnsPossible()
+        [TestCase(0.29f)]
+        [TestCase(0.35f)]
+        [TestCase(0.41f)]
+        public void FaceMatchProspect_WhenDotProductIndicatesPossible_ReturnsPossible(float dotProduct)
         {
-            Assert.Fail();
+            // Arrange
+            var faceComparison = new FaceComparison { DotProduct = dotProduct };
+
+            // Act
+            var result = faceComparison.FaceMatchProspect;
+
+            // Assert
+            Assert.That(result, Is.EqualTo(FaceMatchProspect.Possible));
         }
 
-        [Test]
-        public void FaceMatchProspect_WhenDotProductIndicatesUnlikely_ReturnsNone()
+        [TestCase(0.28f)]
+        [TestCase(0.17f)]
+        [TestCase(0.09f)]
+        public void FaceMatchProspect_WhenDotProductIndicatesUnlikely_ReturnsNone(float dotProduct)
         {
-            Assert.Fail();
+            // Arrange
+            var faceComparison = new FaceComparison { DotProduct = dotProduct };
+
+            // Act
+            var result = faceComparison.FaceMatchProspect;
+
+            // Assert
+            Assert.That(result, Is.EqualTo(FaceMatchProspect.None));
         }
 
     }

@@ -20,11 +20,11 @@ namespace PhotoTool.Features.FaceSearch.Models
         {
             get
             {
-                if (DotProduct >= 0.42)
+                if (DotProduct >= 0.42f)
                 {
                     return FaceMatchProspect.Probable;
                 }
-                else if (DotProduct > 0.28 && DotProduct < 0.42)
+                else if (DotProduct > 0.28f && DotProduct < 0.42f)
                 {
                     return FaceMatchProspect.Possible;
                 }
