@@ -9,7 +9,7 @@
         xmlns:br="clr-namespace:PhotoTool.Features.BatchResizer.Views"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/phototool-logo.ico"
-        Title="PhotoTool" 
+        Title="{Binding Title}" 
         MinWidth="800"
         MinHeight="600"
         >
