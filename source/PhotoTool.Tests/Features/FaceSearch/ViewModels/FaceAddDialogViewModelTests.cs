@@ -4,6 +4,7 @@ using NSubstitute;
 using NUnit.Framework;
 using PhotoTool.Features.BatchResizer.Validators;
 using PhotoTool.Features.BatchResizer.ViewModels;
+using PhotoTool.Features.FaceSearch.Models;
 using PhotoTool.Features.FaceSearch.Repositories;
 using PhotoTool.Features.FaceSearch.Services;
 using PhotoTool.Features.FaceSearch.ViewModels;
@@ -13,6 +14,7 @@ using PhotoTool.Shared.IO;
 using PhotoTool.Shared.Resources;
 using PhotoTool.Shared.UI;
 using PhotoTool.Test;
+using PhotoTool.Tests.Random;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,22 +44,64 @@ namespace PhotoTool.Tests.Features.FaceSearch.ViewModels
             _imageProcessor = new SubstituteBuilder<IImageProcessor>().Build();
         }
 
-        [Test]
+        [AvaloniaTest]
         public async Task LoadImage_FacesFound_AddsToDetectedFaces()
         {
-            Assert.Fail();
+            // Arrange
+            string filePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            int detectedFaceCount = RandomData.Number.Next(3, 7);
+
+            FaceDetectionResult faceDetectionResult = new FaceDetectionResult();
+            faceDetectionResult.Faces.AddRange(TestDataUtils.CreateMany<FaceDetectionResultItem>(detectedFaceCount));
+
+            _faceDetectionService.DecorateImageWithFaceDetections(filePath).Returns(faceDetectionResult);
+
+            // Act
+            var viewModel = CreateFaceAddDialogViewModel(false);
+            await viewModel.LoadImage(filePath);
+
+            // Assert
+            Assert.That(viewModel.DetectedFaces.Count, Is.EqualTo(detectedFaceCount));
         }
 
-        [Test]
+        [AvaloniaTest]
         public async Task LoadImage_WhenCompleteAndNoFacesDetected_ResetsControlProperties()
         {
-            Assert.Fail();
+            // Arrange
+            string filePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
+            FaceDetectionResult faceDetectionResult = new FaceDetectionResult();
+
+            _faceDetectionService.DecorateImageWithFaceDetections(filePath).Returns(faceDetectionResult);
+
+            // Act
+            var viewModel = CreateFaceAddDialogViewModel(false);
+            await viewModel.LoadImage(filePath);
+
+            // Assert
+            Assert.That(viewModel.IsImageSelected, Is.True);
+            Assert.That(viewModel.IsSaveButtonEnabled, Is.False);
         }
 
-        [Test]
+        [AvaloniaTest]
         public async Task LoadImage_WhenCompleteAndFacesDetected_ResetsControlProperties()
         {
-            Assert.Fail();
+            // Arrange
+            string filePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            int detectedFaceCount = RandomData.Number.Next(1, 3);
+
+            FaceDetectionResult faceDetectionResult = new FaceDetectionResult();
+            faceDetectionResult.Faces.AddRange(TestDataUtils.CreateMany<FaceDetectionResultItem>(detectedFaceCount));
+
+            _faceDetectionService.DecorateImageWithFaceDetections(filePath).Returns(faceDetectionResult);
+
+            // Act
+            var viewModel = CreateFaceAddDialogViewModel(false);
+            await viewModel.LoadImage(filePath);
+
+            // Assert
+            Assert.That(viewModel.IsImageSelected, Is.True);
+            Assert.That(viewModel.IsSaveButtonEnabled, Is.True);
         }
 
         [AvaloniaTest]
