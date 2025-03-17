@@ -34,7 +34,7 @@ namespace PhotoTool.Tests.Features.FaceSearch.ViewModels
         private IUIProvider _uiProvider = null;
         private IFaceRepository _faceRepo = null;
         private IImageProcessor _imageProcessor = null;
-        private IFileSystemProvider _fileSystemProvider;
+        private IFileSystemProvider _fileSystemProvider = null;
         private IFaceDetectionService _faceDetectionService = null;
         private IAssetProvider _assetProvider = null;
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
