@@ -1,25 +1,16 @@
 ﻿using Avalonia.Headless.NUnit;
-using FaceAiSharp;
 using NSubstitute;
 using NUnit.Framework;
-using PhotoTool.Features.BatchResizer.Validators;
-using PhotoTool.Features.BatchResizer.ViewModels;
 using PhotoTool.Features.FaceSearch.Models;
 using PhotoTool.Features.FaceSearch.Repositories;
 using PhotoTool.Features.FaceSearch.Services;
 using PhotoTool.Features.FaceSearch.ViewModels;
 using PhotoTool.Features.FaceSearch.Views;
 using PhotoTool.Shared.Graphics;
-using PhotoTool.Shared.IO;
 using PhotoTool.Shared.Resources;
 using PhotoTool.Shared.UI;
 using PhotoTool.Test;
 using PhotoTool.Tests.Random;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoTool.Tests.Features.FaceSearch.ViewModels
 {

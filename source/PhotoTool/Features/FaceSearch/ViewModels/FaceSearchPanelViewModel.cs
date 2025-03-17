@@ -235,7 +235,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
             IsFaceListVisible = faces.Any();
         }
 
-        private async Task SearchFaces()
+        public async Task SearchFaces()
         {
             uint totalFileCount = 0;
             uint imageCount = 0;
@@ -303,7 +303,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
                         FaceComparison faceComparison = _faceDetectionService.SearchForFace(faceEmbedding, fileInfo.FullName);
                         if (faceComparison.FaceMatchProspect != FaceMatchProspect.None)
                         {
-                            Dispatcher.UIThread.Invoke(() =>
+                            _uiProvider.InvokeOnUIThread(() =>
                             {
                                 SearchResults.Add(new SearchFaceViewModel()
                                 {
@@ -341,7 +341,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private void UpdateProgress(string infoText, uint progress)
         {
-            Dispatcher.UIThread.Post(() => {
+            _uiProvider.PostOnUIThread(() => {
                 this.InfoText = infoText;
                 this.SearchImageProgressValue = progress;
             });
@@ -349,7 +349,7 @@ namespace PhotoTool.Features.FaceSearch.ViewModels
 
         private void ToggleButtonStatus()
         {
-            Dispatcher.UIThread.Post(() => {
+            _uiProvider.PostOnUIThread(() => {
                 IsDeleteButtonEnabled = (!this.IsSearchActive && this.SelectedFace != null);
             });
         }
