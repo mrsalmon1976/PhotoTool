@@ -16,7 +16,7 @@ MinVersion=6.2
 OutputDir=.
 OutputBaseFilename=PhotoTool.{#Version}
 PrivilegesRequired=lowest
-SetupIconFile="phototool-icon.ico"
+SetupIconFile="phototool-installer-icon.ico"
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"
