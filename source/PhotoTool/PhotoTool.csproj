@@ -15,6 +15,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="phototool.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="phototool.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.5" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.5" />
     <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.1.5" />
@@ -43,6 +53,9 @@
   <ItemGroup>
     <Compile Update="Features\FaceSearch\Views\FaceSearchPanel.axaml.cs">
       <DependentUpon>FaceSearchPanel.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Program.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
 </Project>

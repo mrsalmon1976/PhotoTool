@@ -11,3 +11,4 @@ deployment/output
 source/packages
 .vs/
 /docs/*.bkp
+/deployment/*.exe
