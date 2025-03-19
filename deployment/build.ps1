@@ -2,6 +2,6 @@ $ErrorActionPreference = "Stop"
 Clear-Host
 $root = $PSScriptRoot
 
-Set-Location "$root\..\source\PhotoTool"
+Set-Location "$root\..\source\PhotoTool" 
 
-&dotnet publish -c Release -r win-x64 --self-contained true
+&dotnet publish -c Release -r win-x64 -o "$root\output" --self-contained true 
