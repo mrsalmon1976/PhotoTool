@@ -320,10 +320,12 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
 
                 await Task.Run(() =>
                 {
+                    IPerformanceLogger performanceLogger = PerformanceLogger.CreateAndStart<BatchResizerPanelViewModel>("ResizeImages");
                     ImageResizeOptions options = ImageResizeOptions.ConvertFromViewModel(this.ImageResizeOptionsViewModel);
                     _imageResizeOptionsValidator.Validate(options);
 
                     uint num = 1;
+                    performanceLogger.Start();
                     foreach (var imageViewModel in SelectedImages)
                     {
                         UpdateProgress($"Resizing {imageViewModel.Name}", num++);
@@ -337,6 +339,9 @@ namespace PhotoTool.Features.BatchResizer.ViewModels
                             _imageProcessor.ResizeImage(imageViewModel.FilePath, options.MaxThumbnailLength, thumbPath);
                         }
                     }
+
+                    decimal elapsedTime = performanceLogger.Stop($"Resized {SelectedImages.Count} images.") / 1000;
+                    UpdateProgress($"Resized {SelectedImages.Count} images in {elapsedTime.ToString("F")} seconds.", 0);
 
                 });
 

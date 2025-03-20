@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -6,24 +6,20 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <FileVersion>4.0.0.0</FileVersion>
-    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <FileVersion>4.0.0</FileVersion>
+    <AssemblyVersion>4.0.0</AssemblyVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="phototool.ico" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="phototool.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.5" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.5" />
@@ -49,7 +45,6 @@
     <PackageReference Include="NLog" Version="5.4.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Features\FaceSearch\Views\FaceSearchPanel.axaml.cs">
       <DependentUpon>FaceSearchPanel.axaml</DependentUpon>

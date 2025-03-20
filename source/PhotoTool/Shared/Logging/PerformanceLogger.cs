@@ -11,9 +11,9 @@ namespace PhotoTool.Shared.Logging
 {
     public interface IPerformanceLogger
     {
-        IPerformanceLogger Start();
+        void Start();
 
-        IPerformanceLogger Stop(string? message = null);
+        long Stop(string? message = null);
     }
 
     public class PerformanceLogger : IPerformanceLogger
@@ -34,28 +34,28 @@ namespace PhotoTool.Shared.Logging
 
         public string LogSource { get; set; }
 
-        public IPerformanceLogger Start()
+        public void Start()
         {
             _stopwatch = Stopwatch.StartNew();
-            return this;
         }
 
-        public IPerformanceLogger Stop(string? message = null)
+        public long Stop(string? message = null)
         {
             if (_stopwatch == null)
             {
                 throw new InvalidOperationException("PerformanceLogger has not been started");
             }
             _stopwatch.Stop();
+            long elapsedMilliseconds = _stopwatch.ElapsedMilliseconds;
 
             LogEventInfo logEvent = new LogEventInfo(LogLevel.Info, LoggerName, message);
             logEvent.Properties["LogSource"] = LogSource;
             logEvent.Properties["ProfileName"] = ProfileName;
-            logEvent.Properties["ExecutionTimeMilliseconds"] = _stopwatch.ElapsedMilliseconds;
+            logEvent.Properties["ExecutionTimeMilliseconds"] = elapsedMilliseconds;
             _logger.Log(logEvent);
 
             _stopwatch = null;
-            return this;
+            return elapsedMilliseconds;
         }
 
 
@@ -67,7 +67,9 @@ namespace PhotoTool.Shared.Logging
 
         public static IPerformanceLogger CreateAndStart<T>(string profileName)
         {
-            return Create<T>(profileName).Start();
+            IPerformanceLogger logger = Create<T>(profileName);
+            logger.Start();
+            return logger;
         }
 
     }
