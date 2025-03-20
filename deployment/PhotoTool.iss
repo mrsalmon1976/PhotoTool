@@ -15,7 +15,8 @@ AppUpdatesURL=https://github.com/mrsalmon1976/PhotoTool/releases
 DefaultDirName={commonappdata}\PhotoTool
 DefaultGroupName=PhotoTool
 LicenseFile=..\LICENSE
-MinVersion=6.2
+; requires Windows 7 or later
+MinVersion=6.1  
 OutputDir=.
 OutputBaseFilename=PhotoTool.{#Version}
 PrivilegesRequired=lowest
