@@ -1,0 +1,138 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:PhotoTool.Features.BatchResizer.ViewModels"
+             xmlns:shared="using:PhotoTool.Shared.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:BatchResizerPanelViewModel"
+             x:Class="PhotoTool.Features.BatchResizer.Views.BatchResizerPanel">
+
+  <Design.DataContext>
+    <vm:BatchResizerPanelViewModelDesign />
+  </Design.DataContext>
+
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" MinWidth="600" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="200" MinWidth="120" />
+    </Grid.ColumnDefinitions>
+    <!-- Left column (main area) -->
+    <Grid RowDefinitions="Auto,*" Grid.Column="0" VerticalAlignment="Stretch">
+        		
+        <Expander Grid.Row="0" MinWidth="400" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,0,10,0" IsExpanded="True">
+            <Expander.Header>
+                <TextBlock Text="Image Options" FontWeight="DemiBold" />
+            </Expander.Header>
+            <Grid ColumnDefinitions="*,*">
+				<Grid Grid.Column="0" RowDefinitions="*,*,*">
+					<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,5,0,0" IsChecked="{ Binding ImageResizeOptionsViewModel.ReplaceSpacesWithUnderscores }" ToolTip.Tip="If selected, spaces in the file name will be replaced with underscore characters">Replace spaces with underscores</CheckBox>
+					<CheckBox Grid.Column="0" Grid.Row="1" Margin="0,5,0,0" IsChecked="{ Binding ImageResizeOptionsViewModel.GenerateThumbnails }" ToolTip.Tip="If selected, Thumbnail images will also be generated with the resized images">Generate thumbnails</CheckBox>
+					<CheckBox Grid.Column="0" Grid.Row="2" Margin="0,5,0,0" IsChecked="{ Binding ImageResizeOptionsViewModel.OverwriteFiles }" ToolTip.Tip="If selected, existing images will be overwritten, otherwise output images will be appended with a numeric digit">Overwrite files</CheckBox>
+				</Grid>
+				<Grid Grid.Column="1" RowDefinitions="*,*,*" ColumnDefinitions="300,50">
+					<TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" ToolTip.Tip="Sets the length of the longest side of the output image (width or height)">Longest side in pixels (0 for original):</TextBlock>
+					<TextBox Grid.Row="0" Grid.Column="1" 
+                   HorizontalAlignment="Right" 
+                   Margin="5,10,0,0" 
+                   Text="{ Binding ImageResizeOptionsViewModel.MaxImageLength }" 
+                   MaxLength="5"
+                   KeyDown="TextBoxKeyDownDigitsOnly"/>
+
+					<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" ToolTip.Tip="Sets the length of the longest side of the output thumbnail image (width or height)">Thumbnail longest side in pixels:</TextBlock>
+					<TextBox Grid.Row="1" Grid.Column="1" 
+                   IsEnabled="{ Binding ImageResizeOptionsViewModel.GenerateThumbnails }" 
+                   HorizontalAlignment="Right" 
+                   Margin="5,10,0,0" 
+                   Text="{ Binding ImageResizeOptionsViewModel.MaxThumbnailLength }" 
+                   MaxLength="4"
+                   KeyDown="TextBoxKeyDownDigitsOnly"/>
+
+				</Grid>
+			</Grid>
+		</Expander>
+      <Border Grid.Row="1" Margin="0,5,10,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+          <Grid RowDefinitions="Auto,*">
+            <DockPanel Grid.Row="0" Margin="10">
+              <TextBlock DockPanel.Dock="Left" Text="{Binding InfoText}" VerticalAlignment="Center" />
+              <Button IsVisible="{Binding IsBatchResizeInProgress }" DockPanel.Dock="Right" Command="{Binding CancelButtonClickCommand }">Cancel</Button>
+              <ProgressBar IsVisible="{Binding IsBatchResizeInProgress }" DockPanel.Dock="Right" ShowProgressText="False" HorizontalAlignment="Right" Width="50" Height="5" Margin="0,0,5,0" Maximum="{Binding SelectedImages.Count }" Value="{Binding ImageResizeProgressValue}" />
+            </DockPanel>
+			  <DataGrid x:Name="ImageDataGrid" 
+                  Grid.Row="1"
+                  Background="Transparent"
+                  Margin="0" 
+                  ItemsSource="{Binding SelectedImages}"
+				          IsReadOnly="True"
+				          CanUserReorderColumns="True"
+				          CanUserResizeColumns="True"
+				          CanUserSortColumns="False"
+				          GridLinesVisibility="All"
+				          FontSize="11"
+				          BorderThickness="1" 
+                  BorderBrush="Gray" 
+                  SelectionChanged="DataGridSelectionChanged" 
+                  KeyUp="DataGridKeyUp"
+                  DragDrop.AllowDrop="True"
+                  >
+				  <DataGrid.Columns>
+					  <DataGridTemplateColumn Header="Image" Width="80">
+						  <DataGridTemplateColumn.CellTemplate>
+							  <DataTemplate>
+								  <Image Source="{Binding Image}" Height="40" />
+							  </DataTemplate>
+						  </DataGridTemplateColumn.CellTemplate>
+					  </DataGridTemplateColumn>
+					  <DataGridTextColumn Header="File" Width="*" FontSize="11" Binding="{Binding FilePath}"/>
+					  <DataGridTextColumn Header="Dimensions" Width="150" FontSize="11" Binding="{Binding Dimensions}"/>
+					  <DataGridTextColumn Header="Size" Width="100" FontSize="11" Binding="{Binding FileSize}"/>
+				  </DataGrid.Columns>
+			  </DataGrid>
+		  </Grid>
+		
+			
+      </Border>
+    </Grid>
+
+    <GridSplitter Grid.Column="1" Background="#0078D4" ResizeDirection="Columns"/>
+
+    <!-- Right column (buttons) -->
+    <DockPanel Grid.Column="2">
+      <StackPanel DockPanel.Dock="Top">
+        <Button x:Name="AddFolderButton" 
+                IsEnabled="{ Binding !IsBusy}" 
+                Command="{Binding AddFolderButtonClickCommand}" 
+                Margin="10,0,0,0" 
+                HorizontalAlignment="Stretch" 
+                HorizontalContentAlignment="Center"
+                >Add Folder</Button>
+		  <Button x:Name="AddFileButton" 
+              IsEnabled="{ Binding !IsBusy}" 
+              Command="{Binding AddFileButtonClickCommand}" 
+              Margin="10,5,0,0" 
+              HorizontalAlignment="Stretch" 
+              HorizontalContentAlignment="Center"
+              >Add File(s)</Button>
+        <Button x:Name="RemoveFilesButton"
+                IsEnabled="{ Binding !IsBusy}"
+                Margin="10,5,0,0"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Click="RemoveFilesButtonClick"
+            >Remove File(s)</Button>
+        <shared:ImagePreviewControl DataContext="{Binding PreviewImageModel }" IsVisible="{Binding ., Converter={x:Static ObjectConverters.IsNotNull}}" />
+      </StackPanel>
+      <Button x:Name="ResizeButton" 
+              IsEnabled="{ Binding !IsBusy }" 
+              DockPanel.Dock="Bottom" 
+              Margin="10,0,0,5" 
+              HorizontalAlignment="Stretch" 
+              HorizontalContentAlignment="Center" 
+              VerticalAlignment="Bottom"
+              Command="{Binding ResizeButtonClickCommand}"
+              >Resize</Button>
+    </DockPanel>
+
+  </Grid>
+</UserControl>

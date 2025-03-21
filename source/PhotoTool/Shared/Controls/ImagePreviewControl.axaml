@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PhotoTool.Shared.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="350"
+             x:Class="PhotoTool.Shared.Controls.ImagePreviewControl"
+             x:DataType="vm:ImagePreviewViewModel">
+  
+  <Border Margin="10,20,0,0" Padding="5" CornerRadius="5"
+          BorderBrush="#e0e0e0" BorderThickness="1" Background="Transparent"
+          >
+    <StackPanel>
+      <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             MaxHeight="300" Stretch="UniformToFill"
+             Source="{Binding Image}" />
+      <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,0">
+        <TextBlock Text="{Binding Name}"
+                   VerticalAlignment="Top"
+                   FontSize="12" TextWrapping="Wrap"
+                   TextAlignment="Center" Margin="0" Padding="5"
+                   />
+        <Image Source="/Assets/icon-window-open.png" ToolTip.Tip="Reveal image in file explorer" Width="15" PointerReleased="OnWindowOpenClick" Margin="0,0,3,0">
+          <Image.Styles>
+            <Style Selector="Image:pointerover">
+              <Setter Property="Cursor" Value="Hand" />
+            </Style>
+          </Image.Styles>
+        </Image>
+        <Image Source="/Assets/icon-copy.png" ToolTip.Tip="Copy image" Width="15" PointerReleased="OnCopyClick" Margin="0,0,3,0">
+          <Image.Styles>
+            <Style Selector="Image:pointerover">
+              <Setter Property="Cursor" Value="Hand" />
+            </Style>
+          </Image.Styles>
+          <FlyoutBase.AttachedFlyout>
+            <Flyout ShowMode="TransientWithDismissOnPointerMoveAway">
+              <TextBlock Foreground="#0078D4" Text="Image copied to clipboard!" />
+            </Flyout>
+          </FlyoutBase.AttachedFlyout>          
+        </Image>
+      </WrapPanel>
+      <TextBlock Text="{Binding Dimensions}"
+                 HorizontalAlignment="Center" VerticalAlignment="Top"
+                 FontSize="11" TextWrapping="Wrap"
+                 TextAlignment="Center" Margin="0,3,0,0" />
+    </StackPanel>
+  </Border>
+</UserControl>

@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PhotoTool.Shared.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="PhotoTool.MainWindow"
+        xmlns:fs="clr-namespace:PhotoTool.Features.FaceSearch.Views"
+        xmlns:br="clr-namespace:PhotoTool.Features.BatchResizer.Views"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/phototool-logo.ico"
+        Title="{Binding Title}" 
+        MinWidth="800"
+        MinHeight="600"
+        >
+  <Grid>
+    <TabControl Margin="5">
+      <TabItem Header="Batch Resizer">
+        <br:BatchResizerPanel DataContext="{Binding BatchResizerPanelViewModel}" />
+      </TabItem>
+      <TabItem Header="Face Search">
+        <fs:FaceSearchPanel DataContext="{Binding FaceSearchPanelViewModel}" />
+      </TabItem>
+    </TabControl>
+  </Grid>
+
+</Window>
