@@ -16,7 +16,7 @@ DefaultDirName={commonappdata}\PhotoTool
 DefaultGroupName=PhotoTool
 LicenseFile=..\LICENSE
 ; requires Windows 7 or later
-MinVersion=6.1  
+MinVersion=6.1sp1  
 OutputDir=.
 OutputBaseFilename=PhotoTool.{#Version}
 PrivilegesRequired=lowest
@@ -40,6 +40,9 @@ Filename: "{app}\PhotoTool.exe"; Description: "Launch PhotoTool"; Flags: nowait 
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{commonappdata}\PhotoTool"
+
+
+
 
 
 
