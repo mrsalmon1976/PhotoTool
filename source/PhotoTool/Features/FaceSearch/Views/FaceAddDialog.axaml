@@ -26,7 +26,7 @@
     <Panel Grid.Column="0">
       <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="LightGray"></Rectangle>
       <TextBlock Margin="10" Text="Select the clearest image you can find of the person you want to search for - this will produce better results when comparing against other images." HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14" Foreground="Black" TextWrapping="Wrap" TextAlignment="Center" IsVisible="{Binding !IsImageSelected }" />
-      <Image Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="Uniform" Source="{Binding SelectedImage}" />      
+      <Image Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="Uniform" Source="{Binding SelectedImage}" RenderOptions.BitmapInterpolationMode="HighQuality" />      
     </Panel>
 
     <GridSplitter Grid.Column="1" Background="Purple" ResizeDirection="Columns"/>
@@ -43,7 +43,7 @@
                   BorderBrush="#e0e0e0" BorderThickness="2"
                   Padding="5">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                  <Image Source="{Binding Image}" Height="40" HorizontalAlignment="Left" />
+                  <Image Source="{Binding Image}" Height="40" HorizontalAlignment="Left" RenderOptions.BitmapInterpolationMode="HighQuality" />
                   <TextBox DataContext="{Binding .}" BorderBrush="{Binding ColorBrush }" BorderThickness="2" Text="{Binding Name}" MinWidth="150" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,5,0" />
 				        </StackPanel>
               </Border>

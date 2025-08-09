@@ -80,7 +80,7 @@
 					  <DataGridTemplateColumn Header="Image" Width="80">
 						  <DataGridTemplateColumn.CellTemplate>
 							  <DataTemplate>
-								  <Image Source="{Binding Image}" Height="40" />
+								  <Image Source="{Binding Image}" Height="40" RenderOptions.BitmapInterpolationMode="HighQuality" />
 							  </DataTemplate>
 						  </DataGridTemplateColumn.CellTemplate>
 					  </DataGridTemplateColumn>

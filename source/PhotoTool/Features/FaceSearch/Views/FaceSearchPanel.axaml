@@ -47,7 +47,7 @@
                             <Setter Property="Cursor" Value="Hand" />
 							            </Style>
 						            </StackPanel.Styles>
-						            <Image Source="{Binding Image}" Height="70" HorizontalAlignment="Left" />
+						            <Image Source="{Binding Image}" Height="70" HorizontalAlignment="Left" RenderOptions.BitmapInterpolationMode="HighQuality" />
                         <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontSize="12" MaxWidth="50" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                       </StackPanel>
                     </Border>
@@ -83,7 +83,7 @@
                           <Setter Property="Cursor" Value="Hand" />
                         </Style>
                       </StackPanel.Styles>
-                      <Image Source="{Binding Image}" Height="150" HorizontalAlignment="Center" />
+                      <Image Source="{Binding Image}" Height="150" HorizontalAlignment="Center" RenderOptions.BitmapInterpolationMode="HighQuality" />
 							        <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" FontSize="12" MaxWidth="200" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
 						        </StackPanel>
 					        </Border>

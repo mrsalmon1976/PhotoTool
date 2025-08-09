@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 ; version number
-#define Version "4.0.0"
+#define Version "4.1.0"
 
 [Setup]
 AppName=PhotoTool
@@ -40,6 +40,7 @@ Filename: "{app}\PhotoTool.exe"; Description: "Launch PhotoTool"; Flags: nowait 
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{commonappdata}\PhotoTool"
+
 
 
 
